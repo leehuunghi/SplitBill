@@ -1,7 +1,12 @@
-import { blobAccess, canUseBlob, isVercelRuntime } from './_utils.js';
+import { blobAccess, canUseBlob, getBlobToken, isVercelRuntime } from './_utils.js';
 
 export default async function handler(_req, res) {
-  const blobToken = process.env.BLOB_READ_WRITE_TOKEN || '';
+  const blobToken = getBlobToken();
+  const blobTokenSource = process.env.SPLIT_BILL_BLOB_TOKEN
+    ? 'SPLIT_BILL_BLOB_TOKEN'
+    : process.env.BLOB_READ_WRITE_TOKEN
+      ? 'BLOB_READ_WRITE_TOKEN'
+      : null;
 
   return res.status(200).json({
     success: true,
@@ -10,6 +15,7 @@ export default async function handler(_req, res) {
       hasBlobToken: canUseBlob(),
       blobTokenLength: blobToken.length,
       blobTokenPrefix: blobToken ? blobToken.slice(0, 18) : null,
+      blobTokenSource,
       blobAccess,
       nodeEnv: process.env.NODE_ENV || null,
       vercelEnv: process.env.VERCEL_ENV || null,

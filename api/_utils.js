@@ -7,6 +7,10 @@ const blobPathname = 'splitbill/data.json';
 export const blobAccess =
   process.env.BLOB_STORE_ACCESS === 'private' ? 'private' : 'public';
 export const isVercelRuntime = () => Boolean(process.env.VERCEL);
+export const getBlobToken = () =>
+  process.env.SPLIT_BILL_BLOB_TOKEN ||
+  process.env.BLOB_READ_WRITE_TOKEN ||
+  '';
 
 export const defaultData = {
   members: [],
@@ -29,7 +33,7 @@ export const readDataFile = async () => {
   }
 };
 
-export const canUseBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+export const canUseBlob = () => Boolean(getBlobToken());
 
 const readBlobData = async () => {
   const { blobs } = await list({ prefix: blobPathname, limit: 1 });
