@@ -164,8 +164,14 @@ const normalizeLoadedData = rawData => {
   };
 };
 
+const isSuperAdminPath = () => {
+  if (typeof window === 'undefined') return false;
+  const normalizedPathname = window.location.pathname.replace(/\/+$/, '') || '/';
+  return normalizedPathname === '/superadmin';
+};
+
 const SplitWiseTool = () => {
-  const isSuperAdmin = typeof window !== 'undefined' && window.location.pathname === '/superadmin';
+  const isSuperAdmin = isSuperAdminPath();
   const [isAdminView, setIsAdminView] = useState(isSuperAdmin);
   const [activeAdminPanel, setActiveAdminPanel] = useState(null);
   const [newMemberName, setNewMemberName] = useState('');
@@ -288,6 +294,17 @@ const SplitWiseTool = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
+        .then(async response => {
+          const data = await response.json().catch(() => null);
+          if (!response.ok || !data?.ok) {
+            setSaveStatus(data?.error || 'Không thể lưu dữ liệu');
+            return;
+          }
+          setSaveStatus('Đã lưu');
+        })
+        .catch(() => {
+          setSaveStatus('Không thể lưu dữ liệu');
+        });
     }, 500);
     return () => clearTimeout(timer);
   }, [

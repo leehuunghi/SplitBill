@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/superadmin",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/superadmin/",
+      "destination": "/index.html"
+    }
+  ]
+}
