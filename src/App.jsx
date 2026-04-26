@@ -709,6 +709,23 @@ const SplitWiseTool = () => {
     return transactions.filter(tx => (tx.date || '').slice(0, 7) === monthFilter);
   }, [transactions, monthFilter]);
 
+  const receivedPayments = useMemo(() => {
+    return payments
+      .filter(payment => payment.type === 'receive')
+      .sort((a, b) => {
+        const aTime = new Date(a.createdAt || 0).getTime();
+        const bTime = new Date(b.createdAt || 0).getTime();
+        return bTime - aTime;
+      });
+  }, [payments]);
+
+  const filteredReceivedPayments = useMemo(() => {
+    if (!monthFilter) return receivedPayments;
+    return receivedPayments.filter(payment =>
+      (payment.createdAt?.slice(0, 7) || '') === monthFilter
+    );
+  }, [receivedPayments, monthFilter]);
+
   const availableMonths = useMemo(() => {
     const months = new Set();
     transactions.forEach(tx => {
@@ -1014,6 +1031,63 @@ const SplitWiseTool = () => {
             })}
           </div>
         </section>
+
+        {isAdminView && (
+          <section className="bg-white rounded-xl shadow p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-lg font-semibold">Lịch sử nhận tiền</h3>
+              <span className="text-sm text-gray-500">
+                {filteredReceivedPayments.length} giao dịch
+              </span>
+            </div>
+            <div className="mt-4 border rounded-lg divide-y max-h-80 overflow-y-auto">
+              {filteredReceivedPayments.length === 0 && (
+                <div className="p-4 text-sm text-gray-500">
+                  Chưa có giao dịch nhận tiền trong tháng này.
+                </div>
+              )}
+              {filteredReceivedPayments.map(payment => {
+                const memberName =
+                  members.find(member => member.id === payment.memberId)?.name || 'Không rõ';
+                const dateLabel = payment.createdAt
+                  ? new Date(payment.createdAt).toLocaleDateString('vi-VN')
+                  : 'Chưa có ngày';
+
+                return (
+                  <div
+                    key={`received-${payment.id}`}
+                    className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-gray-50"
+                    onClick={() =>
+                      startEditingTransaction({
+                        id: `pay-${payment.id}`,
+                        type: 'payment',
+                        amount: payment.amount,
+                        note: payment.note || 'Nhận tiền',
+                        date: payment.createdAt?.slice(0, 10),
+                        createdAt: payment.createdAt,
+                        memberId: payment.memberId,
+                        paymentType: payment.type,
+                      })
+                    }
+                  >
+                    <div>
+                      <div className="font-medium">{payment.note || 'Nhận tiền'}</div>
+                      <div className="text-xs text-gray-500">
+                        {dateLabel} • {memberName}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">Đã nhận</div>
+                      <div className="font-semibold text-emerald-600">
+                        {formatVND(payment.amount)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {isAdminView && activeAdminPanel === 'expense' && (
           <section className="bg-white rounded-xl shadow p-5">
