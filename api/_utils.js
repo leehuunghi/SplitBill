@@ -4,8 +4,9 @@ import { get, list, put } from '@vercel/blob';
 
 const dataPath = path.join(process.cwd(), 'src', 'data.json');
 const blobPathname = 'splitbill/data.json';
-const blobAccess = process.env.BLOB_STORE_ACCESS === 'private' ? 'private' : 'public';
-const isVercelRuntime = () => Boolean(process.env.VERCEL);
+export const blobAccess =
+  process.env.BLOB_STORE_ACCESS === 'private' ? 'private' : 'public';
+export const isVercelRuntime = () => Boolean(process.env.VERCEL);
 
 export const defaultData = {
   members: [],
@@ -28,7 +29,7 @@ export const readDataFile = async () => {
   }
 };
 
-const canUseBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+export const canUseBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 
 const readBlobData = async () => {
   const { blobs } = await list({ prefix: blobPathname, limit: 1 });
