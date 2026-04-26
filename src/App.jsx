@@ -321,6 +321,7 @@ const SplitWiseTool = () => {
             throw new Error(data?.error || 'Không thể lưu dữ liệu');
           }
 
+          if (!isAdminView) return;
           if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
           setToast({
             type: 'success',
@@ -331,6 +332,7 @@ const SplitWiseTool = () => {
           }, 2200);
         })
         .catch(error => {
+          if (!isAdminView) return;
           if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
           setToast({
             type: 'error',
@@ -342,7 +344,7 @@ const SplitWiseTool = () => {
         });
     }, 500);
     return () => clearTimeout(timer);
-  }, [payload, isHydrated]);
+  }, [payload, isHydrated, isAdminView]);
 
   useEffect(() => {
     return () => {
@@ -370,6 +372,11 @@ const SplitWiseTool = () => {
       window.removeEventListener('pagehide', flushPendingChanges);
     };
   }, [isHydrated]);
+
+  useEffect(() => {
+    if (isAdminView) return;
+    setToast(null);
+  }, [isAdminView]);
 
   const balances = useMemo(() => {
     const map = new Map();
@@ -806,7 +813,7 @@ const SplitWiseTool = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-50 min-h-screen">
-      {toast && (
+      {isAdminView && toast && (
         <div className="fixed top-4 right-4 z-50">
           <div
             className={`rounded-xl px-4 py-3 shadow-lg text-sm font-medium text-white ${
