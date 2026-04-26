@@ -1,6 +1,20 @@
-import { readDataFile } from './_utils.js';
+import { readAppData } from './_utils.js';
 
 export default async function handler(_req, res) {
-  const data = await readDataFile();
-  res.status(200).json(data);
+  try {
+    const data = await readAppData();
+    res.status(200).json(data);
+  } catch (_error) {
+    res.status(200).json({
+      members: [],
+      expenses: [],
+      payments: [],
+      treasurerAccount: '',
+      treasurerBankBin: '',
+      treasurerAccountNo: '',
+      treasurerAccountName: '',
+      qrCache: {},
+      nextMemberId: 1,
+    });
+  }
 }

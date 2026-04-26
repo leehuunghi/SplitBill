@@ -1,7 +1,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { get, list, put } from '@vercel/blob';
 
 const dataPath = path.join(process.cwd(), 'src', 'data.json');
+const blobPathname = 'splitbill/data.json';
 
 export const defaultData = {
   members: [],
@@ -22,6 +24,60 @@ export const readDataFile = async () => {
   } catch (_error) {
     return defaultData;
   }
+};
+
+const canUseBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+
+const readBlobData = async () => {
+  const { blobs } = await list({ prefix: blobPathname, limit: 1 });
+  const blob = blobs.find(item => item.pathname === blobPathname);
+
+  if (!blob) {
+    return null;
+  }
+
+  const result = await get(blob.url, { access: 'private' });
+
+  if (!result || result.statusCode !== 200) {
+    return null;
+  }
+
+  const raw = await new Response(result.stream).text();
+  return JSON.parse(raw);
+};
+
+const writeBlobData = async data => {
+  await put(blobPathname, JSON.stringify(data, null, 2), {
+    access: 'private',
+    allowOverwrite: true,
+    addRandomSuffix: false,
+    contentType: 'application/json; charset=utf-8',
+  });
+};
+
+export const readAppData = async () => {
+  if (canUseBlob()) {
+    try {
+      const blobData = await readBlobData();
+      if (blobData) {
+        return blobData;
+      }
+    } catch (_error) {
+      return defaultData;
+    }
+  }
+
+  return readDataFile();
+};
+
+export const writeAppData = async data => {
+  if (canUseBlob()) {
+    await writeBlobData(data);
+    return { storage: 'blob' };
+  }
+
+  await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
+  return { storage: 'file' };
 };
 
 export const readJsonBody = async req => {

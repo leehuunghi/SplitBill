@@ -176,7 +176,6 @@ const SplitWiseTool = () => {
   const [activeAdminPanel, setActiveAdminPanel] = useState(null);
   const [newMemberName, setNewMemberName] = useState('');
   const [isHydrated, setIsHydrated] = useState(false);
-  const [saveStatus, setSaveStatus] = useState('');
 
   const [members, setMembers] = useState([]);
 
@@ -294,17 +293,7 @@ const SplitWiseTool = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-        .then(async response => {
-          const data = await response.json().catch(() => null);
-          if (!response.ok || !data?.ok) {
-            setSaveStatus(data?.error || 'Không thể lưu dữ liệu');
-            return;
-          }
-          setSaveStatus('Đã lưu');
-        })
-        .catch(() => {
-          setSaveStatus('Không thể lưu dữ liệu');
-        });
+        .catch(() => {});
     }, 500);
     return () => clearTimeout(timer);
   }, [
@@ -770,7 +759,6 @@ const SplitWiseTool = () => {
                 </div>
               </>
             )}
-            <span className="text-xs text-gray-500">{saveStatus}</span>
           </div>
         </header>
 
