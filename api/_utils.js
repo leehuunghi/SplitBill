@@ -36,14 +36,15 @@ export const readDataFile = async () => {
 export const canUseBlob = () => Boolean(getBlobToken());
 
 const readBlobData = async () => {
-  const { blobs } = await list({ prefix: blobPathname, limit: 1 });
+  const token = getBlobToken();
+  const { blobs } = await list({ prefix: blobPathname, limit: 1, token });
   const blob = blobs.find(item => item.pathname === blobPathname);
 
   if (!blob) {
     return null;
   }
 
-  const result = await get(blob.url, { access: blobAccess });
+  const result = await get(blob.url, { access: blobAccess, token });
 
   if (!result || result.statusCode !== 200) {
     return null;
@@ -54,11 +55,13 @@ const readBlobData = async () => {
 };
 
 const writeBlobData = async data => {
+  const token = getBlobToken();
   await put(blobPathname, JSON.stringify(data, null, 2), {
     access: blobAccess,
     allowOverwrite: true,
     addRandomSuffix: false,
     contentType: 'application/json; charset=utf-8',
+    token,
   });
 };
 
