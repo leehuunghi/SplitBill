@@ -4,6 +4,7 @@ import { get, list, put } from '@vercel/blob';
 
 const dataPath = path.join(process.cwd(), 'src', 'data.json');
 const blobPathname = 'splitbill/data.json';
+const blobAccess = process.env.BLOB_STORE_ACCESS === 'private' ? 'private' : 'public';
 const isVercelRuntime = () => Boolean(process.env.VERCEL);
 
 export const defaultData = {
@@ -37,7 +38,7 @@ const readBlobData = async () => {
     return null;
   }
 
-  const result = await get(blob.url, { access: 'private' });
+  const result = await get(blob.url, { access: blobAccess });
 
   if (!result || result.statusCode !== 200) {
     return null;
@@ -49,7 +50,7 @@ const readBlobData = async () => {
 
 const writeBlobData = async data => {
   await put(blobPathname, JSON.stringify(data, null, 2), {
-    access: 'private',
+    access: blobAccess,
     allowOverwrite: true,
     addRandomSuffix: false,
     contentType: 'application/json; charset=utf-8',
