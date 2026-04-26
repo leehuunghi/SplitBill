@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   PlusCircle,
   QrCode,
@@ -170,6 +170,15 @@ const isSuperAdminPath = () => {
   return normalizedPathname === '/superadmin';
 };
 
+const persistAppState = payload => {
+  return fetch('/api/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  });
+};
+
 const SplitWiseTool = () => {
   const isSuperAdmin = isSuperAdminPath();
   const [isAdminView, setIsAdminView] = useState(isSuperAdmin);
@@ -224,6 +233,9 @@ const SplitWiseTool = () => {
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [nextMemberId, setNextMemberId] = useState(1);
   const [monthFilter, setMonthFilter] = useState('');
+  const [toast, setToast] = useState(null);
+  const latestPayloadRef = useRef(null);
+  const toastTimerRef = useRef(null);
 
   useEffect(() => {
     let active = true;
@@ -272,9 +284,8 @@ const SplitWiseTool = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isHydrated) return;
-    const payload = {
+  const payload = useMemo(
+    () => ({
       members,
       expenses,
       payments,
@@ -285,29 +296,80 @@ const SplitWiseTool = () => {
       qrCache,
       nextMemberId,
       savedAt: new Date().toISOString(),
-    };
-    
+    }),
+    [
+      members,
+      expenses,
+      payments,
+      treasurerAccount,
+      treasurerBankBin,
+      treasurerAccountNo,
+      treasurerAccountName,
+      qrCache,
+      nextMemberId,
+    ]
+  );
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    latestPayloadRef.current = payload;
     const timer = setTimeout(() => {
-      fetch('/api/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-        .catch(() => {});
+      persistAppState(payload)
+        .then(async response => {
+          const data = await response.json().catch(() => null);
+          if (!response.ok || data?.success !== true) {
+            throw new Error(data?.error || 'Không thể lưu dữ liệu');
+          }
+
+          if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+          setToast({
+            type: 'success',
+            message: 'Đã lưu thành công',
+          });
+          toastTimerRef.current = setTimeout(() => {
+            setToast(null);
+          }, 2200);
+        })
+        .catch(error => {
+          if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+          setToast({
+            type: 'error',
+            message: error?.message || 'Lưu thất bại',
+          });
+          toastTimerRef.current = setTimeout(() => {
+            setToast(null);
+          }, 2600);
+        });
     }, 500);
     return () => clearTimeout(timer);
-  }, [
-    members,
-    expenses,
-    payments,
-    treasurerAccount,
-    treasurerBankBin,
-    treasurerAccountNo,
-    treasurerAccountName,
-    qrCache,
-    nextMemberId,
-    isHydrated,
-  ]);
+  }, [payload, isHydrated]);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const flushPendingChanges = () => {
+      const latestPayload = latestPayloadRef.current;
+      if (!latestPayload || typeof navigator === 'undefined' || !navigator.sendBeacon) {
+        return;
+      }
+
+      const body = new Blob([JSON.stringify(latestPayload)], {
+        type: 'application/json',
+      });
+      navigator.sendBeacon('/api/save', body);
+    };
+
+    window.addEventListener('pagehide', flushPendingChanges);
+    return () => {
+      window.removeEventListener('pagehide', flushPendingChanges);
+    };
+  }, [isHydrated]);
 
   const balances = useMemo(() => {
     const map = new Map();
@@ -744,6 +806,17 @@ const SplitWiseTool = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-50 min-h-screen">
+      {toast && (
+        <div className="fixed top-4 right-4 z-50">
+          <div
+            className={`rounded-xl px-4 py-3 shadow-lg text-sm font-medium text-white ${
+              toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-500'
+            }`}
+          >
+            {toast.message}
+          </div>
+        </div>
+      )}
       <div className="flex flex-col gap-6">
         <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
