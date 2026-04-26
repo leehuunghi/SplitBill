@@ -4,6 +4,7 @@ import { get, list, put } from '@vercel/blob';
 
 const dataPath = path.join(process.cwd(), 'src', 'data.json');
 const blobPathname = 'splitbill/data.json';
+const isVercelRuntime = () => Boolean(process.env.VERCEL);
 
 export const defaultData = {
   members: [],
@@ -74,6 +75,10 @@ export const writeAppData = async data => {
   if (canUseBlob()) {
     await writeBlobData(data);
     return { storage: 'blob' };
+  }
+
+  if (isVercelRuntime()) {
+    throw new Error('Chưa cấu hình Vercel Blob cho môi trường deploy');
   }
 
   await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');

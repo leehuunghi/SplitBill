@@ -14,10 +14,10 @@ export default async function handler(req, res) {
       success: true,
       storage: result.storage,
     });
-  } catch (_error) {
+  } catch (error) {
     return res.status(500).json({
       success: false,
-      error: 'Không thể lưu dữ liệu',
+      error: error instanceof Error ? error.message : 'Không thể lưu dữ liệu',
     });
   }
 }
