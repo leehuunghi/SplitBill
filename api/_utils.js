@@ -1,16 +1,19 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { get, list, put } from '@vercel/blob';
 
 const dataPath = path.join(process.cwd(), 'src', 'data.json');
-const blobPathname = 'splitbill/data.json';
-export const blobAccess =
-  process.env.BLOB_STORE_ACCESS === 'private' ? 'private' : 'public';
+const githubApiBase = 'https://api.github.com';
+
+const defaultGithubConfig = {
+  owner: process.env.GITHUB_REPO_OWNER || 'leehuunghi',
+  repo: process.env.GITHUB_REPO_NAME || 'SplitBill',
+  branch: process.env.GITHUB_REPO_BRANCH || 'main',
+  path: process.env.GITHUB_DATA_PATH || 'src/data.json',
+};
+
 export const isVercelRuntime = () => Boolean(process.env.VERCEL);
-export const getBlobToken = () =>
-  process.env.SPLIT_BILL_BLOB_TOKEN ||
-  process.env.BLOB_READ_WRITE_TOKEN ||
-  '';
+export const getGithubToken = () => process.env.GITHUB_TOKEN || '';
+export const canUseGithubStorage = () => Boolean(getGithubToken());
 
 export const defaultData = {
   members: [],
@@ -33,44 +36,90 @@ export const readDataFile = async () => {
   }
 };
 
-export const canUseBlob = () => Boolean(getBlobToken());
+const getGithubConfig = () => defaultGithubConfig;
 
-const readBlobData = async () => {
-  const token = getBlobToken();
-  const { blobs } = await list({ prefix: blobPathname, limit: 1, token });
-  const blob = blobs.find(item => item.pathname === blobPathname);
-
-  if (!blob) {
-    return null;
-  }
-
-  const result = await get(blob.url, { access: blobAccess, token });
-
-  if (!result || result.statusCode !== 200) {
-    return null;
-  }
-
-  const raw = await new Response(result.stream).text();
-  return JSON.parse(raw);
+const buildGithubContentsUrl = () => {
+  const { owner, repo, path: filePath, branch } = getGithubConfig();
+  const encodedPath = filePath
+    .split('/')
+    .map(part => encodeURIComponent(part))
+    .join('/');
+  return `${githubApiBase}/repos/${owner}/${repo}/contents/${encodedPath}?ref=${encodeURIComponent(branch)}`;
 };
 
-const writeBlobData = async data => {
-  const token = getBlobToken();
-  await put(blobPathname, JSON.stringify(data, null, 2), {
-    access: blobAccess,
-    allowOverwrite: true,
-    addRandomSuffix: false,
-    contentType: 'application/json; charset=utf-8',
-    token,
+const githubHeaders = () => ({
+  Accept: 'application/vnd.github+json',
+  Authorization: `Bearer ${getGithubToken()}`,
+  'X-GitHub-Api-Version': '2022-11-28',
+  'Content-Type': 'application/json',
+});
+
+const decodeGithubContent = content =>
+  Buffer.from(String(content || '').replace(/\n/g, ''), 'base64').toString('utf-8');
+
+const getGithubFile = async () => {
+  const response = await fetch(buildGithubContentsUrl(), {
+    headers: githubHeaders(),
   });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`GitHub read failed: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
+};
+
+const readGithubData = async () => {
+  const file = await getGithubFile();
+  if (!file?.content) {
+    return null;
+  }
+
+  return JSON.parse(decodeGithubContent(file.content));
+};
+
+const putGithubData = async (data, sha) => {
+  const { branch } = getGithubConfig();
+  const body = {
+    message: `Update shared data (${new Date().toISOString()})`,
+    content: Buffer.from(JSON.stringify(data, null, 2), 'utf-8').toString('base64'),
+    branch,
+  };
+
+  if (sha) {
+    body.sha = sha;
+  }
+
+  const response = await fetch(buildGithubContentsUrl(), {
+    method: 'PUT',
+    headers: githubHeaders(),
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`GitHub save failed: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
+};
+
+const writeGithubData = async data => {
+  const existingFile = await getGithubFile();
+  return putGithubData(data, existingFile?.sha);
 };
 
 export const readAppData = async () => {
-  if (canUseBlob()) {
+  if (canUseGithubStorage()) {
     try {
-      const blobData = await readBlobData();
-      if (blobData) {
-        return blobData;
+      const githubData = await readGithubData();
+      if (githubData) {
+        return githubData;
       }
     } catch (_error) {
       return defaultData;
@@ -81,13 +130,13 @@ export const readAppData = async () => {
 };
 
 export const writeAppData = async data => {
-  if (canUseBlob()) {
-    await writeBlobData(data);
-    return { storage: 'blob' };
+  if (canUseGithubStorage()) {
+    await writeGithubData(data);
+    return { storage: 'github' };
   }
 
   if (isVercelRuntime()) {
-    throw new Error('Chưa cấu hình Vercel Blob cho môi trường deploy');
+    throw new Error('Chưa cấu hình GITHUB_TOKEN cho môi trường deploy');
   }
 
   await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
