@@ -102,6 +102,11 @@
       "id": 18,
       "name": "Thái",
       "isTreasurer": false
+    },
+    {
+      "id": 19,
+      "name": "Danh",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -438,6 +443,6 @@
       "updatedAt": "2026-04-24T06:49:15.152Z"
     }
   },
-  "nextMemberId": 19,
-  "savedAt": "2026-05-04T06:06:25.658Z"
+  "nextMemberId": 20,
+  "savedAt": "2026-05-04T06:07:03.243Z"
 }
