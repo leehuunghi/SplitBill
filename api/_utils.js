@@ -103,7 +103,9 @@ const putGithubData = async (data, sha) => {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`GitHub save failed: ${response.status} ${errorText}`);
+    const error = new Error(`GitHub save failed: ${response.status} ${errorText}`);
+    error.status = response.status;
+    throw error;
   }
 
   return response.json();
@@ -111,7 +113,16 @@ const putGithubData = async (data, sha) => {
 
 const writeGithubData = async data => {
   const existingFile = await getGithubFile();
-  return putGithubData(data, existingFile?.sha);
+  try {
+    return await putGithubData(data, existingFile?.sha);
+  } catch (error) {
+    if (error?.status !== 409) {
+      throw error;
+    }
+
+    const latestFile = await getGithubFile();
+    return putGithubData(data, latestFile?.sha);
+  }
 };
 
 export const readAppData = async () => {
