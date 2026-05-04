@@ -522,7 +522,14 @@
   "treasurerBankBin": "970403",
   "treasurerAccountNo": "064307842412",
   "treasurerAccountName": "Le Huu Nghi",
-  "qrCache": {},
+  "qrCache": {
+    "3": {
+      "checksum": 121538,
+      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454061215385802VN62080804THAO630499CA",
+      "addInfo": "THAO",
+      "updatedAt": "2026-05-04T12:18:30.382Z"
+    }
+  },
   "nextMemberId": 21,
-  "savedAt": "2026-05-04T12:08:16.464Z"
+  "savedAt": "2026-05-04T12:18:30.382Z"
 }
