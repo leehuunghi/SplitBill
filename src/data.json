@@ -108,6 +108,11 @@
       "name": "Danh",
       "isTreasurer": false,
       "group": "server"
+    },
+    {
+      "id": 20,
+      "name": "Phát",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -444,6 +449,6 @@
       "updatedAt": "2026-04-24T06:49:15.152Z"
     }
   },
-  "nextMemberId": 20,
-  "savedAt": "2026-05-04T06:07:11.227Z"
+  "nextMemberId": 21,
+  "savedAt": "2026-05-04T06:07:20.045Z"
 }
