@@ -112,7 +112,8 @@
     {
       "id": 20,
       "name": "Phát",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "server"
     }
   ],
   "expenses": [
@@ -450,5 +451,5 @@
     }
   },
   "nextMemberId": 21,
-  "savedAt": "2026-05-04T06:07:20.045Z"
+  "savedAt": "2026-05-04T06:07:34.037Z"
 }
