@@ -746,7 +746,8 @@ const SplitWiseTool = () => {
   const qrContent = qrPayload;
 
   const transactions = useMemo(() => {
-    const expenseTx = expenses.map(exp => ({
+    return expenses
+      .map(exp => ({
       id: `exp-${exp.id}`,
       type: 'expense',
       amount: exp.amount,
@@ -755,23 +756,13 @@ const SplitWiseTool = () => {
       createdAt: exp.createdAt,
       payerId: exp.payerId,
       splits: exp.splits,
-    }));
-    const paymentTx = payments.map(p => ({
-      id: `pay-${p.id}`,
-      type: 'payment',
-      amount: p.amount,
-      note: p.note || (p.type === 'pay' ? 'Thanh toán nợ' : 'Nhận tiền'),
-      date: p.createdAt?.slice(0, 10),
-      createdAt: p.createdAt,
-      memberId: p.memberId,
-      paymentType: p.type,
-    }));
-    return [...expenseTx, ...paymentTx].sort((a, b) => {
+    }))
+      .sort((a, b) => {
       const aTime = new Date(a.createdAt || a.date || 0).getTime();
       const bTime = new Date(b.createdAt || b.date || 0).getTime();
       return bTime - aTime;
     });
-  }, [expenses, payments]);
+  }, [expenses]);
 
   const filteredTransactions = useMemo(() => {
     if (!monthFilter) return transactions;
@@ -799,8 +790,12 @@ const SplitWiseTool = () => {
       const key = (tx.date || '').slice(0, 7);
       if (key) months.add(key);
     });
+    receivedPayments.forEach(payment => {
+      const key = (payment.createdAt || '').slice(0, 7);
+      if (key) months.add(key);
+    });
     return Array.from(months).sort((a, b) => (a < b ? 1 : -1));
-  }, [transactions]);
+  }, [transactions, receivedPayments]);
 
   useEffect(() => {
     if (monthFilter) return;
