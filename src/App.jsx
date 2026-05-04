@@ -779,13 +779,11 @@ const SplitWiseTool = () => {
   }, [transactions, monthFilter]);
 
   const receivedPayments = useMemo(() => {
-    return payments
-      .filter(payment => payment.type === 'receive')
-      .sort((a, b) => {
-        const aTime = new Date(a.createdAt || 0).getTime();
-        const bTime = new Date(b.createdAt || 0).getTime();
-        return bTime - aTime;
-      });
+    return [...payments].sort((a, b) => {
+      const aTime = new Date(a.createdAt || 0).getTime();
+      const bTime = new Date(b.createdAt || 0).getTime();
+      return bTime - aTime;
+    });
   }, [payments]);
 
   const filteredReceivedPayments = useMemo(() => {
@@ -1132,6 +1130,12 @@ const SplitWiseTool = () => {
                 const dateLabel = payment.createdAt
                   ? new Date(payment.createdAt).toLocaleDateString('vi-VN')
                   : 'Chưa có ngày';
+                const paymentLabel =
+                  payment.type === 'pay' ? 'Thanh toán nợ' : 'Nhận tiền';
+                const paymentBadge =
+                  payment.type === 'pay' ? 'Đã thanh toán' : 'Đã nhận';
+                const paymentAmountClass =
+                  payment.type === 'pay' ? 'text-blue-600' : 'text-emerald-600';
 
                 return (
                   <div
@@ -1151,14 +1155,14 @@ const SplitWiseTool = () => {
                     }
                   >
                     <div>
-                      <div className="font-medium">{payment.note || 'Nhận tiền'}</div>
+                      <div className="font-medium">{payment.note || paymentLabel}</div>
                       <div className="text-xs text-gray-500">
-                        {dateLabel} • {memberName}
+                        {dateLabel} • {memberName} • {paymentLabel}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm text-gray-500">Đã nhận</div>
-                      <div className="font-semibold text-emerald-600">
+                      <div className="text-sm text-gray-500">{paymentBadge}</div>
+                      <div className={`font-semibold ${paymentAmountClass}`}>
                         {formatVND(payment.amount)}
                       </div>
                     </div>
