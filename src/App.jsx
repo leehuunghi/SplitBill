@@ -1086,6 +1086,10 @@ const SplitWiseTool = () => {
                 );
               }
               const memberName = members.find(m => m.id === tx.memberId)?.name || 'Không rõ';
+              const paymentLabel =
+                tx.paymentType === 'pay' ? 'Thanh toán nợ' : 'Nhận tiền';
+              const paymentAmountClass =
+                tx.paymentType === 'pay' ? 'text-blue-600' : 'text-emerald-600';
               return (
                 <div
                   key={tx.id}
@@ -1097,12 +1101,14 @@ const SplitWiseTool = () => {
                   <div>
                     <div className="font-medium">{tx.note}</div>
                     <div className="text-xs text-gray-500">
-                      {dateLabel} • {memberName}
+                      {dateLabel} • {memberName} • {paymentLabel}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-500">Thanh toán</div>
-                    <div className="font-semibold text-green-600">{formatVND(tx.amount)}</div>
+                    <div className="text-sm text-gray-500">{paymentLabel}</div>
+                    <div className={`font-semibold ${paymentAmountClass}`}>
+                      {formatVND(tx.amount)}
+                    </div>
                   </div>
                 </div>
               );
