@@ -559,6 +559,59 @@ const SplitWiseTool = () => {
     setExpenses(prev => prev.filter(exp => exp.id !== expenseId));
   };
 
+  const showAdminToast = (type, message) => {
+    if (!isAdminView) return;
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ type, message });
+    toastTimerRef.current = setTimeout(() => {
+      setToast(null);
+    }, type === 'success' ? 2200 : 2600);
+  };
+
+  const deleteMember = memberId => {
+    const targetMember = members.find(member => member.id === memberId);
+    if (!targetMember) return;
+
+    if (targetMember.isTreasurer) {
+      showAdminToast('error', 'Không thể xóa thủ quỹ');
+      return;
+    }
+
+    const hasExpenseReference = expenses.some(
+      expense =>
+        expense.payerId === memberId ||
+        (expense.splits || []).some(split => split.memberId === memberId)
+    );
+    const hasPaymentReference = payments.some(payment => payment.memberId === memberId);
+
+    if (hasExpenseReference || hasPaymentReference) {
+      showAdminToast(
+        'error',
+        'Không thể xóa thành viên đã có trong khoản chi hoặc thanh toán'
+      );
+      return;
+    }
+
+    setMembers(prev => prev.filter(member => member.id !== memberId));
+    setExpenseForm(prev => ({
+      ...prev,
+      participants: prev.participants.filter(id => id !== memberId),
+      splits: Object.fromEntries(
+        Object.entries(prev.splits).filter(([id]) => Number(id) !== memberId)
+      ),
+      payerId: Number(prev.payerId) === memberId ? '' : prev.payerId,
+    }));
+    setPaymentForm(prev => ({
+      ...prev,
+      memberId: Number(prev.memberId) === memberId ? '' : prev.memberId,
+    }));
+    setQrCache(prev => dropQrCacheEntry(prev, memberId));
+    if (qrModal.memberId === memberId) {
+      closeQr();
+    }
+    showAdminToast('success', `Đã xóa thành viên ${targetMember.name}`);
+  };
+
   const startEditingTransaction = tx => {
     if (!isAdminView) return;
     if (tx.type === 'expense') {
@@ -991,15 +1044,26 @@ const SplitWiseTool = () => {
                     {balance > 0 ? '+' : ''}
                     {formatVND(balance)}
                   </div>
-                  {balance < 0 && treasurerId && (
-                    <button
-                      onClick={() => openQrForMember(m.id, Math.abs(balance))}
-                      className="ml-4 p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
-                      title="Tạo QR thanh toán"
-                    >
-                      <QrCode size={18} />
-                    </button>
-                  )}
+                  <div className="ml-4 flex items-center gap-2">
+                    {balance < 0 && treasurerId && (
+                      <button
+                        onClick={() => openQrForMember(m.id, Math.abs(balance))}
+                        className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
+                        title="Tạo QR thanh toán"
+                      >
+                        <QrCode size={18} />
+                      </button>
+                    )}
+                    {isAdminView && (
+                      <button
+                        onClick={() => deleteMember(m.id)}
+                        className="px-3 py-2 rounded-lg border text-sm hover:bg-red-50"
+                        title="Xóa thành viên"
+                      >
+                        Xóa
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })}
