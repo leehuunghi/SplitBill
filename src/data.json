@@ -360,7 +360,16 @@
       "createdAt": "2026-04-24T05:13:37.663Z"
     }
   ],
-  "payments": [],
+  "payments": [
+    {
+      "id": 1777864148983,
+      "memberId": 8,
+      "amount": 197889,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:09:08.983Z"
+    }
+  ],
   "treasurerAccount": "Sacombank - 064307842412",
   "treasurerBankBin": "970403",
   "treasurerAccountNo": "064307842412",
@@ -374,5 +383,5 @@
     }
   },
   "nextMemberId": 19,
-  "savedAt": "2026-05-04T03:08:49.908Z"
+  "savedAt": "2026-05-04T03:09:08.983Z"
 }
