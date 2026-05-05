@@ -108,68 +108,9 @@
       "name": "Danh",
       "isTreasurer": false,
       "group": "server"
-    },
-    {
-      "id": 20,
-      "name": "Huy",
-      "isTreasurer": false
     }
   ],
   "expenses": [
-    {
-      "id": 1777961362172,
-      "amount": 600000,
-      "payerId": 1,
-      "splits": [
-        {
-          "memberId": 2,
-          "amount": 200000
-        },
-        {
-          "memberId": 5,
-          "amount": 40000
-        },
-        {
-          "memberId": 8,
-          "amount": 40000
-        },
-        {
-          "memberId": 9,
-          "amount": 40000
-        },
-        {
-          "memberId": 10,
-          "amount": 40000
-        },
-        {
-          "memberId": 12,
-          "amount": 40000
-        },
-        {
-          "memberId": 14,
-          "amount": 40000
-        },
-        {
-          "memberId": 17,
-          "amount": 40000
-        },
-        {
-          "memberId": 18,
-          "amount": 40000
-        },
-        {
-          "memberId": 19,
-          "amount": 40000
-        },
-        {
-          "memberId": 20,
-          "amount": 40000
-        }
-      ],
-      "note": "",
-      "date": "2026-05-05",
-      "createdAt": "2026-05-05T06:09:22.172Z"
-    },
     {
       "id": 1777874913001,
       "amount": 540000,
@@ -587,20 +528,8 @@
       "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454061215385802VN62080804THAO630499CA",
       "addInfo": "THAO",
       "updatedAt": "2026-05-04T12:18:30.382Z"
-    },
-    "14": {
-      "checksum": 41538,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405415385802VN62080804PHAT6304D570",
-      "addInfo": "PHAT",
-      "updatedAt": "2026-05-05T05:59:19.990Z"
-    },
-    "19": {
-      "checksum": 41544,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405415445802VN62080804DANH63049F28",
-      "addInfo": "DANH",
-      "updatedAt": "2026-05-05T01:51:43.990Z"
     }
   },
   "nextMemberId": 21,
-  "savedAt": "2026-05-05T06:09:22.172Z"
+  "savedAt": "2026-05-04T12:18:30.382Z"
 }
