@@ -612,6 +612,38 @@ const SplitWiseTool = () => {
     showAdminToast('success', `Đã xóa thành viên ${targetMember.name}`);
   };
 
+  const completeMemberPayment = memberId => {
+    if (!treasurerId) return;
+
+    const member = members.find(item => item.id === memberId);
+    const balance = balances.get(memberId) || 0;
+    const amount = Math.abs(Math.min(balance, 0));
+
+    if (!member || !amount) return;
+
+    const isConfirmed = window.confirm(
+      `Xác nhận hoàn tất thanh toán cho ${member.name} số tiền ${formatVND(amount)}?`
+    );
+
+    if (!isConfirmed) return;
+
+    const nextPayment = {
+      id: Date.now(),
+      memberId,
+      amount,
+      type: 'pay',
+      note: 'Complete thanh toán',
+      createdAt: new Date().toISOString(),
+    };
+
+    setPayments(prev => [nextPayment, ...prev]);
+    setQrCache(prev => dropQrCacheEntry(prev, memberId));
+    if (qrModal.memberId === memberId) {
+      closeQr();
+    }
+    showAdminToast('success', `Đã complete thanh toán cho ${member.name}`);
+  };
+
   const startEditingTransaction = tx => {
     if (!isAdminView) return;
     if (tx.type === 'expense') {
@@ -1046,13 +1078,22 @@ const SplitWiseTool = () => {
                   </div>
                   <div className="ml-4 flex items-center gap-2">
                     {balance < 0 && treasurerId && (
-                      <button
-                        onClick={() => openQrForMember(m.id, Math.abs(balance))}
-                        className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
-                        title="Tạo QR thanh toán"
-                      >
-                        <QrCode size={18} />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => openQrForMember(m.id, Math.abs(balance))}
+                          className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
+                          title="Tạo QR thanh toán"
+                        >
+                          <QrCode size={18} />
+                        </button>
+                        <button
+                          onClick={() => completeMemberPayment(m.id)}
+                          className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700"
+                          title="Complete thanh toán"
+                        >
+                          Complete
+                        </button>
+                      </>
                     )}
                     {isAdminView && (
                       <button
