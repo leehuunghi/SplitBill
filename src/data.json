@@ -117,6 +117,32 @@
   ],
   "expenses": [
     {
+      "id": 1778566395342,
+      "amount": 100000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 25000
+        },
+        {
+          "memberId": 5,
+          "amount": 25000
+        },
+        {
+          "memberId": 9,
+          "amount": 25000
+        },
+        {
+          "memberId": 12,
+          "amount": 25000
+        }
+      ],
+      "note": "cafe sáng 11/5",
+      "date": "2026-05-12",
+      "createdAt": "2026-05-12T06:13:15.342Z"
+    },
+    {
       "id": 1778566369030,
       "amount": 60000,
       "payerId": 1,
@@ -932,5 +958,5 @@
     }
   },
   "nextMemberId": 21,
-  "savedAt": "2026-05-12T06:12:49.030Z"
+  "savedAt": "2026-05-12T06:13:15.342Z"
 }
