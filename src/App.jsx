@@ -613,6 +613,7 @@ const SplitWiseTool = () => {
   };
 
   const completeMemberPayment = memberId => {
+    if (!isAdminView) return;
     if (!treasurerId) return;
 
     const member = members.find(item => item.id === memberId);
@@ -1086,13 +1087,15 @@ const SplitWiseTool = () => {
                         >
                           <QrCode size={18} />
                         </button>
-                        <button
-                          onClick={() => completeMemberPayment(m.id)}
-                          className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700"
-                          title="Complete thanh toán"
-                        >
-                          Complete
-                        </button>
+                        {isAdminView && (
+                          <button
+                            onClick={() => completeMemberPayment(m.id)}
+                            className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700"
+                            title="Complete thanh toán"
+                          >
+                            Complete
+                          </button>
+                        )}
                       </>
                     )}
                     {isAdminView && (
