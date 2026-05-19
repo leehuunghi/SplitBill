@@ -1036,27 +1036,43 @@ const SplitWiseTool = () => {
               {members
                 .filter(m => m.isTreasurer)
                 .map(m => {
-                  const balance = balances.get(m.id) || 0;
+                  const totalDebtAmount = Math.abs(Math.min(nonTreasurerTotal, 0));
                   return (
                     <div
                       key={m.id}
-                      className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 grid grid-cols-[1fr_auto_auto] items-center gap-3"
+                      className={`bg-yellow-50 p-4 rounded-lg border border-yellow-200 ${
+                        isAdminView
+                          ? 'grid grid-cols-[1fr_auto_auto] items-center gap-3'
+                          : 'flex flex-col items-center justify-center text-center gap-2'
+                      }`}
                     >
-                      <div>
-                        <span className="font-semibold">{m.name}</span>
-                        <span className="ml-2 text-xs bg-yellow-200 px-2 py-1 rounded">Thủ quỹ</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs text-gray-500">Tổng của các thành viên</div>
+                      {isAdminView ? (
+                        <div>
+                          <span className="font-semibold">{m.name}</span>
+                          <span className="ml-2 text-xs bg-yellow-200 px-2 py-1 rounded">Thủ quỹ</span>
+                        </div>
+                      ) : (
                         <div
-                          className={`font-mono font-bold ${
-                            nonTreasurerTotal < 0 ? 'text-red-500' : 'text-green-600'
+                          className={`font-mono font-bold text-3xl md:text-4xl ${
+                            totalDebtAmount > 0 ? 'text-red-500' : 'text-green-600'
                           }`}
                         >
-                          {nonTreasurerTotal > 0 ? '+' : ''}
-                          {formatVND(nonTreasurerTotal)}
+                          Tổng nợ: {formatVND(totalDebtAmount)}
                         </div>
-                      </div>
+                      )}
+                      {isAdminView && (
+                        <div className="text-right">
+                          <div className="text-xs text-gray-500">Tổng của các thành viên</div>
+                          <div
+                            className={`font-mono font-bold ${
+                              nonTreasurerTotal < 0 ? 'text-red-500' : 'text-green-600'
+                            }`}
+                          >
+                            {nonTreasurerTotal > 0 ? '+' : ''}
+                            {formatVND(nonTreasurerTotal)}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
