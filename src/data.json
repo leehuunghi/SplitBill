@@ -122,6 +122,28 @@
   ],
   "expenses": [
     {
+      "id": 1779173249180,
+      "amount": 75000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 25000
+        },
+        {
+          "memberId": 8,
+          "amount": 25000
+        },
+        {
+          "memberId": 9,
+          "amount": 25000
+        }
+      ],
+      "note": "cf sáng 19/5",
+      "date": "2026-05-19",
+      "createdAt": "2026-05-19T06:47:29.180Z"
+    },
+    {
       "id": 1779172341930,
       "amount": 560000,
       "payerId": 1,
@@ -1459,5 +1481,5 @@
     }
   },
   "nextMemberId": 22,
-  "savedAt": "2026-05-19T06:46:37.449Z"
+  "savedAt": "2026-05-19T06:47:29.180Z"
 }
