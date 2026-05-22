@@ -118,6 +118,11 @@
       "id": 21,
       "name": "Tú",
       "isTreasurer": false
+    },
+    {
+      "id": 22,
+      "name": "Thế Anh",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -1634,6 +1639,6 @@
       "updatedAt": "2026-05-19T09:34:23.677Z"
     }
   },
-  "nextMemberId": 22,
-  "savedAt": "2026-05-22T06:36:31.173Z"
+  "nextMemberId": 23,
+  "savedAt": "2026-05-22T06:37:23.292Z"
 }
