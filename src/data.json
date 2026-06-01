@@ -127,6 +127,20 @@
   ],
   "expenses": [
     {
+      "id": 1780280143736,
+      "amount": 50000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 50000
+        }
+      ],
+      "note": "2 bữa cf sáng",
+      "date": "2026-05-29",
+      "createdAt": "2026-06-01T02:15:43.736Z"
+    },
+    {
       "id": 1780280122521,
       "amount": 38000,
       "payerId": 1,
@@ -2112,5 +2126,5 @@
     }
   },
   "nextMemberId": 23,
-  "savedAt": "2026-06-01T02:15:22.521Z"
+  "savedAt": "2026-06-01T02:15:43.736Z"
 }
