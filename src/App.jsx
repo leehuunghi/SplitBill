@@ -234,6 +234,12 @@ const SplitWiseTool = () => {
   const [nextMemberId, setNextMemberId] = useState(1);
   const [monthFilter, setMonthFilter] = useState('');
   const [toast, setToast] = useState(null);
+  const [lastQrMemberId, setLastQrMemberId] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    const storedValue = window.localStorage.getItem('splitbill:lastQrMemberId');
+    const parsedValue = Number(storedValue);
+    return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : null;
+  });
   const latestPayloadRef = useRef(null);
   const toastTimerRef = useRef(null);
 
@@ -351,6 +357,15 @@ const SplitWiseTool = () => {
       if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (lastQrMemberId) {
+      window.localStorage.setItem('splitbill:lastQrMemberId', String(lastQrMemberId));
+      return;
+    }
+    window.localStorage.removeItem('splitbill:lastQrMemberId');
+  }, [lastQrMemberId]);
 
   useEffect(() => {
     if (!isHydrated) return;
@@ -766,6 +781,9 @@ const SplitWiseTool = () => {
   };
 
   const openQrForMember = async (memberId, amount) => {
+    if (!isAdminView) {
+      setLastQrMemberId(memberId);
+    }
     setQrModal({ open: true, memberId, amount });
     setQrPayload('');
     setQrError('');
@@ -1080,7 +1098,16 @@ const SplitWiseTool = () => {
           )}
 
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            {members.filter(m => !m.isTreasurer).map(m => {
+            {members
+              .filter(m => !m.isTreasurer)
+              .slice()
+              .sort((a, b) => {
+                if (isAdminView || !lastQrMemberId) return 0;
+                if (a.id === lastQrMemberId) return -1;
+                if (b.id === lastQrMemberId) return 1;
+                return 0;
+              })
+              .map(m => {
               const balance = balances.get(m.id) || 0;
               return (
                 <div key={m.id} className="bg-gray-50 p-4 rounded-lg border grid grid-cols-[1fr_auto_auto] items-center gap-3">
