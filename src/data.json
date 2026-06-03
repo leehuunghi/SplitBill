@@ -123,6 +123,11 @@
       "id": 22,
       "name": "Thế Anh",
       "isTreasurer": false
+    },
+    {
+      "id": 23,
+      "name": "Pphạm",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -2191,6 +2196,6 @@
       "updatedAt": "2026-05-06T09:47:54.648Z"
     }
   },
-  "nextMemberId": 23,
-  "savedAt": "2026-06-03T06:07:40.535Z"
+  "nextMemberId": 24,
+  "savedAt": "2026-06-03T06:09:44.269Z"
 }
