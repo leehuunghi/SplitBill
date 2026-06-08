@@ -137,6 +137,64 @@
   ],
   "expenses": [
     {
+      "id": 1780886933625,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 43333
+        },
+        {
+          "memberId": 3,
+          "amount": 43333
+        },
+        {
+          "memberId": 5,
+          "amount": 43333
+        },
+        {
+          "memberId": 6,
+          "amount": 43333
+        },
+        {
+          "memberId": 8,
+          "amount": 43333
+        },
+        {
+          "memberId": 9,
+          "amount": 43333
+        },
+        {
+          "memberId": 10,
+          "amount": 43333
+        },
+        {
+          "memberId": 12,
+          "amount": 43333
+        },
+        {
+          "memberId": 16,
+          "amount": 43333
+        },
+        {
+          "memberId": 17,
+          "amount": 43333
+        },
+        {
+          "memberId": 18,
+          "amount": 43333
+        },
+        {
+          "memberId": 24,
+          "amount": 43337
+        }
+      ],
+      "note": "",
+      "date": "2026-06-04",
+      "createdAt": "2026-06-08T02:48:53.625Z"
+    },
+    {
       "id": 1780467141046,
       "amount": 600000,
       "payerId": 1,
@@ -2351,20 +2409,8 @@
       "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405400005802VN62070803DUY630426B5",
       "addInfo": "DUY",
       "updatedAt": "2026-05-06T09:47:54.648Z"
-    },
-    "14": {
-      "checksum": 240000,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454062400005802VN62080804PHAT6304C2F0",
-      "addInfo": "PHAT",
-      "updatedAt": "2026-06-06T03:21:27.808Z"
-    },
-    "23": {
-      "checksum": 80000,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405800005802VN62090805PPHAM6304E851",
-      "addInfo": "PPHAM",
-      "updatedAt": "2026-06-05T05:31:35.540Z"
     }
   },
   "nextMemberId": 25,
-  "savedAt": "2026-06-06T11:09:30.208Z"
+  "savedAt": "2026-06-08T02:48:53.626Z"
 }
