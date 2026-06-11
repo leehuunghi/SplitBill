@@ -142,7 +142,8 @@
     {
       "id": 26,
       "name": "Nguyên",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "outside"
     }
   ],
   "expenses": [
@@ -2632,5 +2633,5 @@
     }
   },
   "nextMemberId": 27,
-  "savedAt": "2026-06-11T06:54:31.484Z"
+  "savedAt": "2026-06-11T06:54:40.965Z"
 }
