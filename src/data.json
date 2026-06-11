@@ -133,6 +133,11 @@
       "id": 24,
       "name": "Michael T",
       "isTreasurer": false
+    },
+    {
+      "id": 25,
+      "name": "Thông",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -2551,6 +2556,6 @@
       "updatedAt": "2026-05-06T09:47:54.648Z"
     }
   },
-  "nextMemberId": 25,
-  "savedAt": "2026-06-11T06:52:11.200Z"
+  "nextMemberId": 26,
+  "savedAt": "2026-06-11T06:52:45.832Z"
 }
