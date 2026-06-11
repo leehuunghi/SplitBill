@@ -138,6 +138,11 @@
       "id": 25,
       "name": "Thông",
       "isTreasurer": false
+    },
+    {
+      "id": 26,
+      "name": "Nguyên",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -2626,6 +2631,6 @@
       "updatedAt": "2026-05-06T09:47:54.648Z"
     }
   },
-  "nextMemberId": 26,
-  "savedAt": "2026-06-11T06:53:34.475Z"
+  "nextMemberId": 27,
+  "savedAt": "2026-06-11T06:54:31.484Z"
 }
