@@ -148,6 +148,20 @@
   ],
   "expenses": [
     {
+      "id": 1781574868011,
+      "amount": 60000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 60000
+        }
+      ],
+      "note": "cf Trung Nguyên",
+      "date": "2026-06-12",
+      "createdAt": "2026-06-16T01:54:28.011Z"
+    },
+    {
       "id": 1781574779178,
       "amount": 60000,
       "payerId": 1,
@@ -2925,5 +2939,5 @@
     }
   },
   "nextMemberId": 27,
-  "savedAt": "2026-06-16T01:52:59.179Z"
+  "savedAt": "2026-06-16T01:54:28.012Z"
 }
