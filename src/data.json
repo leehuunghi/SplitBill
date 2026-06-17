@@ -148,6 +148,48 @@
   ],
   "expenses": [
     {
+      "id": 1781676135095,
+      "amount": 360000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 45000
+        },
+        {
+          "memberId": 5,
+          "amount": 45000
+        },
+        {
+          "memberId": 6,
+          "amount": 45000
+        },
+        {
+          "memberId": 8,
+          "amount": 45000
+        },
+        {
+          "memberId": 9,
+          "amount": 45000
+        },
+        {
+          "memberId": 12,
+          "amount": 45000
+        },
+        {
+          "memberId": 17,
+          "amount": 45000
+        },
+        {
+          "memberId": 18,
+          "amount": 45000
+        }
+      ],
+      "note": "ăn trưa 16/6",
+      "date": "2026-06-16",
+      "createdAt": "2026-06-17T06:02:15.095Z"
+    },
+    {
       "id": 1781676080509,
       "amount": 320000,
       "payerId": 1,
@@ -2977,5 +3019,5 @@
     }
   },
   "nextMemberId": 27,
-  "savedAt": "2026-06-17T06:01:20.510Z"
+  "savedAt": "2026-06-17T06:02:15.096Z"
 }
