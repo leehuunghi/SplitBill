@@ -144,6 +144,11 @@
       "name": "Nguyên",
       "isTreasurer": false,
       "group": "mobile"
+    },
+    {
+      "id": 27,
+      "name": "Quân",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -3080,6 +3085,6 @@
       "updatedAt": "2026-05-06T09:47:54.648Z"
     }
   },
-  "nextMemberId": 27,
-  "savedAt": "2026-06-17T20:45:24.891Z"
+  "nextMemberId": 28,
+  "savedAt": "2026-06-18T06:02:04.408Z"
 }
