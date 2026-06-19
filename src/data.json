@@ -2595,6 +2595,14 @@
   ],
   "payments": [
     {
+      "id": 1781852813117,
+      "memberId": 10,
+      "amount": 132707,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-19T07:06:53.117Z"
+    },
+    {
       "id": 1781849776921,
       "memberId": 6,
       "amount": 588117,
@@ -3200,18 +3208,6 @@
   "treasurerAccountNo": "064307842412",
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {
-    "2": {
-      "checksum": 751450,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454067514505802VN62130809SEP CUONG63046B5E",
-      "addInfo": "SEP CUONG",
-      "updatedAt": "2026-06-19T06:53:23.091Z"
-    },
-    "10": {
-      "checksum": 132707,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454061327075802VN62080804MINH6304F763",
-      "addInfo": "MINH",
-      "updatedAt": "2026-06-19T07:05:01.493Z"
-    },
     "11": {
       "checksum": 40000,
       "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405400005802VN62070803DUY630426B5",
@@ -3220,5 +3216,5 @@
     }
   },
   "nextMemberId": 28,
-  "savedAt": "2026-06-19T07:05:01.493Z"
+  "savedAt": "2026-06-19T07:06:53.125Z"
 }
