@@ -153,6 +153,120 @@
   ],
   "expenses": [
     {
+      "id": 1781849960140,
+      "amount": 65000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 2500
+        },
+        {
+          "memberId": 3,
+          "amount": 2500
+        },
+        {
+          "memberId": 4,
+          "amount": 2500
+        },
+        {
+          "memberId": 5,
+          "amount": 2500
+        },
+        {
+          "memberId": 6,
+          "amount": 2500
+        },
+        {
+          "memberId": 7,
+          "amount": 2500
+        },
+        {
+          "memberId": 8,
+          "amount": 2500
+        },
+        {
+          "memberId": 9,
+          "amount": 2500
+        },
+        {
+          "memberId": 10,
+          "amount": 2500
+        },
+        {
+          "memberId": 11,
+          "amount": 2500
+        },
+        {
+          "memberId": 12,
+          "amount": 2500
+        },
+        {
+          "memberId": 13,
+          "amount": 2500
+        },
+        {
+          "memberId": 14,
+          "amount": 2500
+        },
+        {
+          "memberId": 15,
+          "amount": 2500
+        },
+        {
+          "memberId": 16,
+          "amount": 2500
+        },
+        {
+          "memberId": 17,
+          "amount": 2500
+        },
+        {
+          "memberId": 18,
+          "amount": 2500
+        },
+        {
+          "memberId": 19,
+          "amount": 2500
+        },
+        {
+          "memberId": 20,
+          "amount": 2500
+        },
+        {
+          "memberId": 21,
+          "amount": 2500
+        },
+        {
+          "memberId": 22,
+          "amount": 2500
+        },
+        {
+          "memberId": 23,
+          "amount": 2500
+        },
+        {
+          "memberId": 24,
+          "amount": 2500
+        },
+        {
+          "memberId": 25,
+          "amount": 2500
+        },
+        {
+          "memberId": 26,
+          "amount": 2500
+        },
+        {
+          "memberId": 27,
+          "amount": 2500
+        }
+      ],
+      "note": "cf Hạnh Nhân Trung Nguyên",
+      "date": "2026-06-19",
+      "createdAt": "2026-06-19T06:19:20.140Z"
+    },
+    {
       "id": 1781849734778,
       "amount": 320000,
       "payerId": 1,
@@ -3191,14 +3305,8 @@
       "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405400005802VN62070803DUY630426B5",
       "addInfo": "DUY",
       "updatedAt": "2026-05-06T09:47:54.648Z"
-    },
-    "12": {
-      "checksum": 223421,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454062234215802VN62080804TUAN6304C432",
-      "addInfo": "TUAN",
-      "updatedAt": "2026-06-19T06:16:50.254Z"
     }
   },
   "nextMemberId": 28,
-  "savedAt": "2026-06-19T06:17:33.607Z"
+  "savedAt": "2026-06-19T06:19:20.140Z"
 }
