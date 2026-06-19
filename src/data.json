@@ -153,6 +153,44 @@
   ],
   "expenses": [
     {
+      "id": 1781849734778,
+      "amount": 320000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 45714
+        },
+        {
+          "memberId": 9,
+          "amount": 45714
+        },
+        {
+          "memberId": 10,
+          "amount": 45714
+        },
+        {
+          "memberId": 11,
+          "amount": 45714
+        },
+        {
+          "memberId": 12,
+          "amount": 45714
+        },
+        {
+          "memberId": 19,
+          "amount": 45714
+        },
+        {
+          "memberId": 26,
+          "amount": 45716
+        }
+      ],
+      "note": "ăn trưa 19/6",
+      "date": "2026-06-18",
+      "createdAt": "2026-06-19T06:15:34.778Z"
+    },
+    {
       "id": 1781762603294,
       "amount": 540000,
       "payerId": 1,
@@ -3140,12 +3178,6 @@
   "treasurerAccountNo": "064307842412",
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {
-    "6": {
-      "checksum": 588117,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454065881175802VN62100806TAM JA630433E9",
-      "addInfo": "TAM JA",
-      "updatedAt": "2026-06-18T13:36:43.189Z"
-    },
     "11": {
       "checksum": 40000,
       "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405400005802VN62070803DUY630426B5",
@@ -3154,5 +3186,5 @@
     }
   },
   "nextMemberId": 28,
-  "savedAt": "2026-06-19T03:09:40.325Z"
+  "savedAt": "2026-06-19T06:15:34.778Z"
 }
