@@ -153,6 +153,20 @@
   ],
   "expenses": [
     {
+      "id": 1782196923704,
+      "amount": 60000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 60000
+        }
+      ],
+      "note": "cf hạnh nhân",
+      "date": "2026-06-23",
+      "createdAt": "2026-06-23T06:42:03.704Z"
+    },
+    {
       "id": 1781849960140,
       "amount": 65000,
       "payerId": 1,
@@ -3244,5 +3258,5 @@
     }
   },
   "nextMemberId": 28,
-  "savedAt": "2026-06-23T06:41:27.161Z"
+  "savedAt": "2026-06-23T06:42:03.705Z"
 }
