@@ -153,7 +153,8 @@
     {
       "id": 28,
       "name": "Khải",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "mobile"
     }
   ],
   "expenses": [
@@ -3277,5 +3278,5 @@
     }
   },
   "nextMemberId": 29,
-  "savedAt": "2026-06-24T04:58:55.279Z"
+  "savedAt": "2026-06-24T04:59:07.794Z"
 }
