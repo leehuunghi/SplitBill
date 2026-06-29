@@ -164,6 +164,76 @@
   ],
   "expenses": [
     {
+      "id": 1782715032013,
+      "amount": 600000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        },
+        {
+          "memberId": 23,
+          "amount": 40000
+        },
+        {
+          "memberId": 25,
+          "amount": 40000
+        },
+        {
+          "memberId": 27,
+          "amount": 40000
+        },
+        {
+          "memberId": 29,
+          "amount": 40000
+        }
+      ],
+      "note": "29/6",
+      "date": "2026-06-29",
+      "createdAt": "2026-06-29T06:37:12.013Z"
+    },
+    {
       "id": 1782457050191,
       "amount": 468000,
       "payerId": 1,
@@ -3753,5 +3823,5 @@
     }
   },
   "nextMemberId": 30,
-  "savedAt": "2026-06-29T06:35:46.492Z"
+  "savedAt": "2026-06-29T06:37:12.013Z"
 }
