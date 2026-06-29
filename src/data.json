@@ -3035,6 +3035,14 @@
   ],
   "payments": [
     {
+      "id": 1782713050345,
+      "memberId": 16,
+      "amount": 127330,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-29T06:04:10.345Z"
+    },
+    {
       "id": 1782712995789,
       "memberId": 25,
       "amount": 87330,
@@ -3740,5 +3748,5 @@
     }
   },
   "nextMemberId": 29,
-  "savedAt": "2026-06-29T06:03:42.849Z"
+  "savedAt": "2026-06-29T06:04:10.350Z"
 }
