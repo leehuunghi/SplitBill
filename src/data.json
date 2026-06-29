@@ -155,6 +155,11 @@
       "name": "Khải",
       "isTreasurer": false,
       "group": "mobile"
+    },
+    {
+      "id": 29,
+      "name": "Thịnh",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -3747,6 +3752,6 @@
       "updatedAt": "2026-06-28T16:39:36.052Z"
     }
   },
-  "nextMemberId": 29,
-  "savedAt": "2026-06-29T06:34:57.937Z"
+  "nextMemberId": 30,
+  "savedAt": "2026-06-29T06:35:46.492Z"
 }
