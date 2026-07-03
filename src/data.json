@@ -1,12 +1,3881 @@
 {
-  "members": [],
-  "expenses": [],
-  "payments": [],
-  "treasurerAccount": "",
-  "treasurerBankBin": "",
-  "treasurerAccountNo": "",
-  "treasurerAccountName": "",
-  "qrCache": {},
-  "nextMemberId": 1,
-  "savedAt": "2026-07-03T04:32:37.626Z"
+  "members": [
+    {
+      "id": 1,
+      "name": "Thủ Quỹ (Admin)",
+      "isTreasurer": true
+    },
+    {
+      "id": 2,
+      "name": "Sếp Cường",
+      "isTreasurer": false,
+      "group": "boss"
+    },
+    {
+      "id": 3,
+      "name": "Thảo",
+      "isTreasurer": false,
+      "group": "boss"
+    },
+    {
+      "id": 4,
+      "name": "Vũ",
+      "isTreasurer": false,
+      "group": "boss"
+    },
+    {
+      "id": 5,
+      "name": "Tâm go",
+      "isTreasurer": false,
+      "group": "server"
+    },
+    {
+      "id": 6,
+      "name": "Tâm ja",
+      "isTreasurer": false,
+      "group": "boss"
+    },
+    {
+      "id": 7,
+      "name": "Lâm",
+      "isTreasurer": false,
+      "group": "mobile"
+    },
+    {
+      "id": 8,
+      "name": "Tuyến",
+      "isTreasurer": false,
+      "group": "mobile"
+    },
+    {
+      "id": 9,
+      "name": "Nghị",
+      "isTreasurer": false,
+      "group": "mobile"
+    },
+    {
+      "id": 10,
+      "name": "Minh",
+      "isTreasurer": false,
+      "group": "server"
+    },
+    {
+      "id": 11,
+      "name": "Duy",
+      "isTreasurer": false,
+      "group": "mobile"
+    },
+    {
+      "id": 12,
+      "name": "Tuấn",
+      "isTreasurer": false,
+      "group": "server"
+    },
+    {
+      "id": 13,
+      "name": "Nhân",
+      "isTreasurer": false,
+      "group": "mobile"
+    },
+    {
+      "id": 14,
+      "name": "Phát",
+      "isTreasurer": false,
+      "group": "server"
+    },
+    {
+      "id": 15,
+      "name": "Ngọc",
+      "isTreasurer": false
+    },
+    {
+      "id": 16,
+      "name": "Linh",
+      "isTreasurer": false
+    },
+    {
+      "id": 17,
+      "name": "Tín",
+      "isTreasurer": false
+    },
+    {
+      "id": 18,
+      "name": "Thái",
+      "isTreasurer": false
+    },
+    {
+      "id": 19,
+      "name": "Danh",
+      "isTreasurer": false,
+      "group": "server"
+    },
+    {
+      "id": 20,
+      "name": "Huy",
+      "isTreasurer": false
+    },
+    {
+      "id": 21,
+      "name": "Tú",
+      "isTreasurer": false
+    },
+    {
+      "id": 22,
+      "name": "Thế Anh",
+      "isTreasurer": false
+    },
+    {
+      "id": 23,
+      "name": "Pphạm",
+      "isTreasurer": false
+    },
+    {
+      "id": 24,
+      "name": "Michael T",
+      "isTreasurer": false
+    },
+    {
+      "id": 25,
+      "name": "Thông",
+      "isTreasurer": false
+    },
+    {
+      "id": 26,
+      "name": "Nguyên",
+      "isTreasurer": false,
+      "group": "mobile"
+    },
+    {
+      "id": 27,
+      "name": "Quân",
+      "isTreasurer": false
+    },
+    {
+      "id": 28,
+      "name": "Khải",
+      "isTreasurer": false,
+      "group": "mobile"
+    },
+    {
+      "id": 29,
+      "name": "Thịnh",
+      "isTreasurer": false
+    }
+  ],
+  "expenses": [
+    {
+      "id": 1782715032013,
+      "amount": 600000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        },
+        {
+          "memberId": 23,
+          "amount": 40000
+        },
+        {
+          "memberId": 25,
+          "amount": 40000
+        },
+        {
+          "memberId": 27,
+          "amount": 40000
+        },
+        {
+          "memberId": 29,
+          "amount": 40000
+        }
+      ],
+      "note": "29/6",
+      "date": "2026-06-29",
+      "createdAt": "2026-06-29T06:37:12.013Z"
+    },
+    {
+      "id": 1782457050191,
+      "amount": 468000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 468000
+        }
+      ],
+      "note": "Trung Nguyên",
+      "date": "2026-06-26",
+      "createdAt": "2026-06-26T06:57:30.191Z"
+    },
+    {
+      "id": 1782453923370,
+      "amount": 480000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        },
+        {
+          "memberId": 26,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 26/6",
+      "date": "2026-06-26",
+      "createdAt": "2026-06-26T06:05:23.370Z"
+    },
+    {
+      "id": 1782369503628,
+      "amount": 600000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        },
+        {
+          "memberId": 23,
+          "amount": 40000
+        },
+        {
+          "memberId": 26,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 25/6",
+      "date": "2026-06-25",
+      "createdAt": "2026-06-25T06:38:23.628Z"
+    },
+    {
+      "id": 1782369416414,
+      "amount": 700000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 41176
+        },
+        {
+          "memberId": 3,
+          "amount": 41176
+        },
+        {
+          "memberId": 4,
+          "amount": 41176
+        },
+        {
+          "memberId": 5,
+          "amount": 41176
+        },
+        {
+          "memberId": 6,
+          "amount": 41176
+        },
+        {
+          "memberId": 8,
+          "amount": 41176
+        },
+        {
+          "memberId": 9,
+          "amount": 41176
+        },
+        {
+          "memberId": 10,
+          "amount": 41176
+        },
+        {
+          "memberId": 12,
+          "amount": 41176
+        },
+        {
+          "memberId": 16,
+          "amount": 41176
+        },
+        {
+          "memberId": 17,
+          "amount": 41176
+        },
+        {
+          "memberId": 18,
+          "amount": 41176
+        },
+        {
+          "memberId": 20,
+          "amount": 41176
+        },
+        {
+          "memberId": 23,
+          "amount": 41176
+        },
+        {
+          "memberId": 25,
+          "amount": 41176
+        },
+        {
+          "memberId": 26,
+          "amount": 41176
+        },
+        {
+          "memberId": 27,
+          "amount": 41184
+        }
+      ],
+      "note": "ăn trưa 24/6",
+      "date": "2026-06-24",
+      "createdAt": "2026-06-25T06:36:56.414Z"
+    },
+    {
+      "id": 1782369251638,
+      "amount": 92000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 7,
+          "amount": 30667
+        },
+        {
+          "memberId": 9,
+          "amount": 30667
+        },
+        {
+          "memberId": 11,
+          "amount": 30666
+        }
+      ],
+      "note": "nước dừa",
+      "date": "2026-06-25",
+      "createdAt": "2026-06-25T06:34:11.638Z"
+    },
+    {
+      "id": 1782363396427,
+      "amount": 98000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 32667
+        },
+        {
+          "memberId": 9,
+          "amount": 32667
+        },
+        {
+          "memberId": 11,
+          "amount": 32666
+        }
+      ],
+      "note": "nước dừa",
+      "date": "2026-06-24",
+      "createdAt": "2026-06-25T04:56:36.427Z"
+    },
+    {
+      "id": 1782363322290,
+      "amount": 80000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 20000
+        },
+        {
+          "memberId": 8,
+          "amount": 20000
+        },
+        {
+          "memberId": 9,
+          "amount": 20000
+        },
+        {
+          "memberId": 12,
+          "amount": 20000
+        }
+      ],
+      "note": "cf sáng",
+      "date": "2026-06-25",
+      "createdAt": "2026-06-25T04:55:22.290Z"
+    },
+    {
+      "id": 1782277287513,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 47273
+        },
+        {
+          "memberId": 3,
+          "amount": 47273
+        },
+        {
+          "memberId": 5,
+          "amount": 47273
+        },
+        {
+          "memberId": 6,
+          "amount": 47273
+        },
+        {
+          "memberId": 8,
+          "amount": 47273
+        },
+        {
+          "memberId": 9,
+          "amount": 47273
+        },
+        {
+          "memberId": 10,
+          "amount": 47273
+        },
+        {
+          "memberId": 12,
+          "amount": 47273
+        },
+        {
+          "memberId": 14,
+          "amount": 47273
+        },
+        {
+          "memberId": 17,
+          "amount": 47273
+        },
+        {
+          "memberId": 19,
+          "amount": 47270
+        }
+      ],
+      "note": "ăn trưa 23/6",
+      "date": "2026-06-23",
+      "createdAt": "2026-06-24T05:01:27.513Z"
+    },
+    {
+      "id": 1782277208410,
+      "amount": 600000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 46154
+        },
+        {
+          "memberId": 5,
+          "amount": 46154
+        },
+        {
+          "memberId": 8,
+          "amount": 46154
+        },
+        {
+          "memberId": 9,
+          "amount": 46154
+        },
+        {
+          "memberId": 10,
+          "amount": 46154
+        },
+        {
+          "memberId": 12,
+          "amount": 46154
+        },
+        {
+          "memberId": 16,
+          "amount": 46154
+        },
+        {
+          "memberId": 18,
+          "amount": 46154
+        },
+        {
+          "memberId": 23,
+          "amount": 46154
+        },
+        {
+          "memberId": 25,
+          "amount": 46154
+        },
+        {
+          "memberId": 26,
+          "amount": 46154
+        },
+        {
+          "memberId": 27,
+          "amount": 46154
+        },
+        {
+          "memberId": 28,
+          "amount": 46152
+        }
+      ],
+      "note": "ăn trưa 22/6",
+      "date": "2026-06-22",
+      "createdAt": "2026-06-24T05:00:08.410Z"
+    },
+    {
+      "id": 1782196948801,
+      "amount": 50000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 50000
+        }
+      ],
+      "note": "ăn sáng + cf",
+      "date": "2026-06-23",
+      "createdAt": "2026-06-23T06:42:28.801Z"
+    },
+    {
+      "id": 1782196923704,
+      "amount": 60000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 60000
+        }
+      ],
+      "note": "cf hạnh nhân",
+      "date": "2026-06-23",
+      "createdAt": "2026-06-23T06:42:03.704Z"
+    },
+    {
+      "id": 1781849960140,
+      "amount": 65000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 65000
+        }
+      ],
+      "note": "cf Hạnh Nhân Trung Nguyên",
+      "date": "2026-06-19",
+      "createdAt": "2026-06-19T06:19:20.140Z"
+    },
+    {
+      "id": 1781849734778,
+      "amount": 320000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 45714
+        },
+        {
+          "memberId": 9,
+          "amount": 45714
+        },
+        {
+          "memberId": 10,
+          "amount": 45714
+        },
+        {
+          "memberId": 11,
+          "amount": 45714
+        },
+        {
+          "memberId": 12,
+          "amount": 45714
+        },
+        {
+          "memberId": 19,
+          "amount": 45714
+        },
+        {
+          "memberId": 26,
+          "amount": 45716
+        }
+      ],
+      "note": "ăn trưa 19/6",
+      "date": "2026-06-18",
+      "createdAt": "2026-06-19T06:15:34.778Z"
+    },
+    {
+      "id": 1781762603294,
+      "amount": 540000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 41538
+        },
+        {
+          "memberId": 3,
+          "amount": 41538
+        },
+        {
+          "memberId": 5,
+          "amount": 41538
+        },
+        {
+          "memberId": 6,
+          "amount": 41538
+        },
+        {
+          "memberId": 8,
+          "amount": 41538
+        },
+        {
+          "memberId": 9,
+          "amount": 41538
+        },
+        {
+          "memberId": 10,
+          "amount": 41538
+        },
+        {
+          "memberId": 12,
+          "amount": 41538
+        },
+        {
+          "memberId": 14,
+          "amount": 41538
+        },
+        {
+          "memberId": 17,
+          "amount": 41538
+        },
+        {
+          "memberId": 20,
+          "amount": 41538
+        },
+        {
+          "memberId": 26,
+          "amount": 41538
+        },
+        {
+          "memberId": 27,
+          "amount": 41544
+        }
+      ],
+      "note": "ăn trưa 18/6",
+      "date": "2026-06-17",
+      "createdAt": "2026-06-18T06:03:23.294Z"
+    },
+    {
+      "id": 1781676221975,
+      "amount": 500000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 45455
+        },
+        {
+          "memberId": 4,
+          "amount": 45455
+        },
+        {
+          "memberId": 5,
+          "amount": 45455
+        },
+        {
+          "memberId": 6,
+          "amount": 45455
+        },
+        {
+          "memberId": 8,
+          "amount": 45455
+        },
+        {
+          "memberId": 9,
+          "amount": 45455
+        },
+        {
+          "memberId": 10,
+          "amount": 45455
+        },
+        {
+          "memberId": 12,
+          "amount": 45455
+        },
+        {
+          "memberId": 17,
+          "amount": 45455
+        },
+        {
+          "memberId": 19,
+          "amount": 45455
+        },
+        {
+          "memberId": 26,
+          "amount": 45450
+        }
+      ],
+      "note": "ăn trưa 17/6",
+      "date": "2026-06-17",
+      "createdAt": "2026-06-17T06:03:41.975Z"
+    },
+    {
+      "id": 1781676135095,
+      "amount": 360000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 45000
+        },
+        {
+          "memberId": 5,
+          "amount": 45000
+        },
+        {
+          "memberId": 6,
+          "amount": 45000
+        },
+        {
+          "memberId": 8,
+          "amount": 45000
+        },
+        {
+          "memberId": 9,
+          "amount": 45000
+        },
+        {
+          "memberId": 12,
+          "amount": 45000
+        },
+        {
+          "memberId": 17,
+          "amount": 45000
+        },
+        {
+          "memberId": 18,
+          "amount": 45000
+        }
+      ],
+      "note": "ăn trưa 16/6",
+      "date": "2026-06-16",
+      "createdAt": "2026-06-17T06:02:15.095Z"
+    },
+    {
+      "id": 1781676080509,
+      "amount": 320000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 45714
+        },
+        {
+          "memberId": 5,
+          "amount": 45714
+        },
+        {
+          "memberId": 6,
+          "amount": 45714
+        },
+        {
+          "memberId": 8,
+          "amount": 45714
+        },
+        {
+          "memberId": 9,
+          "amount": 45714
+        },
+        {
+          "memberId": 12,
+          "amount": 45714
+        },
+        {
+          "memberId": 14,
+          "amount": 45716
+        }
+      ],
+      "note": "ăn trưa 15/6",
+      "date": "2026-06-15",
+      "createdAt": "2026-06-17T06:01:20.509Z"
+    },
+    {
+      "id": 1781574868011,
+      "amount": 60000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 60000
+        }
+      ],
+      "note": "cf Trung Nguyên",
+      "date": "2026-06-12",
+      "createdAt": "2026-06-16T01:54:28.011Z"
+    },
+    {
+      "id": 1781574779178,
+      "amount": 60000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 60000
+        }
+      ],
+      "note": "ăn sáng cf 15/5",
+      "date": "2026-06-15",
+      "createdAt": "2026-06-16T01:52:59.178Z"
+    },
+    {
+      "id": 1781244776170,
+      "amount": 480000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 26,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 12/6",
+      "date": "2026-06-12",
+      "createdAt": "2026-06-12T06:12:56.170Z"
+    },
+    {
+      "id": 1781160958834,
+      "amount": 560000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 43077
+        },
+        {
+          "memberId": 3,
+          "amount": 43077
+        },
+        {
+          "memberId": 4,
+          "amount": 43077
+        },
+        {
+          "memberId": 5,
+          "amount": 43077
+        },
+        {
+          "memberId": 6,
+          "amount": 43077
+        },
+        {
+          "memberId": 8,
+          "amount": 43077
+        },
+        {
+          "memberId": 9,
+          "amount": 43077
+        },
+        {
+          "memberId": 10,
+          "amount": 43077
+        },
+        {
+          "memberId": 12,
+          "amount": 43077
+        },
+        {
+          "memberId": 17,
+          "amount": 43077
+        },
+        {
+          "memberId": 19,
+          "amount": 43077
+        },
+        {
+          "memberId": 24,
+          "amount": 43077
+        },
+        {
+          "memberId": 26,
+          "amount": 43076
+        }
+      ],
+      "note": "ăn trưa 11/6",
+      "date": "2026-06-11",
+      "createdAt": "2026-06-11T06:55:58.834Z"
+    },
+    {
+      "id": 1781160894870,
+      "amount": 600000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 25,
+          "amount": 40000
+        },
+        {
+          "memberId": 26,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 10/6",
+      "date": "2026-06-10",
+      "createdAt": "2026-06-11T06:54:54.870Z"
+    },
+    {
+      "id": 1781160814475,
+      "amount": 600000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        },
+        {
+          "memberId": 23,
+          "amount": 40000
+        },
+        {
+          "memberId": 24,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 9/6",
+      "date": "2026-06-09",
+      "createdAt": "2026-06-11T06:53:34.475Z"
+    },
+    {
+      "id": 1781160731199,
+      "amount": 320000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 8/6",
+      "date": "2026-06-08",
+      "createdAt": "2026-06-11T06:52:11.199Z"
+    },
+    {
+      "id": 1780887066967,
+      "amount": 440000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 44000
+        },
+        {
+          "memberId": 3,
+          "amount": 44000
+        },
+        {
+          "memberId": 4,
+          "amount": 44000
+        },
+        {
+          "memberId": 5,
+          "amount": 44000
+        },
+        {
+          "memberId": 6,
+          "amount": 44000
+        },
+        {
+          "memberId": 8,
+          "amount": 44000
+        },
+        {
+          "memberId": 9,
+          "amount": 44000
+        },
+        {
+          "memberId": 10,
+          "amount": 44000
+        },
+        {
+          "memberId": 12,
+          "amount": 44000
+        },
+        {
+          "memberId": 23,
+          "amount": 44000
+        }
+      ],
+      "note": "ăn trưa 5/6",
+      "date": "2026-06-08",
+      "createdAt": "2026-06-08T02:51:06.967Z"
+    },
+    {
+      "id": 1780886933625,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 43333
+        },
+        {
+          "memberId": 3,
+          "amount": 43333
+        },
+        {
+          "memberId": 5,
+          "amount": 43333
+        },
+        {
+          "memberId": 6,
+          "amount": 43333
+        },
+        {
+          "memberId": 8,
+          "amount": 43333
+        },
+        {
+          "memberId": 9,
+          "amount": 43333
+        },
+        {
+          "memberId": 10,
+          "amount": 43333
+        },
+        {
+          "memberId": 12,
+          "amount": 43333
+        },
+        {
+          "memberId": 16,
+          "amount": 43333
+        },
+        {
+          "memberId": 17,
+          "amount": 43333
+        },
+        {
+          "memberId": 18,
+          "amount": 43333
+        },
+        {
+          "memberId": 24,
+          "amount": 43337
+        }
+      ],
+      "note": "ăn trưa 4/6",
+      "date": "2026-06-04",
+      "createdAt": "2026-06-08T02:48:53.625Z"
+    },
+    {
+      "id": 1780467141046,
+      "amount": 600000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        },
+        {
+          "memberId": 23,
+          "amount": 40000
+        },
+        {
+          "memberId": 24,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 3/6",
+      "date": "2026-06-03",
+      "createdAt": "2026-06-03T06:12:21.046Z"
+    },
+    {
+      "id": 1780467078064,
+      "amount": 560000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 11,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 23,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 2/6",
+      "date": "2026-06-02",
+      "createdAt": "2026-06-03T06:11:18.064Z"
+    },
+    {
+      "id": 1780466860535,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 13,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 1/6",
+      "date": "2026-06-01",
+      "createdAt": "2026-06-03T06:07:40.535Z"
+    },
+    {
+      "id": 1780280143736,
+      "amount": 50000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 50000
+        }
+      ],
+      "note": "2 bữa cf sáng",
+      "date": "2026-05-29",
+      "createdAt": "2026-06-01T02:15:43.736Z"
+    },
+    {
+      "id": 1780280122521,
+      "amount": 38000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 8,
+          "amount": 38000
+        }
+      ],
+      "note": "2 bữa cf sáng",
+      "date": "2026-05-29",
+      "createdAt": "2026-06-01T02:15:22.521Z"
+    },
+    {
+      "id": 1780045944030,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 43333
+        },
+        {
+          "memberId": 3,
+          "amount": 43333
+        },
+        {
+          "memberId": 4,
+          "amount": 43333
+        },
+        {
+          "memberId": 5,
+          "amount": 43333
+        },
+        {
+          "memberId": 6,
+          "amount": 43333
+        },
+        {
+          "memberId": 8,
+          "amount": 43333
+        },
+        {
+          "memberId": 9,
+          "amount": 43333
+        },
+        {
+          "memberId": 10,
+          "amount": 43333
+        },
+        {
+          "memberId": 12,
+          "amount": 43333
+        },
+        {
+          "memberId": 17,
+          "amount": 43333
+        },
+        {
+          "memberId": 18,
+          "amount": 43333
+        },
+        {
+          "memberId": 19,
+          "amount": 43337
+        }
+      ],
+      "note": "ăn trưa 29/5",
+      "date": "2026-05-29",
+      "createdAt": "2026-05-29T09:12:24.030Z"
+    },
+    {
+      "id": 1780026908321,
+      "amount": 560000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 11,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 28/5",
+      "date": "2026-05-28",
+      "createdAt": "2026-05-29T03:55:08.321Z"
+    },
+    {
+      "id": 1780026604676,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 27/5",
+      "date": "2026-05-27",
+      "createdAt": "2026-05-29T03:50:04.676Z"
+    },
+    {
+      "id": 1779784463830,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 13,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 26/5",
+      "date": "2026-05-26",
+      "createdAt": "2026-05-26T08:34:23.830Z"
+    },
+    {
+      "id": 1779689478581,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "cơm trưa 25/5",
+      "date": "2026-05-25",
+      "createdAt": "2026-05-25T06:11:18.581Z"
+    },
+    {
+      "id": 1779431870032,
+      "amount": 601200,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 75150
+        },
+        {
+          "memberId": 4,
+          "amount": 75150
+        },
+        {
+          "memberId": 6,
+          "amount": 75150
+        },
+        {
+          "memberId": 8,
+          "amount": 75150
+        },
+        {
+          "memberId": 9,
+          "amount": 75150
+        },
+        {
+          "memberId": 10,
+          "amount": 75150
+        },
+        {
+          "memberId": 12,
+          "amount": 75150
+        },
+        {
+          "memberId": 22,
+          "amount": 75150
+        }
+      ],
+      "note": "ăn trưa 22/5",
+      "date": "2026-05-22",
+      "createdAt": "2026-05-22T06:37:50.032Z"
+    },
+    {
+      "id": 1779431791173,
+      "amount": 560000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 11,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 13,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 21/5",
+      "date": "2026-05-21",
+      "createdAt": "2026-05-22T06:36:31.173Z"
+    },
+    {
+      "id": 1779431719901,
+      "amount": 560000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 20/5",
+      "date": "2026-05-20",
+      "createdAt": "2026-05-22T06:35:19.901Z"
+    },
+    {
+      "id": 1779173249180,
+      "amount": 75000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 25000
+        },
+        {
+          "memberId": 8,
+          "amount": 25000
+        },
+        {
+          "memberId": 9,
+          "amount": 25000
+        }
+      ],
+      "note": "cf sáng 19/5",
+      "date": "2026-05-19",
+      "createdAt": "2026-05-19T06:47:29.180Z"
+    },
+    {
+      "id": 1779172341930,
+      "amount": 560000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 13,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        },
+        {
+          "memberId": 21,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 19/5",
+      "date": "2026-05-19",
+      "createdAt": "2026-05-19T06:32:21.930Z"
+    },
+    {
+      "id": 1779085428867,
+      "amount": 560000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 43077
+        },
+        {
+          "memberId": 5,
+          "amount": 43077
+        },
+        {
+          "memberId": 6,
+          "amount": 43077
+        },
+        {
+          "memberId": 8,
+          "amount": 43077
+        },
+        {
+          "memberId": 9,
+          "amount": 43077
+        },
+        {
+          "memberId": 10,
+          "amount": 43077
+        },
+        {
+          "memberId": 12,
+          "amount": 43077
+        },
+        {
+          "memberId": 13,
+          "amount": 43077
+        },
+        {
+          "memberId": 16,
+          "amount": 43077
+        },
+        {
+          "memberId": 17,
+          "amount": 43077
+        },
+        {
+          "memberId": 18,
+          "amount": 43077
+        },
+        {
+          "memberId": 20,
+          "amount": 43077
+        },
+        {
+          "memberId": 21,
+          "amount": 43076
+        }
+      ],
+      "note": "ăn trưa 18/5",
+      "date": "2026-05-18",
+      "createdAt": "2026-05-18T06:23:48.867Z"
+    },
+    {
+      "id": 1779070907253,
+      "amount": 400000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 15/5",
+      "date": "2026-05-15",
+      "createdAt": "2026-05-18T02:21:47.253Z"
+    },
+    {
+      "id": 1778652842155,
+      "amount": 68000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 34000
+        },
+        {
+          "memberId": 9,
+          "amount": 34000
+        }
+      ],
+      "note": "ăn sáng cf 13/5",
+      "date": "2026-05-13",
+      "createdAt": "2026-05-13T06:14:02.155Z"
+    },
+    {
+      "id": 1778652800030,
+      "amount": 75000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 25000
+        },
+        {
+          "memberId": 9,
+          "amount": 25000
+        },
+        {
+          "memberId": 19,
+          "amount": 25000
+        }
+      ],
+      "note": "cf sáng 12/5",
+      "date": "2026-05-12",
+      "createdAt": "2026-05-13T06:13:20.030Z"
+    },
+    {
+      "id": 1778652733861,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 13,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 13/5",
+      "date": "2026-05-13",
+      "createdAt": "2026-05-13T06:12:13.861Z"
+    },
+    {
+      "id": 1778566599342,
+      "amount": 440000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 12/5",
+      "date": "2026-05-12",
+      "createdAt": "2026-05-12T06:16:39.342Z"
+    },
+    {
+      "id": 1778566555459,
+      "amount": 480000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 80000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 11/5",
+      "date": "2026-05-12",
+      "createdAt": "2026-05-12T06:15:55.459Z"
+    },
+    {
+      "id": 1778566395342,
+      "amount": 100000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 25000
+        },
+        {
+          "memberId": 5,
+          "amount": 25000
+        },
+        {
+          "memberId": 9,
+          "amount": 25000
+        },
+        {
+          "memberId": 12,
+          "amount": 25000
+        }
+      ],
+      "note": "cafe sáng 11/5",
+      "date": "2026-05-12",
+      "createdAt": "2026-05-12T06:13:15.342Z"
+    },
+    {
+      "id": 1778566369030,
+      "amount": 60000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 60000
+        }
+      ],
+      "note": "ăn sáng 11-12/5",
+      "date": "2026-05-08",
+      "createdAt": "2026-05-12T06:12:49.030Z"
+    },
+    {
+      "id": 1778220705785,
+      "amount": 640000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 42667
+        },
+        {
+          "memberId": 3,
+          "amount": 42667
+        },
+        {
+          "memberId": 4,
+          "amount": 42667
+        },
+        {
+          "memberId": 5,
+          "amount": 42667
+        },
+        {
+          "memberId": 6,
+          "amount": 42667
+        },
+        {
+          "memberId": 8,
+          "amount": 42667
+        },
+        {
+          "memberId": 9,
+          "amount": 42667
+        },
+        {
+          "memberId": 10,
+          "amount": 42667
+        },
+        {
+          "memberId": 12,
+          "amount": 42667
+        },
+        {
+          "memberId": 13,
+          "amount": 42667
+        },
+        {
+          "memberId": 16,
+          "amount": 42667
+        },
+        {
+          "memberId": 17,
+          "amount": 42667
+        },
+        {
+          "memberId": 18,
+          "amount": 42667
+        },
+        {
+          "memberId": 19,
+          "amount": 42667
+        },
+        {
+          "memberId": 20,
+          "amount": 42662
+        }
+      ],
+      "note": "cơm trưa 8/5",
+      "date": "2026-05-08",
+      "createdAt": "2026-05-08T06:11:45.785Z"
+    },
+    {
+      "id": 1778215987950,
+      "amount": 180000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 60000
+        },
+        {
+          "memberId": 3,
+          "amount": 60000
+        },
+        {
+          "memberId": 9,
+          "amount": 60000
+        }
+      ],
+      "note": "ăn sáng 8/5",
+      "date": "2026-05-08",
+      "createdAt": "2026-05-08T04:53:07.950Z"
+    },
+    {
+      "id": 1778136525617,
+      "amount": 560000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 7/5",
+      "date": "2026-05-07",
+      "createdAt": "2026-05-07T06:48:45.617Z"
+    },
+    {
+      "id": 1778063568733,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 11,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 4/5",
+      "date": "2026-05-04",
+      "createdAt": "2026-05-06T10:32:48.733Z"
+    },
+    {
+      "id": 1778050019466,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa 6/5",
+      "date": "2026-05-06",
+      "createdAt": "2026-05-06T06:46:59.466Z"
+    },
+    {
+      "id": 1777874913001,
+      "amount": 600000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 160000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        },
+        {
+          "memberId": 19,
+          "amount": 40000
+        },
+        {
+          "memberId": 20,
+          "amount": 40000
+        }
+      ],
+      "note": "Cơm trưa 5/5",
+      "date": "2026-05-05",
+      "createdAt": "2026-05-04T06:08:33.001Z"
+    },
+    {
+      "id": 1777087225717,
+      "amount": 360000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 13,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa t2",
+      "date": "2026-04-20",
+      "createdAt": "2026-04-25T03:20:25.717Z"
+    },
+    {
+      "id": 1777087148807,
+      "amount": 360000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 13,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa t3",
+      "date": "2026-04-21",
+      "createdAt": "2026-04-25T03:19:08.807Z"
+    },
+    {
+      "id": 1777013343750,
+      "amount": 440000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 15,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa t5",
+      "date": "2026-04-23",
+      "createdAt": "2026-04-24T06:49:03.750Z"
+    },
+    {
+      "id": 1777013247993,
+      "amount": 520000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 40000
+        },
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 4,
+          "amount": 40000
+        },
+        {
+          "memberId": 5,
+          "amount": 40000
+        },
+        {
+          "memberId": 6,
+          "amount": 40000
+        },
+        {
+          "memberId": 8,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 40000
+        },
+        {
+          "memberId": 10,
+          "amount": 40000
+        },
+        {
+          "memberId": 11,
+          "amount": 40000
+        },
+        {
+          "memberId": 12,
+          "amount": 40000
+        },
+        {
+          "memberId": 16,
+          "amount": 40000
+        },
+        {
+          "memberId": 17,
+          "amount": 40000
+        },
+        {
+          "memberId": 18,
+          "amount": 40000
+        }
+      ],
+      "note": "ăn trưa t6",
+      "date": "2026-04-24",
+      "createdAt": "2026-04-24T06:47:27.993Z"
+    },
+    {
+      "id": 1777007617663,
+      "amount": 1061000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 117889
+        },
+        {
+          "memberId": 4,
+          "amount": 117889
+        },
+        {
+          "memberId": 6,
+          "amount": 117889
+        },
+        {
+          "memberId": 8,
+          "amount": 117889
+        },
+        {
+          "memberId": 9,
+          "amount": 117889
+        },
+        {
+          "memberId": 11,
+          "amount": 117889
+        },
+        {
+          "memberId": 12,
+          "amount": 117889
+        },
+        {
+          "memberId": 13,
+          "amount": 117889
+        },
+        {
+          "memberId": 15,
+          "amount": 117888
+        }
+      ],
+      "note": "King bbq t4",
+      "date": "2026-04-22",
+      "createdAt": "2026-04-24T05:13:37.663Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": 1783053148486,
+      "memberId": 4,
+      "amount": 572191,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-07-03T04:32:28.486Z"
+    },
+    {
+      "id": 1782882048232,
+      "memberId": 20,
+      "amount": 322714,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-07-01T05:00:48.232Z"
+    },
+    {
+      "id": 1782874724820,
+      "memberId": 14,
+      "amount": 254527,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-07-01T02:58:44.820Z"
+    },
+    {
+      "id": 1782814195180,
+      "memberId": 18,
+      "amount": 292330,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-30T10:09:55.180Z"
+    },
+    {
+      "id": 1782716949907,
+      "memberId": 7,
+      "amount": 30667,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-29T07:09:09.907Z"
+    },
+    {
+      "id": 1782715066962,
+      "memberId": 8,
+      "amount": 600000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-06-29T06:37:46.962Z"
+    },
+    {
+      "id": 1782713050345,
+      "memberId": 16,
+      "amount": 127330,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-29T06:04:10.345Z"
+    },
+    {
+      "id": 1782712995789,
+      "memberId": 25,
+      "amount": 87330,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-29T06:03:15.789Z"
+    },
+    {
+      "id": 1782712988739,
+      "memberId": 5,
+      "amount": 392310,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-29T06:03:08.739Z"
+    },
+    {
+      "id": 1782704640684,
+      "memberId": 28,
+      "amount": 46152,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-29T03:44:00.684Z"
+    },
+    {
+      "id": 1782700007912,
+      "memberId": 23,
+      "amount": 127330,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-29T02:26:47.912Z"
+    },
+    {
+      "id": 1782454367383,
+      "memberId": 26,
+      "amount": 167330,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-26T06:12:47.383Z"
+    },
+    {
+      "id": 1782453957734,
+      "memberId": 9,
+      "amount": 204510,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-26T06:05:57.734Z"
+    },
+    {
+      "id": 1782277308444,
+      "memberId": 9,
+      "amount": 180679,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-24T05:01:48.444Z"
+    },
+    {
+      "id": 1782094199136,
+      "memberId": 27,
+      "amount": 41544,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-22T02:09:59.136Z"
+    },
+    {
+      "id": 1781852821277,
+      "memberId": 26,
+      "amount": 132704,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-19T07:07:01.277Z"
+    },
+    {
+      "id": 1781852813117,
+      "memberId": 10,
+      "amount": 132707,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-19T07:06:53.117Z"
+    },
+    {
+      "id": 1781849776921,
+      "memberId": 6,
+      "amount": 588117,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-19T06:16:16.921Z"
+    },
+    {
+      "id": 1781678238069,
+      "memberId": 9,
+      "amount": 546579,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-17T06:37:18.069Z"
+    },
+    {
+      "id": 1781520106282,
+      "memberId": 17,
+      "amount": 286410,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-15T10:41:46.282Z"
+    },
+    {
+      "id": 1781255379840,
+      "memberId": 3,
+      "amount": 912743,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T09:09:39.840Z"
+    },
+    {
+      "id": 1781255216225,
+      "memberId": 23,
+      "amount": 84000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T09:06:56.225Z"
+    },
+    {
+      "id": 1781255195099,
+      "memberId": 10,
+      "amount": 203077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T09:06:35.099Z"
+    },
+    {
+      "id": 1781245902220,
+      "memberId": 5,
+      "amount": 410410,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T06:31:42.220Z"
+    },
+    {
+      "id": 1781245736675,
+      "memberId": 25,
+      "amount": 40000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T06:28:56.675Z"
+    },
+    {
+      "id": 1781245589418,
+      "memberId": 16,
+      "amount": 80000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T06:26:29.418Z"
+    },
+    {
+      "id": 1781245582761,
+      "memberId": 12,
+      "amount": 410410,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T06:26:22.761Z"
+    },
+    {
+      "id": 1781245565940,
+      "memberId": 19,
+      "amount": 203077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T06:26:05.940Z"
+    },
+    {
+      "id": 1781244947574,
+      "memberId": 24,
+      "amount": 83077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T06:15:47.574Z"
+    },
+    {
+      "id": 1781244909967,
+      "memberId": 26,
+      "amount": 123076,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-12T06:15:09.967Z"
+    },
+    {
+      "id": 1780997260443,
+      "memberId": 18,
+      "amount": 326666,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-09T09:27:40.443Z"
+    },
+    {
+      "id": 1780891353784,
+      "memberId": 16,
+      "amount": 163333,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-08T04:02:33.785Z"
+    },
+    {
+      "id": 1780888279369,
+      "memberId": 10,
+      "amount": 207333,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-08T03:11:19.369Z"
+    },
+    {
+      "id": 1780887474394,
+      "memberId": 24,
+      "amount": 83337,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-08T02:57:54.394Z"
+    },
+    {
+      "id": 1780887274269,
+      "memberId": 23,
+      "amount": 80000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-06-08T02:54:34.269Z"
+    },
+    {
+      "id": 1780887197894,
+      "memberId": 14,
+      "amount": 240000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-08T02:53:17.894Z"
+    },
+    {
+      "id": 1780631233699,
+      "memberId": 8,
+      "amount": 947227,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-05T03:47:13.699Z"
+    },
+    {
+      "id": 1780631192941,
+      "memberId": 13,
+      "amount": 40000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-05T03:46:32.941Z"
+    },
+    {
+      "id": 1780466728946,
+      "memberId": 19,
+      "amount": 228337,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-03T06:05:28.946Z"
+    },
+    {
+      "id": 1780280643404,
+      "memberId": 20,
+      "amount": 323077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-01T02:24:03.404Z"
+    },
+    {
+      "id": 1780278419184,
+      "memberId": 9,
+      "amount": 605560,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-01T01:46:59.184Z"
+    },
+    {
+      "id": 1780278193688,
+      "memberId": 17,
+      "amount": 529077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-01T01:43:13.688Z"
+    },
+    {
+      "id": 1780278187308,
+      "memberId": 12,
+      "amount": 358483,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-01T01:43:07.308Z"
+    },
+    {
+      "id": 1780278180750,
+      "memberId": 5,
+      "amount": 203333,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-01T01:43:00.750Z"
+    },
+    {
+      "id": 1780278175173,
+      "memberId": 6,
+      "amount": 163333,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-01T01:42:55.173Z"
+    },
+    {
+      "id": 1780278170630,
+      "memberId": 10,
+      "amount": 203333,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-06-01T01:42:50.630Z"
+    },
+    {
+      "id": 1780026467885,
+      "memberId": 13,
+      "amount": 120000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-29T03:47:47.885Z"
+    },
+    {
+      "id": 1779766456171,
+      "memberId": 2,
+      "amount": 819356,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-26T03:34:16.171Z"
+    },
+    {
+      "id": 1779696442176,
+      "memberId": 6,
+      "amount": 235150,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-25T08:07:22.176Z"
+    },
+    {
+      "id": 1779689377438,
+      "memberId": 16,
+      "amount": 123077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-25T06:09:37.438Z"
+    },
+    {
+      "id": 1779446351522,
+      "memberId": 22,
+      "amount": 75150,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-22T10:39:11.522Z"
+    },
+    {
+      "id": 1779445918863,
+      "memberId": 5,
+      "amount": 163077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-22T10:31:58.863Z"
+    },
+    {
+      "id": 1779445860963,
+      "memberId": 18,
+      "amount": 323077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-22T10:31:00.963Z"
+    },
+    {
+      "id": 1779435758782,
+      "memberId": 10,
+      "amount": 238227,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-22T07:42:38.782Z"
+    },
+    {
+      "id": 1779431556437,
+      "memberId": 12,
+      "amount": 123077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-22T06:32:36.437Z"
+    },
+    {
+      "id": 1779244083779,
+      "memberId": 21,
+      "amount": 83076,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-20T02:28:03.779Z"
+    },
+    {
+      "id": 1779173184349,
+      "memberId": 4,
+      "amount": 320556,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-19T06:46:24.349Z"
+    },
+    {
+      "id": 1779172219186,
+      "memberId": 5,
+      "amount": 40000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-19T06:30:19.186Z"
+    },
+    {
+      "id": 1779172111846,
+      "memberId": 6,
+      "amount": 325744,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-19T06:28:31.847Z"
+    },
+    {
+      "id": 1779091737586,
+      "memberId": 16,
+      "amount": 120000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-18T08:08:57.586Z"
+    },
+    {
+      "id": 1779091716160,
+      "memberId": 13,
+      "amount": 83077,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-18T08:08:36.161Z"
+    },
+    {
+      "id": 1779073405903,
+      "memberId": 20,
+      "amount": 119995,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-18T03:03:25.903Z"
+    },
+    {
+      "id": 1779070755818,
+      "memberId": 5,
+      "amount": 145000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-18T02:19:15.818Z"
+    },
+    {
+      "id": 1779070749023,
+      "memberId": 10,
+      "amount": 80000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-18T02:19:09.023Z"
+    },
+    {
+      "id": 1778765341111,
+      "memberId": 14,
+      "amount": 200000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-14T13:29:01.111Z"
+    },
+    {
+      "id": 1778765273574,
+      "memberId": 12,
+      "amount": 347667,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-14T13:27:53.574Z"
+    },
+    {
+      "id": 1778568766022,
+      "memberId": 20,
+      "amount": 82667,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-12T06:52:46.022Z"
+    },
+    {
+      "id": 1778568744751,
+      "memberId": 16,
+      "amount": 202667,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-12T06:52:24.751Z"
+    },
+    {
+      "id": 1778568726989,
+      "memberId": 3,
+      "amount": 262667,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-12T06:52:06.989Z"
+    },
+    {
+      "id": 1778567936279,
+      "memberId": 9,
+      "amount": 605556,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-12T06:38:56.279Z"
+    },
+    {
+      "id": 1778567256164,
+      "memberId": 19,
+      "amount": 242667,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-05-12T06:27:36.164Z"
+    },
+    {
+      "id": 1778566098673,
+      "memberId": 18,
+      "amount": 202667,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-12T06:08:18.673Z"
+    },
+    {
+      "id": 1778233410533,
+      "memberId": 13,
+      "amount": 42667,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-08T09:43:30.533Z"
+    },
+    {
+      "id": 1778222189453,
+      "memberId": 5,
+      "amount": 42667,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-08T06:36:29.453Z"
+    },
+    {
+      "id": 1778220905892,
+      "memberId": 10,
+      "amount": 202667,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-08T06:15:05.892Z"
+    },
+    {
+      "id": 1778143125804,
+      "memberId": 17,
+      "amount": 320000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-07T08:38:45.804Z"
+    },
+    {
+      "id": 1778141855364,
+      "memberId": 5,
+      "amount": 40000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-07T08:17:35.364Z"
+    },
+    {
+      "id": 1778063736022,
+      "memberId": 5,
+      "amount": 40000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-06T10:35:36.022Z"
+    },
+    {
+      "id": 1778063667843,
+      "memberId": 5,
+      "amount": 38462,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-06T10:34:27.843Z"
+    },
+    {
+      "id": 1778060577024,
+      "memberId": 20,
+      "amount": 80000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-06T09:42:57.024Z"
+    },
+    {
+      "id": 1777977051047,
+      "memberId": 6,
+      "amount": 277889,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-05T10:30:51.047Z"
+    },
+    {
+      "id": 1777896490135,
+      "memberId": 2,
+      "amount": 319427,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T12:08:10.135Z"
+    },
+    {
+      "id": 1777876082131,
+      "memberId": 5,
+      "amount": 41538,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T06:28:02.131Z"
+    },
+    {
+      "id": 1777875320546,
+      "memberId": 15,
+      "amount": 157888,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T06:15:20.546Z"
+    },
+    {
+      "id": 1777864751565,
+      "memberId": 11,
+      "amount": 157889,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:19:11.565Z"
+    },
+    {
+      "id": 1777864732718,
+      "memberId": 13,
+      "amount": 197889,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:18:52.718Z"
+    },
+    {
+      "id": 1777864724006,
+      "memberId": 10,
+      "amount": 120000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:18:44.006Z"
+    },
+    {
+      "id": 1777864711881,
+      "memberId": 16,
+      "amount": 160000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:18:31.881Z"
+    },
+    {
+      "id": 1777864697152,
+      "memberId": 12,
+      "amount": 237889,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:18:17.152Z"
+    },
+    {
+      "id": 1777864666181,
+      "memberId": 5,
+      "amount": 120000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:17:46.181Z"
+    },
+    {
+      "id": 1777864644781,
+      "memberId": 18,
+      "amount": 160000,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:17:24.781Z"
+    },
+    {
+      "id": 1777864148983,
+      "memberId": 8,
+      "amount": 197889,
+      "type": "pay",
+      "note": "",
+      "createdAt": "2026-05-04T03:09:08.983Z"
+    }
+  ],
+  "treasurerAccount": "Sacombank - 064307842412",
+  "treasurerBankBin": "970403",
+  "treasurerAccountNo": "064307842412",
+  "treasurerAccountName": "Le Huu Nghi",
+  "qrCache": {
+    "2": {
+      "checksum": 1006053,
+      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA5303704540710060535802VN62130809SEP CUONG6304B175",
+      "addInfo": "SEP CUONG",
+      "updatedAt": "2026-07-01T10:39:47.259Z"
+    },
+    "3": {
+      "checksum": 379987,
+      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454063799875802VN62080804THAO63046AB5",
+      "addInfo": "THAO",
+      "updatedAt": "2026-07-01T10:39:49.016Z"
+    },
+    "11": {
+      "checksum": 269046,
+      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454062690465802VN62070803DUY630409FE",
+      "addInfo": "DUY",
+      "updatedAt": "2026-06-28T16:39:36.052Z"
+    },
+    "27": {
+      "checksum": 127338,
+      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454061273385802VN62080804QUAN6304F2E8",
+      "addInfo": "QUAN",
+      "updatedAt": "2026-07-02T04:38:10.310Z"
+    }
+  },
+  "nextMemberId": 30,
+  "savedAt": "2026-07-03T04:32:38.848Z"
 }
