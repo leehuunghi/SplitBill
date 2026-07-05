@@ -164,6 +164,56 @@
   ],
   "expenses": [
     {
+      "id": 1783235242100,
+      "amount": 480000,
+      "payerId": 8,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 48000
+        },
+        {
+          "memberId": 3,
+          "amount": 48000
+        },
+        {
+          "memberId": 5,
+          "amount": 48000
+        },
+        {
+          "memberId": 6,
+          "amount": 48000
+        },
+        {
+          "memberId": 8,
+          "amount": 48000
+        },
+        {
+          "memberId": 10,
+          "amount": 48000
+        },
+        {
+          "memberId": 12,
+          "amount": 48000
+        },
+        {
+          "memberId": 17,
+          "amount": 48000
+        },
+        {
+          "memberId": 26,
+          "amount": 48000
+        },
+        {
+          "memberId": 29,
+          "amount": 48000
+        }
+      ],
+      "note": "ăn trưa 30/6",
+      "date": "2026-06-30",
+      "createdAt": "2026-07-05T07:07:22.100Z"
+    },
+    {
       "id": 1783234482635,
       "amount": 640000,
       "payerId": 14,
@@ -3952,14 +4002,8 @@
       "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454061273385802VN62080804QUAN6304F2E8",
       "addInfo": "QUAN",
       "updatedAt": "2026-07-02T04:38:10.310Z"
-    },
-    "29": {
-      "checksum": 77648,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405776485802VN62090805THINH6304DF57",
-      "addInfo": "THINH",
-      "updatedAt": "2026-07-05T06:59:45.879Z"
     }
   },
   "nextMemberId": 30,
-  "savedAt": "2026-07-05T06:59:45.879Z"
+  "savedAt": "2026-07-05T07:07:22.100Z"
 }
