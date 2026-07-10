@@ -164,7 +164,8 @@
     {
       "id": 30,
       "name": "Thắng",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "mobile"
     }
   ],
   "expenses": [
@@ -4386,5 +4387,5 @@
     }
   },
   "nextMemberId": 31,
-  "savedAt": "2026-07-10T06:44:26.412Z"
+  "savedAt": "2026-07-10T06:44:38.614Z"
 }
