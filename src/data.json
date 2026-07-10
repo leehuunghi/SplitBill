@@ -160,6 +160,11 @@
       "id": 29,
       "name": "Thịnh",
       "isTreasurer": false
+    },
+    {
+      "id": 30,
+      "name": "Thắng",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -4380,6 +4385,6 @@
       "updatedAt": "2026-07-09T06:13:29.046Z"
     }
   },
-  "nextMemberId": 30,
-  "savedAt": "2026-07-10T06:43:51.059Z"
+  "nextMemberId": 31,
+  "savedAt": "2026-07-10T06:44:26.412Z"
 }
