@@ -339,43 +339,47 @@
       "splits": [
         {
           "memberId": 5,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 6,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 8,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 9,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 10,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 11,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 12,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 19,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 20,
-          "amount": 56000
+          "amount": 50909
         },
         {
           "memberId": 29,
-          "amount": 56000
+          "amount": 50909
+        },
+        {
+          "memberId": 31,
+          "amount": 50910
         }
       ],
       "note": "ăn trưa 14/7",
@@ -4888,5 +4892,5 @@
     }
   },
   "nextMemberId": 32,
-  "savedAt": "2026-07-20T03:11:35.858Z"
+  "savedAt": "2026-07-20T03:11:50.920Z"
 }
