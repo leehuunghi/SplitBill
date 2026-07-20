@@ -389,67 +389,71 @@
       "splits": [
         {
           "memberId": 2,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 3,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 5,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 6,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 7,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 8,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 9,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 10,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 11,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 12,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 16,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 18,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 20,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 26,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 29,
-          "amount": 42500
+          "amount": 40000
         },
         {
           "memberId": 30,
-          "amount": 42500
+          "amount": 40000
+        },
+        {
+          "memberId": 31,
+          "amount": 40000
         }
       ],
       "note": "ăn trưa 13/7",
@@ -4884,5 +4888,5 @@
     }
   },
   "nextMemberId": 32,
-  "savedAt": "2026-07-20T03:10:48.705Z"
+  "savedAt": "2026-07-20T03:11:35.858Z"
 }
