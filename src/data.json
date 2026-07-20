@@ -166,6 +166,11 @@
       "name": "Thắng",
       "isTreasurer": false,
       "group": "mobile"
+    },
+    {
+      "id": 31,
+      "name": "ST",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -4878,6 +4883,6 @@
       "updatedAt": "2026-07-14T03:44:13.660Z"
     }
   },
-  "nextMemberId": 31,
-  "savedAt": "2026-07-20T03:10:26.567Z"
+  "nextMemberId": 32,
+  "savedAt": "2026-07-20T03:10:48.705Z"
 }
