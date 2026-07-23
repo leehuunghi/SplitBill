@@ -175,7 +175,8 @@
     {
       "id": 32,
       "name": "Việt",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "server"
     }
   ],
   "expenses": [
@@ -5111,5 +5112,5 @@
     }
   },
   "nextMemberId": 33,
-  "savedAt": "2026-07-23T02:49:03.436Z"
+  "savedAt": "2026-07-23T02:49:39.957Z"
 }
