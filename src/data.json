@@ -171,12 +171,6 @@
       "id": 31,
       "name": "ST",
       "isTreasurer": false
-    },
-    {
-      "id": 32,
-      "name": "Việt",
-      "isTreasurer": false,
-      "group": "server"
     }
   ],
   "expenses": [
@@ -4187,14 +4181,6 @@
   ],
   "payments": [
     {
-      "id": 1784776057602,
-      "memberId": 10,
-      "amount": 364402,
-      "type": "pay",
-      "note": "",
-      "createdAt": "2026-07-23T03:07:37.602Z"
-    },
-    {
       "id": 1784772387976,
       "memberId": 12,
       "amount": 775544,
@@ -5119,6 +5105,6 @@
       "updatedAt": "2026-07-14T03:44:13.660Z"
     }
   },
-  "nextMemberId": 33,
-  "savedAt": "2026-07-23T04:00:26.273Z"
+  "nextMemberId": 32,
+  "savedAt": "2026-07-23T02:31:18.817Z"
 }
