@@ -7,8 +7,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const payload = await readJsonBody(req);
-    const result = await writeAppData(payload || {});
+    const body = (await readJsonBody(req)) || {};
+    const { saveMeta, ...payload } = body;
+    const result = await writeAppData(payload, saveMeta);
 
     return res.status(200).json({
       success: true,

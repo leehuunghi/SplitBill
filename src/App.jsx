@@ -345,8 +345,11 @@ const SplitWiseTool = () => {
   // Chỉ lưu khi có một hành động tính năng chủ động yêu cầu (qua requestSave()),
   // không tự động lưu ngay sau khi vừa load trang xong.
   const pendingSaveRef = useRef(false);
-  const requestSave = () => {
+  const pendingSaveActionRef = useRef('unknown');
+  const saveRouteLabel = isSuperAdmin ? '/superadmin' : isRestrictedAdmin ? '/phat' : '/';
+  const requestSave = (action = 'unknown') => {
     pendingSaveRef.current = true;
+    pendingSaveActionRef.current = action;
   };
 
   useEffect(() => {
@@ -360,8 +363,18 @@ const SplitWiseTool = () => {
     const signature = getDataSignature(payload);
     if (signature === lastSavedSignatureRef.current) return;
 
+    const action = pendingSaveActionRef.current || 'unknown';
+    const requestPayload = {
+      ...payload,
+      saveMeta: {
+        route: saveRouteLabel,
+        action,
+        at: new Date().toISOString(),
+      },
+    };
+
     const timer = setTimeout(() => {
-      persistAppState(payload)
+      persistAppState(requestPayload)
         .then(async response => {
           const data = await response.json().catch(() => null);
           if (!response.ok || data?.success !== true) {
@@ -571,10 +584,11 @@ const SplitWiseTool = () => {
         ? prev.map(expense => (expense.id === existingExpense.id ? nextExpense : expense))
         : [nextExpense, ...prev]
     );
+    const wasEditing = Boolean(existingExpense);
     setEditingTransaction(null);
     resetExpenseForm();
     setActiveAdminPanel(null);
-    requestSave();
+    requestSave(wasEditing ? 'Sửa khoản chi' : 'Thêm khoản chi');
   };
 
   const addPayment = () => {
@@ -614,15 +628,16 @@ const SplitWiseTool = () => {
       setQrAddInfo('');
       setQrLoading(false);
     }
+    const wasEditingPayment = Boolean(existingPayment);
     setEditingTransaction(null);
     resetPaymentForm();
     setActiveAdminPanel(null);
-    requestSave();
+    requestSave(wasEditingPayment ? 'Sửa thanh toán' : 'Thêm thanh toán');
   };
 
   const deleteExpense = expenseId => {
     setExpenses(prev => prev.filter(exp => exp.id !== expenseId));
-    requestSave();
+    requestSave('Xóa khoản chi');
   };
 
   const showAdminToast = (type, message) => {
@@ -677,7 +692,7 @@ const SplitWiseTool = () => {
       closeQr();
     }
     showAdminToast('success', `Đã xóa thành viên ${targetMember.name}`);
-    requestSave();
+    requestSave(`Xóa thành viên: ${targetMember.name}`);
   };
 
   const completeMemberPayment = memberId => {
@@ -711,7 +726,7 @@ const SplitWiseTool = () => {
       closeQr();
     }
     showAdminToast('success', `Đã complete thanh toán cho ${member.name}`);
-    requestSave();
+    requestSave(`Complete thanh toán: ${member.name}`);
   };
 
   const startEditingTransaction = tx => {
@@ -759,7 +774,7 @@ const SplitWiseTool = () => {
     setNextMemberId(memberId + 1);
     setNewMemberName('');
     setActiveAdminPanel(null);
-    requestSave();
+    requestSave(`Thêm thành viên: ${name}`);
   };
 
   const toggleParticipant = id => {
@@ -774,13 +789,14 @@ const SplitWiseTool = () => {
 
   const selectTreasurer = id => {
     if (isRestrictedAdmin) return;
+    const treasurerMember = members.find(m => m.id === id);
     setMembers(prev => prev.map(m => ({ ...m, isTreasurer: m.id === id })));
     setExpenseForm(prev => ({
       ...prev,
       participants: prev.participants.filter(pid => pid !== id),
       splits: { ...prev.splits, [id]: undefined },
     }));
-    requestSave();
+    requestSave(`Chọn thủ quỹ: ${treasurerMember?.name || id}`);
   };
 
   const moveMemberToGroup = (targetMember, groupKey) => {
@@ -792,7 +808,7 @@ const SplitWiseTool = () => {
           : member
       )
     );
-    requestSave();
+    requestSave(`Đổi nhóm: ${targetMember?.name || ''} -> ${normalizedGroup}`);
   };
 
   const handleMemberDragStart = (member, groupKey) => event => {
@@ -1820,7 +1836,7 @@ const SplitWiseTool = () => {
               <button
                 type="button"
                 onClick={() => {
-                  requestSave();
+                  requestSave('Lưu cấu hình thủ quỹ');
                   showAdminToast('success', 'Đã lưu cấu hình thủ quỹ');
                 }}
                 className="px-4 py-2 rounded-lg bg-gray-900 text-white"

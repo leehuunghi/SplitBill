@@ -83,10 +83,17 @@ const readGithubData = async () => {
   return JSON.parse(decodeGithubContent(file.content));
 };
 
-const putGithubData = async (data, sha) => {
+const buildCommitMessage = saveMeta => {
+  const at = saveMeta?.at || new Date().toISOString();
+  const route = saveMeta?.route || 'unknown-route';
+  const action = saveMeta?.action || 'unknown-action';
+  return `Update shared data via ${route} - ${action} (${at})`;
+};
+
+const putGithubData = async (data, sha, saveMeta) => {
   const { branch } = getGithubConfig();
   const body = {
-    message: `Update shared data (${new Date().toISOString()})`,
+    message: buildCommitMessage(saveMeta),
     content: Buffer.from(JSON.stringify(data, null, 2), 'utf-8').toString('base64'),
     branch,
   };
@@ -111,17 +118,17 @@ const putGithubData = async (data, sha) => {
   return response.json();
 };
 
-const writeGithubData = async data => {
+const writeGithubData = async (data, saveMeta) => {
   const existingFile = await getGithubFile();
   try {
-    return await putGithubData(data, existingFile?.sha);
+    return await putGithubData(data, existingFile?.sha, saveMeta);
   } catch (error) {
     if (error?.status !== 409) {
       throw error;
     }
 
     const latestFile = await getGithubFile();
-    return putGithubData(data, latestFile?.sha);
+    return putGithubData(data, latestFile?.sha, saveMeta);
   }
 };
 
@@ -140,9 +147,9 @@ export const readAppData = async () => {
   return readDataFile();
 };
 
-export const writeAppData = async data => {
+export const writeAppData = async (data, saveMeta) => {
   if (canUseGithubStorage()) {
-    await writeGithubData(data);
+    await writeGithubData(data, saveMeta);
     return { storage: 'github' };
   }
 

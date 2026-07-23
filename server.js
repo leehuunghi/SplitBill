@@ -28,7 +28,12 @@ app.get('/api/load', async (_req, res) => {
 
 app.post('/api/save', async (req, res) => {
   try {
-    const payload = req.body || {};
+    const { saveMeta, ...payload } = req.body || {};
+    if (saveMeta) {
+      console.log(
+        `[save] route=${saveMeta.route || 'unknown'} action=${saveMeta.action || 'unknown'} at=${saveMeta.at || ''}`
+      );
+    }
     await fs.writeFile(dataPath, JSON.stringify(payload, null, 2), 'utf-8');
     res.json({ success: true, storage: 'file' });
   } catch (err) {
