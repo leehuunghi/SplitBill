@@ -427,15 +427,38 @@ const SplitWiseTool = () => {
     if (!isHydrated) return;
 
     const flushPendingChanges = () => {
+      // Chỉ flush nếu có một hành động tính năng đang chờ lưu (chưa kịp
+      // chạy qua debounce 500ms) — không tự lưu khi không có gì thay đổi.
+      if (!pendingSaveRef.current) return;
+
       const latestPayload = latestPayloadRef.current;
       if (!latestPayload || typeof navigator === 'undefined' || !navigator.sendBeacon) {
         return;
       }
 
-      const body = new Blob([JSON.stringify(latestPayload)], {
-        type: 'application/json',
-      });
+      const signature = getDataSignature(latestPayload);
+      if (signature === lastSavedSignatureRef.current) {
+        pendingSaveRef.current = false;
+        return;
+      }
+
+      const action = pendingSaveActionRef.current || 'unknown';
+      const body = new Blob(
+        [
+          JSON.stringify({
+            ...latestPayload,
+            saveMeta: {
+              route: saveRouteLabel,
+              action,
+              at: new Date().toISOString(),
+            },
+          }),
+        ],
+        { type: 'application/json' }
+      );
       navigator.sendBeacon('/api/save', body);
+      lastSavedSignatureRef.current = signature;
+      pendingSaveRef.current = false;
     };
 
     window.addEventListener('pagehide', flushPendingChanges);
