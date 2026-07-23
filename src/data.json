@@ -175,6 +175,28 @@
   ],
   "expenses": [
     {
+      "id": 1784773775171,
+      "amount": 106000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 26000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        }
+      ],
+      "note": "tiền cà phê sáng highland 23/07",
+      "date": "2026-07-23",
+      "createdAt": "2026-07-23T02:29:35.171Z"
+    },
+    {
       "id": 1784773693230,
       "amount": 133000,
       "payerId": 14,
@@ -5084,5 +5106,5 @@
     }
   },
   "nextMemberId": 32,
-  "savedAt": "2026-07-23T02:28:13.231Z"
+  "savedAt": "2026-07-23T02:29:35.171Z"
 }
