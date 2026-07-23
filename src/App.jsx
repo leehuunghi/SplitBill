@@ -179,6 +179,13 @@ const isPhatPath = () => {
   return normalizedPathname === '/phat';
 };
 
+// So sánh nội dung dữ liệu thực sự (bỏ qua savedAt) để tránh gọi API lưu
+// khi không có gì thay đổi.
+const getDataSignature = data => {
+  const { savedAt, ...rest } = data || {};
+  return JSON.stringify(rest);
+};
+
 const persistAppState = payload => {
   return fetch('/api/save', {
     method: 'POST',
@@ -255,6 +262,7 @@ const SplitWiseTool = () => {
   });
   const latestPayloadRef = useRef(null);
   const toastTimerRef = useRef(null);
+  const lastSavedSignatureRef = useRef(null);
 
   useEffect(() => {
     let active = true;
@@ -297,6 +305,7 @@ const SplitWiseTool = () => {
             memberId: firstNonTreasurer ? firstNonTreasurer.id : '',
           }));
         }
+        lastSavedSignatureRef.current = getDataSignature(normalizedData);
         setIsHydrated(true);
       })
       .catch(() => {
@@ -346,6 +355,11 @@ const SplitWiseTool = () => {
     if (!pendingSaveRef.current) return;
     pendingSaveRef.current = false;
 
+    // Nếu dữ liệu thực sự (bỏ qua savedAt) không đổi so với lần lưu gần nhất
+    // thì bỏ qua, tránh gọi API/tạo commit không cần thiết.
+    const signature = getDataSignature(payload);
+    if (signature === lastSavedSignatureRef.current) return;
+
     const timer = setTimeout(() => {
       persistAppState(payload)
         .then(async response => {
@@ -353,6 +367,8 @@ const SplitWiseTool = () => {
           if (!response.ok || data?.success !== true) {
             throw new Error(data?.error || 'Không thể lưu dữ liệu');
           }
+
+          lastSavedSignatureRef.current = signature;
 
           if (!isAdminView) return;
           if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
