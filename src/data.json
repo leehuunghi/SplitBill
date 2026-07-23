@@ -171,9 +171,62 @@
       "id": 31,
       "name": "ST",
       "isTreasurer": false
+    },
+    {
+      "id": 32,
+      "name": "Việt",
+      "isTreasurer": false
     }
   ],
   "expenses": [
+    {
+      "id": 1784773775171,
+      "amount": 106000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 40000
+        },
+        {
+          "memberId": 9,
+          "amount": 26000
+        },
+        {
+          "memberId": 14,
+          "amount": 40000
+        }
+      ],
+      "note": "tiền cà phê sáng highland 23/07",
+      "date": "2026-07-23",
+      "createdAt": "2026-07-23T02:29:35.171Z"
+    },
+    {
+      "id": 1784773693230,
+      "amount": 133000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 33250
+        },
+        {
+          "memberId": 10,
+          "amount": 33250
+        },
+        {
+          "memberId": 12,
+          "amount": 33250
+        },
+        {
+          "memberId": 14,
+          "amount": 33250
+        }
+      ],
+      "note": "cà phê sáng highland 22/07",
+      "date": "2026-07-22",
+      "createdAt": "2026-07-23T02:28:13.230Z"
+    },
     {
       "id": 1784702831689,
       "amount": 400000,
@@ -5038,12 +5091,6 @@
       "addInfo": "THAO",
       "updatedAt": "2026-07-01T10:39:49.016Z"
     },
-    "10": {
-      "checksum": 364402,
-      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454063644025802VN62080804MINH6304084A",
-      "addInfo": "MINH",
-      "updatedAt": "2026-07-23T02:24:18.923Z"
-    },
     "11": {
       "checksum": 269046,
       "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA530370454062690465802VN62070803DUY630409FE",
@@ -5063,6 +5110,6 @@
       "updatedAt": "2026-07-14T03:44:13.660Z"
     }
   },
-  "nextMemberId": 32,
-  "savedAt": "2026-07-23T02:25:07.486Z"
+  "nextMemberId": 33,
+  "savedAt": "2026-07-23T02:49:03.436Z"
 }
