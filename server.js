@@ -30,9 +30,9 @@ app.post('/api/save', async (req, res) => {
   try {
     const payload = req.body || {};
     await fs.writeFile(dataPath, JSON.stringify(payload, null, 2), 'utf-8');
-    res.json({ ok: true });
+    res.json({ success: true, storage: 'file' });
   } catch (err) {
-    res.status(500).json({ ok: false, error: 'Failed to save file' });
+    res.status(500).json({ success: false, error: 'Failed to save file' });
   }
 });
 

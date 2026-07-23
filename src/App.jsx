@@ -49,6 +49,9 @@ const dropQrCacheEntry = (cache, memberId) => {
   return nextCache;
 };
 
+// ID thành viên được cố định làm "Người trả" trên trang /phat.
+const PHAT_FIXED_PAYER_ID = 14;
+
 const MEMBER_GROUPS = [
   { key: 'boss', label: 'Sếp' },
   { key: 'mobile', label: 'Mobile' },
@@ -170,6 +173,12 @@ const isSuperAdminPath = () => {
   return normalizedPathname === '/superadmin';
 };
 
+const isPhatPath = () => {
+  if (typeof window === 'undefined') return false;
+  const normalizedPathname = window.location.pathname.replace(/\/+$/, '') || '/';
+  return normalizedPathname === '/phat';
+};
+
 const persistAppState = payload => {
   return fetch('/api/save', {
     method: 'POST',
@@ -181,8 +190,12 @@ const persistAppState = payload => {
 
 const SplitWiseTool = () => {
   const isSuperAdmin = isSuperAdminPath();
-  const [isAdminView, setIsAdminView] = useState(isSuperAdmin);
-  const [activeAdminPanel, setActiveAdminPanel] = useState(null);
+  const isPhatAdmin = isPhatPath();
+  // Chế độ "phat": giao diện giống admin nhưng chỉ được phép thêm khoản chi.
+  const isRestrictedAdmin = isPhatAdmin && !isSuperAdmin;
+  const [isAdminView, setIsAdminView] = useState(isSuperAdmin || isPhatAdmin);
+  const showFullAdminControls = isAdminView && !isRestrictedAdmin;
+  const [activeAdminPanel, setActiveAdminPanel] = useState(isRestrictedAdmin ? 'expense' : null);
   const [newMemberName, setNewMemberName] = useState('');
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -267,9 +280,13 @@ const SplitWiseTool = () => {
         if (typeof normalizedData.treasurerAccountName === 'string') setTreasurerAccountName(normalizedData.treasurerAccountName);
         if (normalizedData.qrCache && typeof normalizedData.qrCache === 'object') setQrCache(normalizedData.qrCache);
         if (Array.isArray(normalizedData.members) && normalizedData.members.length > 0) {
+          const fixedPayer = isRestrictedAdmin
+            ? normalizedData.members.find(m => Number(m.id) === PHAT_FIXED_PAYER_ID)
+            : null;
           setExpenseForm(prev => ({
             ...prev,
             payerId:
+              fixedPayer?.id ||
               normalizedData.members.find(m => m.isTreasurer)?.id ||
               normalizedData.members[0].id,
             participants: normalizedData.members.filter(m => !m.isTreasurer).map(m => m.id),
@@ -316,9 +333,19 @@ const SplitWiseTool = () => {
     ]
   );
 
+  // Chỉ lưu khi có một hành động tính năng chủ động yêu cầu (qua requestSave()),
+  // không tự động lưu ngay sau khi vừa load trang xong.
+  const pendingSaveRef = useRef(false);
+  const requestSave = () => {
+    pendingSaveRef.current = true;
+  };
+
   useEffect(() => {
-    if (!isHydrated) return;
     latestPayloadRef.current = payload;
+    if (!isHydrated) return;
+    if (!pendingSaveRef.current) return;
+    pendingSaveRef.current = false;
+
     const timer = setTimeout(() => {
       persistAppState(payload)
         .then(async response => {
@@ -455,7 +482,11 @@ const SplitWiseTool = () => {
   );
 
   const resetExpenseForm = () => {
-    const defaultPayerId = members.find(m => m.isTreasurer)?.id || members[0]?.id || '';
+    const fixedPayerId = isRestrictedAdmin
+      ? members.find(m => Number(m.id) === PHAT_FIXED_PAYER_ID)?.id
+      : null;
+    const defaultPayerId =
+      fixedPayerId || members.find(m => m.isTreasurer)?.id || members[0]?.id || '';
     setExpenseForm({
       amount: '',
       payerId: defaultPayerId,
@@ -527,9 +558,11 @@ const SplitWiseTool = () => {
     setEditingTransaction(null);
     resetExpenseForm();
     setActiveAdminPanel(null);
+    requestSave();
   };
 
   const addPayment = () => {
+    if (isRestrictedAdmin) return;
     if (!treasurerId) return;
     const amount = Math.min(Number(paymentForm.amount || 0), paymentAmountLimit);
     if (!amount) return;
@@ -568,10 +601,12 @@ const SplitWiseTool = () => {
     setEditingTransaction(null);
     resetPaymentForm();
     setActiveAdminPanel(null);
+    requestSave();
   };
 
   const deleteExpense = expenseId => {
     setExpenses(prev => prev.filter(exp => exp.id !== expenseId));
+    requestSave();
   };
 
   const showAdminToast = (type, message) => {
@@ -584,6 +619,7 @@ const SplitWiseTool = () => {
   };
 
   const deleteMember = memberId => {
+    if (isRestrictedAdmin) return;
     const targetMember = members.find(member => member.id === memberId);
     if (!targetMember) return;
 
@@ -625,10 +661,11 @@ const SplitWiseTool = () => {
       closeQr();
     }
     showAdminToast('success', `Đã xóa thành viên ${targetMember.name}`);
+    requestSave();
   };
 
   const completeMemberPayment = memberId => {
-    if (!isAdminView) return;
+    if (!isAdminView || isRestrictedAdmin) return;
     if (!treasurerId) return;
 
     const member = members.find(item => item.id === memberId);
@@ -658,10 +695,11 @@ const SplitWiseTool = () => {
       closeQr();
     }
     showAdminToast('success', `Đã complete thanh toán cho ${member.name}`);
+    requestSave();
   };
 
   const startEditingTransaction = tx => {
-    if (!isAdminView) return;
+    if (!isAdminView || isRestrictedAdmin) return;
     if (tx.type === 'expense') {
       setEditingTransaction({ type: 'expense', id: Number(tx.id.replace('exp-', '')) });
       setExpenseForm({
@@ -696,6 +734,7 @@ const SplitWiseTool = () => {
   };
 
   const addMember = () => {
+    if (isRestrictedAdmin) return;
     const name = newMemberName.trim();
     if (!name) return;
     const memberId = getNextMemberId(members);
@@ -704,6 +743,7 @@ const SplitWiseTool = () => {
     setNextMemberId(memberId + 1);
     setNewMemberName('');
     setActiveAdminPanel(null);
+    requestSave();
   };
 
   const toggleParticipant = id => {
@@ -717,12 +757,14 @@ const SplitWiseTool = () => {
   };
 
   const selectTreasurer = id => {
+    if (isRestrictedAdmin) return;
     setMembers(prev => prev.map(m => ({ ...m, isTreasurer: m.id === id })));
     setExpenseForm(prev => ({
       ...prev,
       participants: prev.participants.filter(pid => pid !== id),
       splits: { ...prev.splits, [id]: undefined },
     }));
+    requestSave();
   };
 
   const moveMemberToGroup = (targetMember, groupKey) => {
@@ -734,6 +776,7 @@ const SplitWiseTool = () => {
           : member
       )
     );
+    requestSave();
   };
 
   const handleMemberDragStart = (member, groupKey) => event => {
@@ -969,32 +1012,36 @@ const SplitWiseTool = () => {
               <PlusCircle size={18} />
               Thêm khoản chi
             </button>
-            <button
-              className={`px-3 py-2 rounded-lg border shadow-sm flex items-center gap-2 ${
-                activeAdminPanel === 'member' ? 'bg-gray-900 text-white' : 'bg-white'
-              }`}
-              onClick={() =>
-                setActiveAdminPanel(prev => (prev === 'member' ? null : 'member'))
-              }
-            >
-              <UserPlus size={18} />
-              Thêm thành viên
-            </button>
-            <button
-              className={`px-3 py-2 rounded-lg border shadow-sm flex items-center gap-2 ${
-                activeAdminPanel === 'payment' ? 'bg-gray-900 text-white' : 'bg-white'
-              }`}
-              onClick={() =>
-                setActiveAdminPanel(prev => (prev === 'payment' ? null : 'payment'))
-              }
-            >
-              <CreditCard size={18} />
-              Thêm thanh toán
-            </button>
+            {showFullAdminControls && (
+              <>
+                <button
+                  className={`px-3 py-2 rounded-lg border shadow-sm flex items-center gap-2 ${
+                    activeAdminPanel === 'member' ? 'bg-gray-900 text-white' : 'bg-white'
+                  }`}
+                  onClick={() =>
+                    setActiveAdminPanel(prev => (prev === 'member' ? null : 'member'))
+                  }
+                >
+                  <UserPlus size={18} />
+                  Thêm thành viên
+                </button>
+                <button
+                  className={`px-3 py-2 rounded-lg border shadow-sm flex items-center gap-2 ${
+                    activeAdminPanel === 'payment' ? 'bg-gray-900 text-white' : 'bg-white'
+                  }`}
+                  onClick={() =>
+                    setActiveAdminPanel(prev => (prev === 'payment' ? null : 'payment'))
+                  }
+                >
+                  <CreditCard size={18} />
+                  Thêm thanh toán
+                </button>
+              </>
+            )}
           </div>
         )}
 
-        {isAdminView && activeAdminPanel === 'member' && (
+        {showFullAdminControls && activeAdminPanel === 'member' && (
           <section className="bg-white rounded-xl shadow p-5">
             <h3 className="text-lg font-semibold mb-4">Thêm thành viên mới</h3>
             <div className="flex flex-col md:flex-row gap-3">
@@ -1032,7 +1079,7 @@ const SplitWiseTool = () => {
               <Users size={18} className="text-gray-500" />
               <h2 className="text-lg font-semibold">Danh sách thành viên</h2>
             </div>
-            {isAdminView && (
+            {showFullAdminControls && (
               <div className="flex items-center gap-3">
                 <label className="text-sm text-gray-500">Chọn thủ quỹ</label>
                 <select
@@ -1130,7 +1177,7 @@ const SplitWiseTool = () => {
                         >
                           <QrCode size={18} />
                         </button>
-                        {isAdminView && (
+                        {showFullAdminControls && (
                           <button
                             onClick={() => completeMemberPayment(m.id)}
                             className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700"
@@ -1141,7 +1188,7 @@ const SplitWiseTool = () => {
                         )}
                       </>
                     )}
-                    {isAdminView && (
+                    {showFullAdminControls && (
                       <button
                         onClick={() => deleteMember(m.id)}
                         className="px-3 py-2 rounded-lg border text-sm hover:bg-red-50"
@@ -1157,6 +1204,7 @@ const SplitWiseTool = () => {
           </div>
         </section>
 
+        {!isRestrictedAdmin && (
         <section className="bg-white rounded-xl shadow p-5">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <h3 className="text-lg font-semibold">Danh sách thu chi</h3>
@@ -1200,7 +1248,7 @@ const SplitWiseTool = () => {
                   <div
                     key={tx.id}
                     className={`p-4 flex items-center justify-between gap-4 ${
-                      isAdminView ? 'cursor-pointer hover:bg-gray-50' : ''
+                      showFullAdminControls ? 'cursor-pointer hover:bg-gray-50' : ''
                     }`}
                     onClick={() => startEditingTransaction(tx)}
                   >
@@ -1217,7 +1265,7 @@ const SplitWiseTool = () => {
                       <div className="text-sm text-gray-500">Chi</div>
                       <div className="font-semibold text-red-500">{formatVND(tx.amount)}</div>
                     </div>
-                    {isAdminView && (
+                    {showFullAdminControls && (
                       <button
                         className="px-3 py-2 rounded-lg border text-sm hover:bg-red-50"
                         onClick={event => {
@@ -1240,7 +1288,7 @@ const SplitWiseTool = () => {
                 <div
                   key={tx.id}
                   className={`p-4 flex items-center justify-between gap-4 ${
-                    isAdminView ? 'cursor-pointer hover:bg-gray-50' : ''
+                    showFullAdminControls ? 'cursor-pointer hover:bg-gray-50' : ''
                   }`}
                   onClick={() => startEditingTransaction(tx)}
                 >
@@ -1261,8 +1309,9 @@ const SplitWiseTool = () => {
             })}
           </div>
         </section>
+        )}
 
-        {isAdminView && (
+        {showFullAdminControls && (
           <section className="bg-white rounded-xl shadow p-5">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-lg font-semibold">Lịch sử nhận tiền</h3>
@@ -1361,8 +1410,11 @@ const SplitWiseTool = () => {
               <label className="text-sm">
                 Người trả
                 <select
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className={`mt-1 w-full border rounded-lg px-3 py-2 ${
+                    isRestrictedAdmin ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : ''
+                  }`}
                   value={expenseForm.payerId}
+                  disabled={isRestrictedAdmin}
                   onChange={e =>
                     setExpenseForm(prev => ({ ...prev, payerId: e.target.value }))
                   }
@@ -1550,7 +1602,7 @@ const SplitWiseTool = () => {
           </section>
         )}
 
-        {isAdminView && activeAdminPanel === 'payment' && (
+        {showFullAdminControls && activeAdminPanel === 'payment' && (
           <section className="bg-white rounded-xl shadow p-5">
             <h3 className="text-lg font-semibold mb-4">
               {editingTransaction?.type === 'payment'
@@ -1698,7 +1750,7 @@ const SplitWiseTool = () => {
           </section>
         )}
 
-        {isAdminView && (
+        {showFullAdminControls && (
           <section className="bg-white rounded-xl shadow p-5">
             <h3 className="text-lg font-semibold mb-4">Cấu hình thủ quỹ</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1745,6 +1797,18 @@ const SplitWiseTool = () => {
               <div className="text-sm text-gray-500 flex items-end">
                 Mã QR hiện tại dùng chuỗi nội dung cơ bản. Có thể thay bằng payload VietQR thực tế khi kết nối ngân hàng.
               </div>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  requestSave();
+                  showAdminToast('success', 'Đã lưu cấu hình thủ quỹ');
+                }}
+                className="px-4 py-2 rounded-lg bg-gray-900 text-white"
+              >
+                Lưu cấu hình
+              </button>
             </div>
           </section>
         )}

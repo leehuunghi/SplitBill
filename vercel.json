@@ -7,6 +7,14 @@
     {
       "source": "/superadmin/",
       "destination": "/index.html"
+    },
+    {
+      "source": "/phat",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/phat/",
+      "destination": "/index.html"
     }
   ]
 }
