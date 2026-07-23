@@ -999,7 +999,7 @@ const SplitWiseTool = () => {
           </div>
         </header>
 
-        {isAdminView && (
+        {showFullAdminControls && (
           <div className="flex flex-wrap gap-2">
                         <button
               className={`px-3 py-2 rounded-lg border shadow-sm flex items-center gap-2 ${
@@ -1170,13 +1170,15 @@ const SplitWiseTool = () => {
                   <div className="ml-4 flex items-center gap-2">
                     {balance < 0 && treasurerId && (
                       <>
-                        <button
-                          onClick={() => openQrForMember(m.id, Math.abs(balance))}
-                          className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
-                          title="Tạo QR thanh toán"
-                        >
-                          <QrCode size={18} />
-                        </button>
+                        {!isRestrictedAdmin && (
+                          <button
+                            onClick={() => openQrForMember(m.id, Math.abs(balance))}
+                            className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
+                            title="Tạo QR thanh toán"
+                          >
+                            <QrCode size={18} />
+                          </button>
+                        )}
                         {showFullAdminControls && (
                           <button
                             onClick={() => completeMemberPayment(m.id)}
