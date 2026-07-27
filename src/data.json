@@ -181,6 +181,20 @@
   ],
   "expenses": [
     {
+      "id": 1785138484009,
+      "amount": 292000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 292000
+        }
+      ],
+      "note": "Cà phê sáng Thảo mời mn (Phát chi)",
+      "date": "2026-07-27",
+      "createdAt": "2026-07-27T07:48:04.009Z"
+    },
+    {
       "id": 1785032114994,
       "amount": 520000,
       "payerId": 1,
@@ -5294,5 +5308,5 @@
     }
   },
   "nextMemberId": 33,
-  "savedAt": "2026-07-27T03:22:33.908Z"
+  "savedAt": "2026-07-27T07:48:04.009Z"
 }
