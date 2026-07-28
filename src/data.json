@@ -181,6 +181,32 @@
   ],
   "expenses": [
     {
+      "id": 1785222693362,
+      "amount": 115000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 7,
+          "amount": 60000
+        },
+        {
+          "memberId": 9,
+          "amount": 17000
+        },
+        {
+          "memberId": 19,
+          "amount": 19000
+        },
+        {
+          "memberId": 32,
+          "amount": 19000
+        }
+      ],
+      "note": "cf chiều",
+      "date": "2026-07-28",
+      "createdAt": "2026-07-28T07:11:33.362Z"
+    },
+    {
       "id": 1785139008058,
       "amount": 153000,
       "payerId": 14,
@@ -5334,5 +5360,5 @@
     }
   },
   "nextMemberId": 33,
-  "savedAt": "2026-07-27T07:56:48.058Z"
+  "savedAt": "2026-07-28T07:11:33.363Z"
 }
