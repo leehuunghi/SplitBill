@@ -181,74 +181,6 @@
   ],
   "expenses": [
     {
-      "id": 1785376657190,
-      "amount": 216000,
-      "payerId": 14,
-      "splits": [
-        {
-          "memberId": 3,
-          "amount": 43200
-        },
-        {
-          "memberId": 7,
-          "amount": 43200
-        },
-        {
-          "memberId": 8,
-          "amount": 43200
-        },
-        {
-          "memberId": 9,
-          "amount": 43200
-        },
-        {
-          "memberId": 14,
-          "amount": 43200
-        }
-      ],
-      "note": "Cà phê sáng Highland",
-      "date": "2026-07-29",
-      "createdAt": "2026-07-30T01:57:37.190Z"
-    },
-    {
-      "id": 1785376491569,
-      "amount": 132000,
-      "payerId": 14,
-      "splits": [
-        {
-          "memberId": 3,
-          "amount": 18857
-        },
-        {
-          "memberId": 5,
-          "amount": 18857
-        },
-        {
-          "memberId": 7,
-          "amount": 18857
-        },
-        {
-          "memberId": 8,
-          "amount": 18857
-        },
-        {
-          "memberId": 9,
-          "amount": 18857
-        },
-        {
-          "memberId": 12,
-          "amount": 18857
-        },
-        {
-          "memberId": 14,
-          "amount": 18858
-        }
-      ],
-      "note": "Cà phê sáng Trung Nguyên",
-      "date": "2026-07-28",
-      "createdAt": "2026-07-30T01:54:51.569Z"
-    },
-    {
       "id": 1785304741069,
       "amount": 1131840,
       "payerId": 1,
@@ -4477,6 +4409,14 @@
   ],
   "payments": [
     {
+      "id": 1785410701297,
+      "memberId": 32,
+      "amount": 33000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-07-30T11:25:01.297Z"
+    },
+    {
       "id": 1785307352680,
       "memberId": 19,
       "amount": 369437,
@@ -5446,5 +5386,5 @@
     }
   },
   "nextMemberId": 33,
-  "savedAt": "2026-07-30T01:57:37.190Z"
+  "savedAt": "2026-07-30T11:25:01.298Z"
 }
