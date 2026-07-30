@@ -181,6 +181,36 @@
   ],
   "expenses": [
     {
+      "id": 1785376657190,
+      "amount": 216000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 43200
+        },
+        {
+          "memberId": 7,
+          "amount": 43200
+        },
+        {
+          "memberId": 8,
+          "amount": 43200
+        },
+        {
+          "memberId": 9,
+          "amount": 43200
+        },
+        {
+          "memberId": 14,
+          "amount": 43200
+        }
+      ],
+      "note": "Cà phê sáng Highland",
+      "date": "2026-07-29",
+      "createdAt": "2026-07-30T01:57:37.190Z"
+    },
+    {
       "id": 1785376491569,
       "amount": 132000,
       "payerId": 14,
@@ -5416,5 +5446,5 @@
     }
   },
   "nextMemberId": 33,
-  "savedAt": "2026-07-30T01:54:51.569Z"
+  "savedAt": "2026-07-30T01:57:37.190Z"
 }
