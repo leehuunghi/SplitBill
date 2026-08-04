@@ -177,9 +177,57 @@
       "name": "Việt",
       "isTreasurer": false,
       "group": "server"
+    },
+    {
+      "id": 33,
+      "name": "Lịch",
+      "isTreasurer": false
+    },
+    {
+      "id": 34,
+      "name": "Đức Anh",
+      "isTreasurer": false
     }
   ],
   "expenses": [
+    {
+      "id": 1785818309376,
+      "amount": 260000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 30,
+          "amount": 37143
+        },
+        {
+          "memberId": 34,
+          "amount": 37143
+        },
+        {
+          "memberId": 11,
+          "amount": 37143
+        },
+        {
+          "memberId": 4,
+          "amount": 37143
+        },
+        {
+          "memberId": 9,
+          "amount": 37143
+        },
+        {
+          "memberId": 8,
+          "amount": 37143
+        },
+        {
+          "memberId": 7,
+          "amount": 37142
+        }
+      ],
+      "note": "Tiền thua bóng đá ngày 2026-07-31 - Mobile thua",
+      "date": "2026-07-31",
+      "createdAt": "2026-08-04T04:38:29.376Z"
+    },
     {
       "id": 1785480061107,
       "amount": 244000,
@@ -5603,6 +5651,6 @@
       "updatedAt": "2026-06-28T16:39:36.052Z"
     }
   },
-  "nextMemberId": 33,
-  "savedAt": "2026-08-02T16:02:00.348Z"
+  "nextMemberId": 35,
+  "savedAt": "2026-08-04T04:38:35.176Z"
 }
