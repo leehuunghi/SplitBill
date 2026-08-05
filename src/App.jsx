@@ -1076,6 +1076,28 @@ const SplitWiseTool = () => {
     [historyOwedExpenses]
   );
 
+  const historySentPayments = useMemo(() => {
+    if (!historyModal.memberId) return [];
+    return payments
+      .filter(p => p.memberId === historyModal.memberId && p.type === 'pay')
+      .filter(p => {
+        if (!monthFilter) return true;
+        return (p.createdAt || '').slice(0, 7) === monthFilter;
+      })
+      .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  }, [payments, historyModal.memberId, monthFilter]);
+
+  const historyReceivedPayments = useMemo(() => {
+    if (!historyModal.memberId) return [];
+    return payments
+      .filter(p => p.memberId === historyModal.memberId && p.type === 'receive')
+      .filter(p => {
+        if (!monthFilter) return true;
+        return (p.createdAt || '').slice(0, 7) === monthFilter;
+      })
+      .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  }, [payments, historyModal.memberId, monthFilter]);
+
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-50 min-h-screen">
       {isAdminView && toast && (
@@ -2108,6 +2130,50 @@ const SplitWiseTool = () => {
                           <div className="text-gray-500">{when}</div>
                         </div>
                         <div className="font-semibold text-red-500">{formatVND(exp.shareAmount)}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="mb-4">
+                <div className="text-xs text-gray-500 mb-2">Tiền đã gửi</div>
+                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                  {historySentPayments.length === 0 && (
+                    <div className="p-3 text-xs text-gray-500">Chưa có khoản nào.</div>
+                  )}
+                  {historySentPayments.map(payment => {
+                    const when = payment.createdAt
+                      ? new Date(payment.createdAt).toLocaleDateString('vi-VN')
+                      : 'Chưa có ngày';
+                    return (
+                      <div key={payment.id} className="p-3 text-xs flex items-center justify-between gap-3">
+                        <div>
+                          <div className="font-medium">{payment.note || 'Thanh toán nợ'}</div>
+                          <div className="text-gray-500">{when}</div>
+                        </div>
+                        <div className="font-semibold text-blue-600">{formatVND(payment.amount)}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 mb-2">Tiền đã nhận</div>
+                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                  {historyReceivedPayments.length === 0 && (
+                    <div className="p-3 text-xs text-gray-500">Chưa có khoản nào.</div>
+                  )}
+                  {historyReceivedPayments.map(payment => {
+                    const when = payment.createdAt
+                      ? new Date(payment.createdAt).toLocaleDateString('vi-VN')
+                      : 'Chưa có ngày';
+                    return (
+                      <div key={payment.id} className="p-3 text-xs flex items-center justify-between gap-3">
+                        <div>
+                          <div className="font-medium">{payment.note || 'Nhận tiền'}</div>
+                          <div className="text-gray-500">{when}</div>
+                        </div>
+                        <div className="font-semibold text-emerald-600">{formatVND(payment.amount)}</div>
                       </div>
                     );
                   })}
