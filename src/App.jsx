@@ -8,6 +8,7 @@ import {
   UserCheck,
   X,
   ShieldCheck,
+  History,
 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 
@@ -243,6 +244,7 @@ const SplitWiseTool = () => {
     memberId: null,
     amount: 0,
   });
+  const [historyModal, setHistoryModal] = useState({ open: false, memberId: null });
   const [qrPayload, setQrPayload] = useState('');
   const [qrLoading, setQrLoading] = useState(false);
   const [qrError, setQrError] = useState('');
@@ -253,6 +255,7 @@ const SplitWiseTool = () => {
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [nextMemberId, setNextMemberId] = useState(1);
   const [monthFilter, setMonthFilter] = useState('');
+  const [personFilter, setPersonFilter] = useState('');
   const [toast, setToast] = useState(null);
   const [lastQrMemberId, setLastQrMemberId] = useState(() => {
     if (typeof window === 'undefined') return null;
@@ -967,9 +970,17 @@ const SplitWiseTool = () => {
   }, [expenses]);
 
   const filteredTransactions = useMemo(() => {
-    if (!monthFilter) return transactions;
-    return transactions.filter(tx => (tx.date || '').slice(0, 7) === monthFilter);
-  }, [transactions, monthFilter]);
+    return transactions.filter(tx => {
+      if (monthFilter && (tx.date || '').slice(0, 7) !== monthFilter) return false;
+      if (personFilter) {
+        const personId = Number(personFilter);
+        const isPayer = tx.payerId === personId;
+        const isParticipant = (tx.splits || []).some(s => s.memberId === personId);
+        if (!isPayer && !isParticipant) return false;
+      }
+      return true;
+    });
+  }, [transactions, monthFilter, personFilter]);
 
   const receivedPayments = useMemo(() => {
     return [...payments].sort((a, b) => {
@@ -1005,6 +1016,65 @@ const SplitWiseTool = () => {
       setMonthFilter(availableMonths[0]);
     }
   }, [availableMonths, monthFilter]);
+
+  const availablePeople = useMemo(() => {
+    const ids = new Set();
+    transactions.forEach(tx => {
+      if (tx.payerId) ids.add(tx.payerId);
+      (tx.splits || []).forEach(s => ids.add(s.memberId));
+    });
+    return members
+      .filter(m => ids.has(m.id))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [transactions, members]);
+
+  const openHistoryForMember = memberId => {
+    setHistoryModal({ open: true, memberId });
+  };
+
+  const closeHistory = () => {
+    setHistoryModal({ open: false, memberId: null });
+  };
+
+  const historyMember = members.find(m => m.id === historyModal.memberId);
+
+  const historyPaidExpenses = useMemo(() => {
+    if (!historyModal.memberId) return [];
+    return expenses
+      .filter(exp => exp.payerId === historyModal.memberId)
+      .filter(exp => {
+        if (!monthFilter) return true;
+        const key = (exp.date || exp.createdAt || '').slice(0, 7);
+        return key === monthFilter;
+      })
+      .sort((a, b) => new Date(b.createdAt || b.date || 0) - new Date(a.createdAt || a.date || 0));
+  }, [expenses, historyModal.memberId, monthFilter]);
+
+  const historyOwedExpenses = useMemo(() => {
+    if (!historyModal.memberId) return [];
+    return expenses
+      .filter(exp => exp.splits.some(s => s.memberId === historyModal.memberId))
+      .filter(exp => {
+        if (!monthFilter) return true;
+        const key = (exp.date || exp.createdAt || '').slice(0, 7);
+        return key === monthFilter;
+      })
+      .map(exp => ({
+        ...exp,
+        shareAmount: exp.splits.find(s => s.memberId === historyModal.memberId)?.amount || 0,
+      }))
+      .sort((a, b) => new Date(b.createdAt || b.date || 0) - new Date(a.createdAt || a.date || 0));
+  }, [expenses, historyModal.memberId, monthFilter]);
+
+  const historyTotalPaid = useMemo(
+    () => historyPaidExpenses.reduce((sum, exp) => sum + exp.amount, 0),
+    [historyPaidExpenses]
+  );
+
+  const historyTotalOwed = useMemo(
+    () => historyOwedExpenses.reduce((sum, exp) => sum + exp.shareAmount, 0),
+    [historyOwedExpenses]
+  );
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-50 min-h-screen">
@@ -1285,11 +1355,34 @@ const SplitWiseTool = () => {
                   );
                 })}
               </select>
+              <span className="text-gray-500">Lọc theo người</span>
+              <select
+                className="border rounded-lg px-3 py-2 text-sm"
+                value={personFilter}
+                onChange={e => setPersonFilter(e.target.value)}
+                disabled={availablePeople.length === 0}
+              >
+                <option value="">Tất cả</option>
+                {availablePeople.map(person => (
+                  <option key={person.id} value={person.id}>
+                    {person.name}
+                  </option>
+                ))}
+              </select>
+              {personFilter && (
+                <button
+                  className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
+                  onClick={() => openHistoryForMember(Number(personFilter))}
+                  title="Xem lịch sử"
+                >
+                  <History size={18} />
+                </button>
+              )}
             </div>
           </div>
           <div className="mt-4 border rounded-lg divide-y max-h-80 overflow-y-auto">
             {filteredTransactions.length === 0 && (
-              <div className="p-4 text-sm text-gray-500">Không có giao dịch trong tháng này.</div>
+              <div className="p-4 text-sm text-gray-500">Không có giao dịch phù hợp.</div>
             )}
             {filteredTransactions.map(tx => {
               const dateLabel = tx.date
@@ -1937,6 +2030,84 @@ const SplitWiseTool = () => {
                           <div className="font-semibold">{formatVND(share)}</div>
                           <div className="text-gray-500">Tổng: {formatVND(exp.amount)}</div>
                         </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {historyModal.open && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md relative">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+              onClick={closeHistory}
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
+            <h4 className="text-lg font-semibold mb-1">
+              Lịch sử: {historyMember?.name || 'Không rõ'}
+            </h4>
+            <p className="text-xs text-gray-500 mb-4">
+              {monthFilter
+                ? `Tháng ${monthFilter.split('-')[1]}/${monthFilter.split('-')[0]}`
+                : 'Tất cả các tháng'}
+            </p>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="border rounded-lg p-3">
+                <div className="text-xs text-gray-500">Tổng đã trả</div>
+                <div className="font-semibold text-emerald-600">{formatVND(historyTotalPaid)}</div>
+              </div>
+              <div className="border rounded-lg p-3">
+                <div className="text-xs text-gray-500">Tổng cần trả</div>
+                <div className="font-semibold text-red-500">{formatVND(historyTotalOwed)}</div>
+              </div>
+            </div>
+            <div className="text-sm">
+              <div className="mb-4">
+                <div className="text-xs text-gray-500 mb-2">Các khoản đã đứng ra chi</div>
+                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                  {historyPaidExpenses.length === 0 && (
+                    <div className="p-3 text-xs text-gray-500">Chưa chi khoản nào.</div>
+                  )}
+                  {historyPaidExpenses.map(exp => {
+                    const when = exp.date
+                      ? new Date(exp.date).toLocaleDateString('vi-VN')
+                      : new Date(exp.createdAt).toLocaleDateString('vi-VN');
+                    return (
+                      <div key={exp.id} className="p-3 text-xs flex items-center justify-between gap-3">
+                        <div>
+                          <div className="font-medium">{exp.note || 'Khoản chi'}</div>
+                          <div className="text-gray-500">{when}</div>
+                        </div>
+                        <div className="font-semibold text-emerald-600">{formatVND(exp.amount)}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 mb-2">Các khoản cần trả (phần chia)</div>
+                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                  {historyOwedExpenses.length === 0 && (
+                    <div className="p-3 text-xs text-gray-500">Chưa tham gia khoản nào.</div>
+                  )}
+                  {historyOwedExpenses.map(exp => {
+                    const when = exp.date
+                      ? new Date(exp.date).toLocaleDateString('vi-VN')
+                      : new Date(exp.createdAt).toLocaleDateString('vi-VN');
+                    return (
+                      <div key={exp.id} className="p-3 text-xs flex items-center justify-between gap-3">
+                        <div>
+                          <div className="font-medium">{exp.note || 'Khoản chi'}</div>
+                          <div className="text-gray-500">{when}</div>
+                        </div>
+                        <div className="font-semibold text-red-500">{formatVND(exp.shareAmount)}</div>
                       </div>
                     );
                   })}
