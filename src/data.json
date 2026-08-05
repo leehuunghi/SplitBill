@@ -4717,6 +4717,14 @@
   ],
   "payments": [
     {
+      "id": 1785897010354,
+      "memberId": 14,
+      "amount": 1000000,
+      "type": "receive",
+      "note": "claim tiền 5/8 vào Techcombank",
+      "createdAt": "2026-08-05T02:30:10.354Z"
+    },
+    {
       "id": 1785895246406,
       "memberId": 3,
       "amount": 1184044,
@@ -5723,5 +5731,5 @@
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {},
   "nextMemberId": 35,
-  "savedAt": "2026-08-05T02:14:31.499Z"
+  "savedAt": "2026-08-05T02:30:10.354Z"
 }
