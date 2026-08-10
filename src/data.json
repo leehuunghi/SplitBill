@@ -101,7 +101,8 @@
     {
       "id": 18,
       "name": "Thái",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "server"
     },
     {
       "id": 19,
@@ -6057,5 +6058,5 @@
     }
   },
   "nextMemberId": 38,
-  "savedAt": "2026-08-10T04:27:47.703Z"
+  "savedAt": "2026-08-10T04:28:00.660Z"
 }
