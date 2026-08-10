@@ -101,7 +101,8 @@
     {
       "id": 18,
       "name": "Thái",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "server"
     },
     {
       "id": 19,
@@ -6045,5 +6046,5 @@
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {},
   "nextMemberId": 37,
-  "savedAt": "2026-08-10T03:54:52.377Z"
+  "savedAt": "2026-08-10T04:28:54.165Z"
 }
