@@ -191,6 +191,44 @@
   ],
   "expenses": [
     {
+      "id": 1786332626754,
+      "amount": 400000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 57143
+        },
+        {
+          "memberId": 4,
+          "amount": 57143
+        },
+        {
+          "memberId": 5,
+          "amount": 57143
+        },
+        {
+          "memberId": 8,
+          "amount": 57143
+        },
+        {
+          "memberId": 9,
+          "amount": 57143
+        },
+        {
+          "memberId": 10,
+          "amount": 57143
+        },
+        {
+          "memberId": 12,
+          "amount": 57142
+        }
+      ],
+      "note": "ăn trưa 5/8",
+      "date": "2026-08-05",
+      "createdAt": "2026-08-10T03:30:26.754Z"
+    },
+    {
       "id": 1786332477797,
       "amount": 360000,
       "payerId": 1,
@@ -5913,5 +5951,5 @@
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {},
   "nextMemberId": 35,
-  "savedAt": "2026-08-10T03:27:57.797Z"
+  "savedAt": "2026-08-10T03:30:26.754Z"
 }
