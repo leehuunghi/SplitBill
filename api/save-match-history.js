@@ -55,12 +55,14 @@ export default async function handler(req, res) {
       updatedAt: new Date().toISOString(),
     };
 
-    const lossResult = await upsertLossExpense(match, lossAmount, dataStore);
+    const saveMeta = { route: '/chiateam', action: `Lưu kết quả trận đấu ngày ${matchDate}` };
+
+    const lossResult = await upsertLossExpense(match, lossAmount, dataStore, saveMeta);
     match.lossAmount = lossResult.lossAmount;
     match.lossExpenseId = lossResult.lossExpenseId;
 
     const matches = sortMatchesDesc([match, ...withoutSameDate]);
-    await matchHistoryStore.write({ matches });
+    await matchHistoryStore.write({ matches }, saveMeta);
     res.status(200).json({ success: true, match, members: computeMemberStats(matches) });
   } catch (error) {
     res.status(500).json({

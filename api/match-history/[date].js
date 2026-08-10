@@ -9,6 +9,7 @@ export default async function handler(req, res) {
 
   try {
     const { date } = req.query;
+    const saveMeta = { route: '/chiateam', action: `Xoá trận đấu ngày ${date}` };
     const historyData = await matchHistoryStore.read();
     const current = Array.isArray(historyData?.matches) ? historyData.matches : [];
     const target = current.find(m => m.date === date);
@@ -21,7 +22,7 @@ export default async function handler(req, res) {
         const expenses = Array.isArray(data.expenses) ? data.expenses : [];
         const nextExpenses = expenses.filter(e => e.id !== target.lossExpenseId);
         if (nextExpenses.length !== expenses.length) {
-          await dataStore.write({ ...data, expenses: nextExpenses, savedAt: new Date().toISOString() });
+          await dataStore.write({ ...data, expenses: nextExpenses, savedAt: new Date().toISOString() }, saveMeta);
         }
       } catch (_error) {
         // Không chặn việc xoá trận nếu dọn khoản chi thất bại
@@ -29,7 +30,7 @@ export default async function handler(req, res) {
     }
 
     const matches = sortMatchesDesc(current.filter(m => m.date !== date));
-    await matchHistoryStore.write({ matches });
+    await matchHistoryStore.write({ matches }, saveMeta);
     res.status(200).json({ success: true, members: computeMemberStats(matches), matches });
   } catch (_error) {
     res.status(500).json({ success: false, error: 'Failed to delete match' });

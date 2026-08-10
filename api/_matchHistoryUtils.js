@@ -38,7 +38,7 @@ export const sortMatchesDesc = matches =>
 // lossAmount <= 0, khoản chi cũ (nếu có) sẽ bị xoá khỏi data.json.
 // `dataStore` phải có { read, write } (vd. dataStore từ ./_utils.js) để tương
 // thích với cả lưu trữ local (fs) lẫn lưu trữ GitHub trên Vercel.
-export const upsertLossExpense = async (match, lossAmountRaw, dataStore) => {
+export const upsertLossExpense = async (match, lossAmountRaw, dataStore, saveMeta) => {
   const lossAmount = Math.round(Number(lossAmountRaw) || 0);
   let data;
   try {
@@ -54,7 +54,7 @@ export const upsertLossExpense = async (match, lossAmountRaw, dataStore) => {
     if (match.lossExpenseId) {
       const nextExpenses = expenses.filter(e => e.id !== match.lossExpenseId);
       if (nextExpenses.length !== expenses.length) {
-        await dataStore.write({ ...data, expenses: nextExpenses, savedAt: new Date().toISOString() });
+        await dataStore.write({ ...data, expenses: nextExpenses, savedAt: new Date().toISOString() }, saveMeta);
       }
     }
     return { lossAmount: 0, lossExpenseId: null };
@@ -93,6 +93,6 @@ export const upsertLossExpense = async (match, lossAmountRaw, dataStore) => {
     expenses.unshift(expense);
   }
 
-  await dataStore.write({ ...data, expenses, savedAt: new Date().toISOString() });
+  await dataStore.write({ ...data, expenses, savedAt: new Date().toISOString() }, saveMeta);
   return { lossAmount, lossExpenseId: expense.id };
 };
