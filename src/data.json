@@ -322,31 +322,35 @@
       "splits": [
         {
           "memberId": 3,
-          "amount": 51429
+          "amount": 45000
         },
         {
           "memberId": 5,
-          "amount": 51429
+          "amount": 45000
         },
         {
           "memberId": 8,
-          "amount": 51429
+          "amount": 45000
         },
         {
           "memberId": 9,
-          "amount": 51429
+          "amount": 45000
         },
         {
           "memberId": 10,
-          "amount": 51429
+          "amount": 45000
         },
         {
           "memberId": 12,
-          "amount": 51429
+          "amount": 45000
         },
         {
           "memberId": 14,
-          "amount": 51426
+          "amount": 45000
+        },
+        {
+          "memberId": 18,
+          "amount": 45000
         }
       ],
       "note": "ăn trưa 4/8",
@@ -6046,5 +6050,5 @@
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {},
   "nextMemberId": 37,
-  "savedAt": "2026-08-10T04:28:54.165Z"
+  "savedAt": "2026-08-10T04:31:41.257Z"
 }
