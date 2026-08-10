@@ -201,6 +201,44 @@
   ],
   "expenses": [
     {
+      "id": 1786333116280,
+      "amount": 340000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 48571
+        },
+        {
+          "memberId": 3,
+          "amount": 48571
+        },
+        {
+          "memberId": 12,
+          "amount": 48571
+        },
+        {
+          "memberId": 32,
+          "amount": 48571
+        },
+        {
+          "memberId": 36,
+          "amount": 48571
+        },
+        {
+          "memberId": 6,
+          "amount": 48571
+        },
+        {
+          "memberId": 5,
+          "amount": 48574
+        }
+      ],
+      "note": "Tiền thua bóng đá ngày 2026-08-06 - Backend thua",
+      "date": "2026-08-06",
+      "createdAt": "2026-08-10T03:38:36.280Z"
+    },
+    {
       "id": 1786332680694,
       "amount": 320000,
       "payerId": 1,
@@ -5999,5 +6037,5 @@
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {},
   "nextMemberId": 37,
-  "savedAt": "2026-08-10T03:36:03.208Z"
+  "savedAt": "2026-08-10T03:38:36.280Z"
 }
