@@ -197,6 +197,11 @@
       "id": 36,
       "name": "Nhật",
       "isTreasurer": false
+    },
+    {
+      "id": 37,
+      "name": "Thái",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -6043,7 +6048,14 @@
   "treasurerBankBin": "970403",
   "treasurerAccountNo": "064307842412",
   "treasurerAccountName": "Le Huu Nghi",
-  "qrCache": {},
-  "nextMemberId": 37,
-  "savedAt": "2026-08-10T03:54:52.377Z"
+  "qrCache": {
+    "16": {
+      "checksum": 40000,
+      "payload": "00020101021238560010A0000007270126000697040301120643078424120208QRIBFTTA53037045405400005802VN62080804LINH6304A57A",
+      "addInfo": "LINH",
+      "updatedAt": "2026-08-10T04:18:47.328Z"
+    }
+  },
+  "nextMemberId": 38,
+  "savedAt": "2026-08-10T04:27:47.703Z"
 }
