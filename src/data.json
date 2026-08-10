@@ -192,6 +192,11 @@
       "id": 35,
       "name": "Tài (em Phát)",
       "isTreasurer": false
+    },
+    {
+      "id": 36,
+      "name": "Nhật",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -5993,6 +5998,6 @@
   "treasurerAccountNo": "064307842412",
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {},
-  "nextMemberId": 36,
-  "savedAt": "2026-08-10T03:35:46.780Z"
+  "nextMemberId": 37,
+  "savedAt": "2026-08-10T03:36:03.208Z"
 }
