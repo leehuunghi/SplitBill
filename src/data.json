@@ -212,7 +212,8 @@
     {
       "id": 39,
       "name": "Thiện",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "server"
     }
   ],
   "expenses": [
@@ -6194,5 +6195,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-14T06:34:27.250Z"
+  "savedAt": "2026-08-14T06:34:48.630Z"
 }
