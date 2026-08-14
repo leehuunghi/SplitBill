@@ -36,63 +36,77 @@ export const sortMatchesDesc = matches =>
 // Dùng match.lossExpenseId để UPDATE đúng khoản chi cũ thay vì tạo trùng mỗi
 // lần lưu lại trận. Nếu không còn đội thua (hoà/chưa có kết quả) hoặc
 // lossAmount <= 0, khoản chi cũ (nếu có) sẽ bị xoá khỏi data.json.
-// `dataStore` phải có { read, write } (vd. dataStore từ ./_utils.js) để tương
-// thích với cả lưu trữ local (fs) lẫn lưu trữ GitHub trên Vercel.
+// `dataStore` phải có `mutate(applyFn, saveMeta)` (vd. dataStore từ
+// ./_utils.js): đọc bản data.json MỚI NHẤT rồi mới áp dụng thay đổi, tránh
+// đè lên các thay đổi khác (vd. từ /api/data-action) xảy ra xen giữa.
 export const upsertLossExpense = async (match, lossAmountRaw, dataStore, saveMeta) => {
   const lossAmount = Math.round(Number(lossAmountRaw) || 0);
-  let data;
-  try {
-    data = await dataStore.read();
-  } catch (_error) {
-    return { lossAmount: 0, lossExpenseId: null };
-  }
-
-  const expenses = Array.isArray(data.expenses) ? data.expenses : [];
   const losingIds = match.result === 'A' ? match.teamB : match.result === 'B' ? match.teamA : [];
 
+  // Không còn đội thua hoặc số tiền <= 0: chỉ cần dọn khoản chi cũ (nếu có).
   if (!losingIds.length || lossAmount <= 0) {
-    if (match.lossExpenseId) {
-      const nextExpenses = expenses.filter(e => e.id !== match.lossExpenseId);
-      if (nextExpenses.length !== expenses.length) {
-        await dataStore.write({ ...data, expenses: nextExpenses, savedAt: new Date().toISOString() }, saveMeta);
-      }
+    if (!match.lossExpenseId) return { lossAmount: 0, lossExpenseId: null };
+    try {
+      await dataStore.mutate(current => {
+        const expenses = Array.isArray(current.expenses) ? current.expenses : [];
+        const nextExpenses = expenses.filter(e => e.id !== match.lossExpenseId);
+        if (nextExpenses.length === expenses.length) return current;
+        return { ...current, expenses: nextExpenses, savedAt: new Date().toISOString() };
+      }, saveMeta);
+    } catch (_error) {
+      // Không chặn luồng lưu trận đấu nếu dọn khoản chi thất bại
     }
     return { lossAmount: 0, lossExpenseId: null };
   }
 
-  const members = Array.isArray(data.members) ? data.members : [];
-  const treasurer = members.find(m => m?.isTreasurer);
-  const payerId = treasurer ? Number(treasurer.id) : Number(members[0]?.id) || null;
-  if (!payerId) {
+  let resultLossExpenseId = null;
+  let noPayer = false;
+
+  try {
+    await dataStore.mutate(current => {
+      const members = Array.isArray(current.members) ? current.members : [];
+      const treasurer = members.find(m => m?.isTreasurer);
+      const payerId = treasurer ? Number(treasurer.id) : Number(members[0]?.id) || null;
+      if (!payerId) {
+        noPayer = true;
+        return current;
+      }
+
+      const expenses = Array.isArray(current.expenses) ? current.expenses : [];
+      const per = Math.round(lossAmount / losingIds.length);
+      const splits = losingIds.map((memberId, idx) => ({
+        memberId,
+        amount: idx === losingIds.length - 1 ? lossAmount - per * (losingIds.length - 1) : per,
+      }));
+      const losingTeamName = match.result === 'A' ? match.teamNames?.B : match.teamNames?.A;
+      const note = `Tiền thua bóng đá ngày ${match.date}${losingTeamName ? ` - ${losingTeamName} thua` : ''}`;
+
+      const existingIdx = expenses.findIndex(e => e.id === match.lossExpenseId);
+      let expense;
+      let nextExpenses;
+      if (existingIdx !== -1) {
+        expense = { ...expenses[existingIdx], amount: lossAmount, payerId, splits, note, date: match.date };
+        nextExpenses = expenses.map((e, idx) => (idx === existingIdx ? expense : e));
+      } else {
+        expense = {
+          id: Date.now(),
+          amount: lossAmount,
+          payerId,
+          splits,
+          note,
+          date: match.date,
+          createdAt: new Date().toISOString(),
+        };
+        nextExpenses = [expense, ...expenses];
+      }
+
+      resultLossExpenseId = expense.id;
+      return { ...current, expenses: nextExpenses, savedAt: new Date().toISOString() };
+    }, saveMeta);
+  } catch (_error) {
     return { lossAmount: 0, lossExpenseId: null };
   }
 
-  const per = Math.round(lossAmount / losingIds.length);
-  const splits = losingIds.map((memberId, idx) => ({
-    memberId,
-    amount: idx === losingIds.length - 1 ? lossAmount - per * (losingIds.length - 1) : per,
-  }));
-  const losingTeamName = match.result === 'A' ? match.teamNames?.B : match.teamNames?.A;
-  const note = `Tiền thua bóng đá ngày ${match.date}${losingTeamName ? ` - ${losingTeamName} thua` : ''}`;
-
-  const existingIdx = expenses.findIndex(e => e.id === match.lossExpenseId);
-  let expense;
-  if (existingIdx !== -1) {
-    expense = { ...expenses[existingIdx], amount: lossAmount, payerId, splits, note, date: match.date };
-    expenses[existingIdx] = expense;
-  } else {
-    expense = {
-      id: Date.now(),
-      amount: lossAmount,
-      payerId,
-      splits,
-      note,
-      date: match.date,
-      createdAt: new Date().toISOString(),
-    };
-    expenses.unshift(expense);
-  }
-
-  await dataStore.write({ ...data, expenses, savedAt: new Date().toISOString() }, saveMeta);
-  return { lossAmount, lossExpenseId: expense.id };
+  if (noPayer) return { lossAmount: 0, lossExpenseId: null };
+  return { lossAmount, lossExpenseId: resultLossExpenseId };
 };

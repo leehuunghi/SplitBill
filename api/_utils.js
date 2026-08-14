@@ -58,6 +58,17 @@ const readGithubJson = async filePath => {
   return JSON.parse(decodeGithubContent(file.content));
 };
 
+// Đọc kèm `sha` hiện tại để dùng cho optimistic-concurrency khi ghi lại
+// (PUT kèm đúng sha vừa đọc; GitHub sẽ từ chối nếu ai đó vừa ghi đè trước).
+const readGithubWithSha = async filePath => {
+  const file = await getGithubFile(filePath);
+  if (!file?.content) {
+    return { data: null, sha: null };
+  }
+
+  return { data: JSON.parse(decodeGithubContent(file.content)), sha: file.sha };
+};
+
 const buildCommitMessage = saveMeta => {
   const at = saveMeta?.at || new Date().toISOString();
   const route = saveMeta?.route || 'unknown-route';
@@ -107,11 +118,16 @@ const writeGithubJson = async (filePath, data, saveMeta) => {
   }
 };
 
+const MUTATE_MAX_ATTEMPTS = 5;
+
 // Kho JSON dùng chung: đọc/ghi qua GitHub Contents API khi có GITHUB_TOKEN
 // (bắt buộc trên Vercel vì filesystem chỉ đọc-ghi tạm thời), hoặc fallback
 // đọc/ghi file cục bộ khi chạy local (vd. `vercel dev`).
 export const createJsonStore = ({ localRelativePath, githubRelativePath, defaultData }) => {
   const localPath = path.join(process.cwd(), localRelativePath);
+  // Serialize các lệnh mutate() trên cùng file trong 1 tiến trình Node, để 2
+  // request local chạy gần như đồng thời không interleave đọc/ghi vào nhau.
+  let localMutationQueue = Promise.resolve();
 
   const read = async () => {
     if (canUseGithubStorage()) {
@@ -147,7 +163,60 @@ export const createJsonStore = ({ localRelativePath, githubRelativePath, default
     return { storage: 'file' };
   };
 
-  return { read, write };
+  // Đọc bản mới nhất -> áp dụng `applyFn` -> ghi lại, với retry thật sự khi
+  // có xung đột: nếu ai đó ghi đè giữa lúc mình đọc và mình ghi, đọc lại bản
+  // mới nhất rồi CHẠY LẠI `applyFn` trên bản đó (không ghi đè lại nội dung
+  // cũ đã tính từ dữ liệu stale). Nhờ vậy 2 request cùng sửa dữ liệu gần như
+  // đồng thời sẽ không làm mất thay đổi của nhau.
+  const mutate = async (applyFn, saveMeta) => {
+    if (canUseGithubStorage()) {
+      for (let attempt = 0; attempt < MUTATE_MAX_ATTEMPTS; attempt += 1) {
+        const { data, sha } = await readGithubWithSha(githubRelativePath);
+        const current = data || defaultData;
+        const next = await applyFn(current);
+        if (next === current) return next;
+        try {
+          await putGithubJson(githubRelativePath, next, sha, saveMeta);
+          return next;
+        } catch (error) {
+          if (error?.status === 409 || error?.status === 422) {
+            continue;
+          }
+          throw error;
+        }
+      }
+      throw new Error('Xung đột dữ liệu, vui lòng thử lại');
+    }
+
+    if (isVercelRuntime()) {
+      throw new Error('Chưa cấu hình GITHUB_TOKEN cho môi trường deploy');
+    }
+
+    const runLocalMutation = async () => {
+      let current;
+      try {
+        const raw = await fs.readFile(localPath, 'utf-8');
+        current = JSON.parse(raw);
+      } catch (_error) {
+        current = defaultData;
+      }
+      const next = await applyFn(current);
+      if (next === current) return next;
+      await fs.writeFile(localPath, JSON.stringify(next, null, 2), 'utf-8');
+      return next;
+    };
+
+    const result = localMutationQueue.then(runLocalMutation, runLocalMutation);
+    // Giữ chain "sống" kể cả khi lệnh này lỗi, để lệnh mutate() tiếp theo
+    // không bị kẹt chờ mãi một promise đã reject.
+    localMutationQueue = result.then(
+      () => undefined,
+      () => undefined
+    );
+    return result;
+  };
+
+  return { read, write, mutate };
 };
 
 export const defaultData = {

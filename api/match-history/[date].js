@@ -18,12 +18,12 @@ export default async function handler(req, res) {
     // tránh để lại khoản chi mồ côi trong data.json.
     if (target?.lossExpenseId) {
       try {
-        const data = await dataStore.read();
-        const expenses = Array.isArray(data.expenses) ? data.expenses : [];
-        const nextExpenses = expenses.filter(e => e.id !== target.lossExpenseId);
-        if (nextExpenses.length !== expenses.length) {
-          await dataStore.write({ ...data, expenses: nextExpenses, savedAt: new Date().toISOString() }, saveMeta);
-        }
+        await dataStore.mutate(current => {
+          const expenses = Array.isArray(current.expenses) ? current.expenses : [];
+          const nextExpenses = expenses.filter(e => e.id !== target.lossExpenseId);
+          if (nextExpenses.length === expenses.length) return current;
+          return { ...current, expenses: nextExpenses, savedAt: new Date().toISOString() };
+        }, saveMeta);
       } catch (_error) {
         // Không chặn việc xoá trận nếu dọn khoản chi thất bại
       }

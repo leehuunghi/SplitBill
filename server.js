@@ -1,31 +1,25 @@
 import 'dotenv/config';
 import express from 'express';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { dataStore, matchHistoryStore, defaultData } from './api/_utils.js';
+import {
+  computeMemberStats,
+  sortMatchesDesc,
+  upsertLossExpense,
+  DEFAULT_TEAM_NAMES,
+  DEFAULT_TEAM_COLORS,
+} from './api/_matchHistoryUtils.js';
+import { applyDataMutation, DataActionError } from './api/_dataMutations.js';
 
 const app = express();
 const PORT = 5174;
-const dataPath = path.resolve('src', 'data.json');
-const matchHistoryPath = path.resolve('src', 'match-history.json');
-const DEFAULT_TEAM_NAMES = { A: 'Đội A', B: 'Đội B' };
-const DEFAULT_TEAM_COLORS = { A: '#059669', B: '#2563eb' };
 
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/api/load', async (_req, res) => {
   try {
-    const raw = await fs.readFile(dataPath, 'utf-8');
-    const data = JSON.parse(raw);
-    res.json(data);
-  } catch (err) {
-    res.status(200).json({
-      members: [],
-      expenses: [],
-      payments: [],
-      treasurerAccount: '',
-      qrCache: {},
-      nextMemberId: 1,
-    });
+    res.json(await dataStore.read());
+  } catch (_err) {
+    res.status(200).json(defaultData);
   }
 });
 
@@ -37,129 +31,29 @@ app.post('/api/save', async (req, res) => {
         `[save] route=${saveMeta.route || 'unknown'} action=${saveMeta.action || 'unknown'} at=${saveMeta.at || ''}`
       );
     }
-    await fs.writeFile(dataPath, JSON.stringify(payload, null, 2), 'utf-8');
-    res.json({ success: true, storage: 'file' });
-  } catch (err) {
+    const result = await dataStore.write(payload, saveMeta);
+    res.json({ success: true, storage: result.storage });
+  } catch (_err) {
     res.status(500).json({ success: false, error: 'Failed to save file' });
   }
 });
 
-// Ngày là khoá duy nhất: mỗi ngày chỉ có tối đa 1 kết quả trận đấu.
-// "members" không được lưu trực tiếp mà luôn tính lại từ "matches" để tránh
-// lệch số liệu khi 1 trận bị lưu đè (upsert theo date).
-const computeMemberStats = matches => {
-  const members = {};
-  const bumpStat = (memberId, key) => {
-    const id = String(memberId);
-    const prev = members[id] || { wins: 0, losses: 0, draws: 0 };
-    members[id] = { ...prev, [key]: (prev[key] || 0) + 1 };
-  };
-  matches.forEach(match => {
-    if (match.result === 'pending') return; // chưa có kết quả -> không tính vào thống kê
-    const idsA = Array.isArray(match.teamA) ? match.teamA : [];
-    const idsB = Array.isArray(match.teamB) ? match.teamB : [];
-    idsA.forEach(id => {
-      if (match.result === 'A') bumpStat(id, 'wins');
-      else if (match.result === 'B') bumpStat(id, 'losses');
-      else bumpStat(id, 'draws');
-    });
-    idsB.forEach(id => {
-      if (match.result === 'B') bumpStat(id, 'wins');
-      else if (match.result === 'A') bumpStat(id, 'losses');
-      else bumpStat(id, 'draws');
-    });
-  });
-  return members;
-};
-
-const sortMatchesDesc = matches =>
-  [...matches].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
-
-const readMatchHistory = async () => {
+// Đọc bản mới nhất trước khi áp dụng action, tránh đè lên thay đổi của
+// người khác vừa lưu xen giữa (xem api/data-action.js / api/_dataMutations.js).
+app.post('/api/data-action', async (req, res) => {
   try {
-    const raw = await fs.readFile(matchHistoryPath, 'utf-8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed.matches) ? parsed.matches : [];
+    const { action, payload, saveMeta } = req.body || {};
+    const data = await dataStore.mutate(current => applyDataMutation(current, action, payload), saveMeta);
+    res.status(200).json({ success: true, data });
   } catch (err) {
-    return [];
+    const status = err instanceof DataActionError ? err.status : 500;
+    res.status(status).json({ success: false, error: err?.message || 'Không thể lưu dữ liệu' });
   }
-};
-
-// Tạo/cập nhật khoản chi "tiền thua" gắn với 1 trận đấu, chia đều cho đội thua.
-// Dùng match.lossExpenseId để UPDATE đúng khoản chi cũ thay vì tạo trùng mỗi
-// lần lưu lại trận. Nếu không còn đội thua (hoà/chưa có kết quả) hoặc
-// lossAmount <= 0, khoản chi cũ (nếu có) sẽ bị xoá khỏi data.json.
-const upsertLossExpense = async (match, lossAmountRaw) => {
-  const lossAmount = Math.round(Number(lossAmountRaw) || 0);
-  let data;
-  try {
-    const raw = await fs.readFile(dataPath, 'utf-8');
-    data = JSON.parse(raw);
-  } catch (err) {
-    return { lossAmount: 0, lossExpenseId: null };
-  }
-
-  const expenses = Array.isArray(data.expenses) ? data.expenses : [];
-  const losingIds =
-    match.result === 'A' ? match.teamB : match.result === 'B' ? match.teamA : [];
-
-  if (!losingIds.length || lossAmount <= 0) {
-    if (match.lossExpenseId) {
-      const nextExpenses = expenses.filter(e => e.id !== match.lossExpenseId);
-      if (nextExpenses.length !== expenses.length) {
-        await fs.writeFile(
-          dataPath,
-          JSON.stringify({ ...data, expenses: nextExpenses, savedAt: new Date().toISOString() }, null, 2),
-          'utf-8'
-        );
-      }
-    }
-    return { lossAmount: 0, lossExpenseId: null };
-  }
-
-  const members = Array.isArray(data.members) ? data.members : [];
-  const treasurer = members.find(m => m?.isTreasurer);
-  const payerId = treasurer ? Number(treasurer.id) : Number(members[0]?.id) || null;
-  if (!payerId) {
-    return { lossAmount: 0, lossExpenseId: null };
-  }
-
-  const per = Math.round(lossAmount / losingIds.length);
-  const splits = losingIds.map((memberId, idx) => ({
-    memberId,
-    amount: idx === losingIds.length - 1 ? lossAmount - per * (losingIds.length - 1) : per,
-  }));
-  const losingTeamName = match.result === 'A' ? match.teamNames?.B : match.teamNames?.A;
-  const note = `Tiền thua bóng đá ngày ${match.date}${losingTeamName ? ` - ${losingTeamName} thua` : ''}`;
-
-  const existingIdx = expenses.findIndex(e => e.id === match.lossExpenseId);
-  let expense;
-  if (existingIdx !== -1) {
-    expense = { ...expenses[existingIdx], amount: lossAmount, payerId, splits, note, date: match.date };
-    expenses[existingIdx] = expense;
-  } else {
-    expense = {
-      id: Date.now(),
-      amount: lossAmount,
-      payerId,
-      splits,
-      note,
-      date: match.date,
-      createdAt: new Date().toISOString(),
-    };
-    expenses.unshift(expense);
-  }
-
-  await fs.writeFile(
-    dataPath,
-    JSON.stringify({ ...data, expenses, savedAt: new Date().toISOString() }, null, 2),
-    'utf-8'
-  );
-  return { lossAmount, lossExpenseId: expense.id };
-};
+});
 
 app.get('/api/match-history/load', async (_req, res) => {
-  const matches = sortMatchesDesc(await readMatchHistory());
+  const historyData = await matchHistoryStore.read();
+  const matches = sortMatchesDesc(Array.isArray(historyData?.matches) ? historyData.matches : []);
   res.json({ members: computeMemberStats(matches), matches });
 });
 
@@ -185,7 +79,8 @@ app.post('/api/save-match-history', async (req, res) => {
       return res.status(400).json({ success: false, error: 'result must be "A", "B", "draw" or "pending"' });
     }
 
-    const current = await readMatchHistory();
+    const historyData = await matchHistoryStore.read();
+    const current = Array.isArray(historyData?.matches) ? historyData.matches : [];
     // Upsert theo date: mỗi ngày chỉ giữ 1 trận, lưu đè nếu đã có.
     const withoutSameDate = current.filter(m => m.date !== matchDate);
     const existing = current.find(m => m.date === matchDate);
@@ -204,14 +99,16 @@ app.post('/api/save-match-history', async (req, res) => {
       updatedAt: new Date().toISOString(),
     };
 
-    const lossResult = await upsertLossExpense(match, lossAmount);
+    const saveMeta = { route: '/chiateam', action: `Lưu kết quả trận đấu ngày ${matchDate}` };
+
+    const lossResult = await upsertLossExpense(match, lossAmount, dataStore, saveMeta);
     match.lossAmount = lossResult.lossAmount;
     match.lossExpenseId = lossResult.lossExpenseId;
 
     const matches = sortMatchesDesc([match, ...withoutSameDate]);
-    await fs.writeFile(matchHistoryPath, JSON.stringify({ matches }, null, 2), 'utf-8');
+    await matchHistoryStore.write({ matches }, saveMeta);
     res.json({ success: true, match, members: computeMemberStats(matches) });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: 'Failed to save match history' });
   }
 });
@@ -219,33 +116,30 @@ app.post('/api/save-match-history', async (req, res) => {
 app.delete('/api/match-history/:date', async (req, res) => {
   try {
     const { date } = req.params;
-    const current = await readMatchHistory();
+    const historyData = await matchHistoryStore.read();
+    const current = Array.isArray(historyData?.matches) ? historyData.matches : [];
     const target = current.find(m => m.date === date);
+    const saveMeta = { route: '/chiateam', action: `Xoá trận đấu ngày ${date}` };
 
     // Xoá trận thì cũng dọn luôn khoản chi tiền thua gắn với trận đó (nếu có),
     // tránh để lại khoản chi mồ côi trong data.json.
     if (target?.lossExpenseId) {
       try {
-        const raw = await fs.readFile(dataPath, 'utf-8');
-        const data = JSON.parse(raw);
-        const expenses = Array.isArray(data.expenses) ? data.expenses : [];
-        const nextExpenses = expenses.filter(e => e.id !== target.lossExpenseId);
-        if (nextExpenses.length !== expenses.length) {
-          await fs.writeFile(
-            dataPath,
-            JSON.stringify({ ...data, expenses: nextExpenses, savedAt: new Date().toISOString() }, null, 2),
-            'utf-8'
-          );
-        }
-      } catch (err) {
+        await dataStore.mutate(currentData => {
+          const expenses = Array.isArray(currentData.expenses) ? currentData.expenses : [];
+          const nextExpenses = expenses.filter(e => e.id !== target.lossExpenseId);
+          if (nextExpenses.length === expenses.length) return currentData;
+          return { ...currentData, expenses: nextExpenses, savedAt: new Date().toISOString() };
+        }, saveMeta);
+      } catch (_error) {
         // Không chặn việc xoá trận nếu dọn khoản chi thất bại
       }
     }
 
     const matches = sortMatchesDesc(current.filter(m => m.date !== date));
-    await fs.writeFile(matchHistoryPath, JSON.stringify({ matches }, null, 2), 'utf-8');
+    await matchHistoryStore.write({ matches }, saveMeta);
     res.json({ success: true, members: computeMemberStats(matches), matches });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: 'Failed to delete match' });
   }
 });
@@ -286,7 +180,7 @@ app.post('/api/vietqr', async (req, res) => {
       return res.status(502).json({ ok: false, error: 'Failed to generate payload', raw: data });
     }
     return res.json({ ok: true, payload: qrData });
-  } catch (err) {
+  } catch (_err) {
     return res.status(500).json({ ok: false, error: 'VietQR API error' });
   }
 });

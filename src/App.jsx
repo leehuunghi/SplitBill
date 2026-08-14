@@ -11,6 +11,7 @@ import {
   History,
 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
+import { getNextMemberId, dropQrCacheEntry, normalizeMemberGroup } from './shared/dataHelpers.js';
 
 const formatVND = value =>
   Number(value || 0).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + 'đ';
@@ -33,22 +34,10 @@ const buildTransferContent = memberName => {
   return normalized.slice(0, 25);
 };
 
-const getNextMemberId = members =>
-  members.reduce((maxId, member) => {
-    const memberId = Number(member?.id) || 0;
-    return memberId > maxId ? memberId : maxId;
-  }, 0) + 1;
-
 const getPaymentAmountLimit = (balance, type) =>
   type === 'pay'
     ? Math.max(0, Math.abs(Math.min(balance, 0)))
     : Math.max(0, Math.max(balance, 0));
-
-const dropQrCacheEntry = (cache, memberId) => {
-  const nextCache = { ...cache };
-  delete nextCache[String(memberId)];
-  return nextCache;
-};
 
 // ID thành viên được cố định làm "Người trả" trên trang /phat.
 const PHAT_FIXED_PAYER_ID = 14;
@@ -59,25 +48,6 @@ const MEMBER_GROUPS = [
   { key: 'server', label: 'Server' },
   { key: 'outside', label: 'Người ngoài' },
 ];
-
-const normalizeMemberGroup = value => {
-  const normalized = String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim()
-    .toLowerCase();
-
-  if (['sep', 'boss', 'leader', 'quan ly', 'manager'].includes(normalized)) return 'boss';
-  if (['mobile', 'app', 'ios', 'android'].includes(normalized)) return 'mobile';
-  if (['server', 'backend', 'be', 'api'].includes(normalized)) return 'server';
-  if (['outside', 'outsider', 'ngoai', 'nguoi ngoai', 'external'].includes(normalized)) {
-    return 'outside';
-  }
-  return 'outside';
-};
-
-const isSameMember = (member, target) =>
-  Number(member?.id) === Number(target?.id) && String(member?.name || '') === String(target?.name || '');
 
 const normalizeLoadedData = rawData => {
   const data = rawData && typeof rawData === 'object' ? rawData : {};
@@ -180,21 +150,22 @@ const isPhatPath = () => {
   return normalizedPathname === '/phat';
 };
 
-// So sánh nội dung dữ liệu thực sự (bỏ qua savedAt) để tránh gọi API lưu
-// khi không có gì thay đổi.
-const getDataSignature = data => {
-  const { savedAt, ...rest } = data || {};
-  return JSON.stringify(rest);
-};
-
-const persistAppState = payload => {
-  return fetch('/api/save', {
+// Gọi 1 mutation atomic ở server (xem api/_dataMutations.js): server luôn
+// đọc bản dữ liệu MỚI NHẤT rồi mới áp dụng thay đổi, nên không bao giờ đè
+// mất thay đổi của người khác đã lưu trước đó (khác với việc gửi nguyên cả
+// state để server ghi đè cả file như cách làm cũ).
+const runDataAction = (action, payload, saveMeta) =>
+  fetch('/api/data-action', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-    keepalive: true,
+    body: JSON.stringify({ action, payload, saveMeta }),
+  }).then(async response => {
+    const json = await response.json().catch(() => null);
+    if (!response.ok || json?.success !== true) {
+      throw new Error(json?.error || 'Không thể lưu dữ liệu');
+    }
+    return json.data;
   });
-};
 
 const SplitWiseTool = () => {
   const isSuperAdmin = isSuperAdminPath();
@@ -263,9 +234,55 @@ const SplitWiseTool = () => {
     const parsedValue = Number(storedValue);
     return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : null;
   });
-  const latestPayloadRef = useRef(null);
   const toastTimerRef = useRef(null);
-  const lastSavedSignatureRef = useRef(null);
+  const saveRouteLabel = isSuperAdmin ? '/superadmin' : isRestrictedAdmin ? '/phat' : '/';
+
+  const showAdminToast = (type, message) => {
+    if (!isAdminView) return;
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ type, message });
+    toastTimerRef.current = setTimeout(() => {
+      setToast(null);
+    }, type === 'success' ? 2200 : 2600);
+  };
+
+  // Đồng bộ state theo đúng bản dữ liệu server trả về sau mỗi action (server
+  // luôn là nguồn dữ liệu đúng, đã merge thay đổi mới nhất từ mọi người).
+  const applyServerData = data => {
+    if (!data) return;
+    if (Array.isArray(data.members)) setMembers(data.members);
+    if (Array.isArray(data.expenses)) setExpenses(data.expenses);
+    if (Array.isArray(data.payments)) setPayments(data.payments);
+    if (typeof data.treasurerAccount === 'string') setTreasurerAccount(data.treasurerAccount);
+    if (typeof data.treasurerBankBin === 'string') setTreasurerBankBin(data.treasurerBankBin);
+    if (typeof data.treasurerAccountNo === 'string') setTreasurerAccountNo(data.treasurerAccountNo);
+    if (typeof data.treasurerAccountName === 'string') setTreasurerAccountName(data.treasurerAccountName);
+    if (data.qrCache && typeof data.qrCache === 'object') setQrCache(data.qrCache);
+    if (typeof data.nextMemberId === 'number') setNextMemberId(data.nextMemberId);
+  };
+
+  // Gọi 1 action lưu ngay lập tức (không debounce/gộp batch vì mỗi action
+  // đã là 1 mutation atomic riêng ở server). Thành công thì đồng bộ toàn bộ
+  // state theo đúng bản server trả về (bản đã merge thay đổi mới nhất, kể cả
+  // của người khác), để không bao giờ hiện dữ liệu cũ/mất đồng bộ.
+  const performDataAction = (
+    action,
+    actionPayload,
+    actionLabel,
+    successMessage = 'Đã lưu thành công'
+  ) => {
+    const saveMeta = { route: saveRouteLabel, action: actionLabel, at: new Date().toISOString() };
+    return runDataAction(action, actionPayload, saveMeta)
+      .then(data => {
+        applyServerData(data);
+        showAdminToast('success', successMessage);
+        return data;
+      })
+      .catch(error => {
+        showAdminToast('error', error?.message || 'Lưu thất bại');
+        throw error;
+      });
+  };
 
   useEffect(() => {
     let active = true;
@@ -308,7 +325,6 @@ const SplitWiseTool = () => {
             memberId: firstNonTreasurer ? firstNonTreasurer.id : '',
           }));
         }
-        lastSavedSignatureRef.current = getDataSignature(normalizedData);
         setIsHydrated(true);
       })
       .catch(() => {
@@ -318,98 +334,6 @@ const SplitWiseTool = () => {
       active = false;
     };
   }, []);
-
-  const payload = useMemo(
-    () => ({
-      members,
-      expenses,
-      payments,
-      treasurerAccount,
-      treasurerBankBin,
-      treasurerAccountNo,
-      treasurerAccountName,
-      qrCache,
-      nextMemberId,
-      savedAt: new Date().toISOString(),
-    }),
-    [
-      members,
-      expenses,
-      payments,
-      treasurerAccount,
-      treasurerBankBin,
-      treasurerAccountNo,
-      treasurerAccountName,
-      qrCache,
-      nextMemberId,
-    ]
-  );
-
-  // Chỉ lưu khi có một hành động tính năng chủ động yêu cầu (qua requestSave()),
-  // không tự động lưu ngay sau khi vừa load trang xong.
-  const pendingSaveRef = useRef(false);
-  const pendingSaveActionRef = useRef('unknown');
-  const saveRouteLabel = isSuperAdmin ? '/superadmin' : isRestrictedAdmin ? '/phat' : '/';
-  const requestSave = (action = 'unknown') => {
-    pendingSaveRef.current = true;
-    pendingSaveActionRef.current = action;
-  };
-
-  useEffect(() => {
-    latestPayloadRef.current = payload;
-    if (!isHydrated) return;
-    if (!pendingSaveRef.current) return;
-    pendingSaveRef.current = false;
-
-    // Nếu dữ liệu thực sự (bỏ qua savedAt) không đổi so với lần lưu gần nhất
-    // thì bỏ qua, tránh gọi API/tạo commit không cần thiết.
-    const signature = getDataSignature(payload);
-    if (signature === lastSavedSignatureRef.current) return;
-
-    const action = pendingSaveActionRef.current || 'unknown';
-    const requestPayload = {
-      ...payload,
-      saveMeta: {
-        route: saveRouteLabel,
-        action,
-        at: new Date().toISOString(),
-      },
-    };
-
-    const timer = setTimeout(() => {
-      persistAppState(requestPayload)
-        .then(async response => {
-          const data = await response.json().catch(() => null);
-          if (!response.ok || data?.success !== true) {
-            throw new Error(data?.error || 'Không thể lưu dữ liệu');
-          }
-
-          lastSavedSignatureRef.current = signature;
-
-          if (!isAdminView) return;
-          if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-          setToast({
-            type: 'success',
-            message: 'Đã lưu thành công',
-          });
-          toastTimerRef.current = setTimeout(() => {
-            setToast(null);
-          }, 2200);
-        })
-        .catch(error => {
-          if (!isAdminView) return;
-          if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-          setToast({
-            type: 'error',
-            message: error?.message || 'Lưu thất bại',
-          });
-          toastTimerRef.current = setTimeout(() => {
-            setToast(null);
-          }, 2600);
-        });
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [payload, isHydrated, isAdminView]);
 
   useEffect(() => {
     return () => {
@@ -425,50 +349,6 @@ const SplitWiseTool = () => {
     }
     window.localStorage.removeItem('splitbill:lastQrMemberId');
   }, [lastQrMemberId]);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-
-    const flushPendingChanges = () => {
-      // Chỉ flush nếu có một hành động tính năng đang chờ lưu (chưa kịp
-      // chạy qua debounce 500ms) — không tự lưu khi không có gì thay đổi.
-      if (!pendingSaveRef.current) return;
-
-      const latestPayload = latestPayloadRef.current;
-      if (!latestPayload || typeof navigator === 'undefined' || !navigator.sendBeacon) {
-        return;
-      }
-
-      const signature = getDataSignature(latestPayload);
-      if (signature === lastSavedSignatureRef.current) {
-        pendingSaveRef.current = false;
-        return;
-      }
-
-      const action = pendingSaveActionRef.current || 'unknown';
-      const body = new Blob(
-        [
-          JSON.stringify({
-            ...latestPayload,
-            saveMeta: {
-              route: saveRouteLabel,
-              action,
-              at: new Date().toISOString(),
-            },
-          }),
-        ],
-        { type: 'application/json' }
-      );
-      navigator.sendBeacon('/api/save', body);
-      lastSavedSignatureRef.current = signature;
-      pendingSaveRef.current = false;
-    };
-
-    window.addEventListener('pagehide', flushPendingChanges);
-    return () => {
-      window.removeEventListener('pagehide', flushPendingChanges);
-    };
-  }, [isHydrated]);
 
   useEffect(() => {
     if (isAdminView) return;
@@ -596,25 +476,27 @@ const SplitWiseTool = () => {
       editingTransaction?.type === 'expense'
         ? expenses.find(expense => expense.id === editingTransaction.id) || null
         : null;
-    const nextExpense = {
-      id: existingExpense?.id || Date.now(),
-      amount,
-      payerId: Number(expenseForm.payerId),
-      splits: computedSplits,
-      note: expenseForm.note.trim(),
-      date: expenseForm.date,
-      createdAt: existingExpense?.createdAt || new Date().toISOString(),
-    };
-    setExpenses(prev =>
-      existingExpense
-        ? prev.map(expense => (expense.id === existingExpense.id ? nextExpense : expense))
-        : [nextExpense, ...prev]
-    );
     const wasEditing = Boolean(existingExpense);
-    setEditingTransaction(null);
-    resetExpenseForm();
-    setActiveAdminPanel(null);
-    requestSave(wasEditing ? 'Sửa khoản chi' : 'Thêm khoản chi');
+    performDataAction(
+      'expense.upsert',
+      {
+        expense: {
+          id: existingExpense?.id,
+          amount,
+          payerId: Number(expenseForm.payerId),
+          splits: computedSplits,
+          note: expenseForm.note.trim(),
+          date: expenseForm.date,
+        },
+      },
+      wasEditing ? 'Sửa khoản chi' : 'Thêm khoản chi'
+    )
+      .then(() => {
+        setEditingTransaction(null);
+        resetExpenseForm();
+        setActiveAdminPanel(null);
+      })
+      .catch(() => {});
   };
 
   const addPayment = () => {
@@ -627,52 +509,37 @@ const SplitWiseTool = () => {
       editingTransaction?.type === 'payment'
         ? payments.find(payment => payment.id === editingTransaction.id) || null
         : null;
-    const nextPayment = {
-      id: existingPayment?.id || Date.now(),
-      memberId,
-      amount,
-      type: paymentForm.type,
-      note: paymentForm.note.trim(),
-      createdAt: existingPayment?.createdAt || new Date().toISOString(),
-    };
-    setPayments(prev =>
-      existingPayment
-        ? prev.map(payment => (payment.id === existingPayment.id ? nextPayment : payment))
-        : [nextPayment, ...prev]
-    );
-    setQrCache(prev => {
-      let nextCache = dropQrCacheEntry(prev, memberId);
-      if (existingPayment && existingPayment.memberId !== memberId) {
-        nextCache = dropQrCacheEntry(nextCache, existingPayment.memberId);
-      }
-      return nextCache;
-    });
-    if (qrModal.memberId === memberId || qrModal.memberId === existingPayment?.memberId) {
-      setQrModal({ open: false, memberId: null, amount: 0 });
-      setQrPayload('');
-      setQrError('');
-      setQrAddInfo('');
-      setQrLoading(false);
-    }
     const wasEditingPayment = Boolean(existingPayment);
-    setEditingTransaction(null);
-    resetPaymentForm();
-    setActiveAdminPanel(null);
-    requestSave(wasEditingPayment ? 'Sửa thanh toán' : 'Thêm thanh toán');
+    performDataAction(
+      'payment.upsert',
+      {
+        payment: {
+          id: existingPayment?.id,
+          memberId,
+          amount,
+          type: paymentForm.type,
+          note: paymentForm.note.trim(),
+        },
+      },
+      wasEditingPayment ? 'Sửa thanh toán' : 'Thêm thanh toán'
+    )
+      .then(() => {
+        if (qrModal.memberId === memberId || qrModal.memberId === existingPayment?.memberId) {
+          setQrModal({ open: false, memberId: null, amount: 0 });
+          setQrPayload('');
+          setQrError('');
+          setQrAddInfo('');
+          setQrLoading(false);
+        }
+        setEditingTransaction(null);
+        resetPaymentForm();
+        setActiveAdminPanel(null);
+      })
+      .catch(() => {});
   };
 
   const deleteExpense = expenseId => {
-    setExpenses(prev => prev.filter(exp => exp.id !== expenseId));
-    requestSave('Xóa khoản chi');
-  };
-
-  const showAdminToast = (type, message) => {
-    if (!isAdminView) return;
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    setToast({ type, message });
-    toastTimerRef.current = setTimeout(() => {
-      setToast(null);
-    }, type === 'success' ? 2200 : 2600);
+    performDataAction('expense.delete', { expenseId }, 'Xóa khoản chi');
   };
 
   const deleteMember = memberId => {
@@ -680,45 +547,30 @@ const SplitWiseTool = () => {
     const targetMember = members.find(member => member.id === memberId);
     if (!targetMember) return;
 
-    if (targetMember.isTreasurer) {
-      showAdminToast('error', 'Không thể xóa thủ quỹ');
-      return;
-    }
-
-    const hasExpenseReference = expenses.some(
-      expense =>
-        expense.payerId === memberId ||
-        (expense.splits || []).some(split => split.memberId === memberId)
-    );
-    const hasPaymentReference = payments.some(payment => payment.memberId === memberId);
-
-    if (hasExpenseReference || hasPaymentReference) {
-      showAdminToast(
-        'error',
-        'Không thể xóa thành viên đã có trong khoản chi hoặc thanh toán'
-      );
-      return;
-    }
-
-    setMembers(prev => prev.filter(member => member.id !== memberId));
-    setExpenseForm(prev => ({
-      ...prev,
-      participants: prev.participants.filter(id => id !== memberId),
-      splits: Object.fromEntries(
-        Object.entries(prev.splits).filter(([id]) => Number(id) !== memberId)
-      ),
-      payerId: Number(prev.payerId) === memberId ? '' : prev.payerId,
-    }));
-    setPaymentForm(prev => ({
-      ...prev,
-      memberId: Number(prev.memberId) === memberId ? '' : prev.memberId,
-    }));
-    setQrCache(prev => dropQrCacheEntry(prev, memberId));
-    if (qrModal.memberId === memberId) {
-      closeQr();
-    }
-    showAdminToast('success', `Đã xóa thành viên ${targetMember.name}`);
-    requestSave(`Xóa thành viên: ${targetMember.name}`);
+    performDataAction(
+      'member.delete',
+      { memberId },
+      `Xóa thành viên: ${targetMember.name}`,
+      `Đã xóa thành viên ${targetMember.name}`
+    )
+      .then(() => {
+        setExpenseForm(prev => ({
+          ...prev,
+          participants: prev.participants.filter(id => id !== memberId),
+          splits: Object.fromEntries(
+            Object.entries(prev.splits).filter(([id]) => Number(id) !== memberId)
+          ),
+          payerId: Number(prev.payerId) === memberId ? '' : prev.payerId,
+        }));
+        setPaymentForm(prev => ({
+          ...prev,
+          memberId: Number(prev.memberId) === memberId ? '' : prev.memberId,
+        }));
+        if (qrModal.memberId === memberId) {
+          closeQr();
+        }
+      })
+      .catch(() => {});
   };
 
   const completeMemberPayment = memberId => {
@@ -737,22 +589,18 @@ const SplitWiseTool = () => {
 
     if (!isConfirmed) return;
 
-    const nextPayment = {
-      id: Date.now(),
-      memberId,
-      amount,
-      type: 'pay',
-      note: 'Complete thanh toán',
-      createdAt: new Date().toISOString(),
-    };
-
-    setPayments(prev => [nextPayment, ...prev]);
-    setQrCache(prev => dropQrCacheEntry(prev, memberId));
-    if (qrModal.memberId === memberId) {
-      closeQr();
-    }
-    showAdminToast('success', `Đã complete thanh toán cho ${member.name}`);
-    requestSave(`Complete thanh toán: ${member.name}`);
+    performDataAction(
+      'payment.upsert',
+      { payment: { memberId, amount, type: 'pay', note: 'Complete thanh toán' } },
+      `Complete thanh toán: ${member.name}`,
+      `Đã complete thanh toán cho ${member.name}`
+    )
+      .then(() => {
+        if (qrModal.memberId === memberId) {
+          closeQr();
+        }
+      })
+      .catch(() => {});
   };
 
   const startEditingTransaction = tx => {
@@ -794,13 +642,12 @@ const SplitWiseTool = () => {
     if (isRestrictedAdmin) return;
     const name = newMemberName.trim();
     if (!name) return;
-    const memberId = getNextMemberId(members);
-    const newMember = { id: memberId, name, isTreasurer: false };
-    setMembers(prev => [...prev, newMember]);
-    setNextMemberId(memberId + 1);
-    setNewMemberName('');
-    setActiveAdminPanel(null);
-    requestSave(`Thêm thành viên: ${name}`);
+    performDataAction('member.add', { name }, `Thêm thành viên: ${name}`)
+      .then(() => {
+        setNewMemberName('');
+        setActiveAdminPanel(null);
+      })
+      .catch(() => {});
   };
 
   const toggleParticipant = id => {
@@ -816,25 +663,28 @@ const SplitWiseTool = () => {
   const selectTreasurer = id => {
     if (isRestrictedAdmin) return;
     const treasurerMember = members.find(m => m.id === id);
-    setMembers(prev => prev.map(m => ({ ...m, isTreasurer: m.id === id })));
-    setExpenseForm(prev => ({
-      ...prev,
-      participants: prev.participants.filter(pid => pid !== id),
-      splits: { ...prev.splits, [id]: undefined },
-    }));
-    requestSave(`Chọn thủ quỹ: ${treasurerMember?.name || id}`);
+    performDataAction(
+      'member.setTreasurer',
+      { memberId: id },
+      `Chọn thủ quỹ: ${treasurerMember?.name || id}`
+    )
+      .then(() => {
+        setExpenseForm(prev => ({
+          ...prev,
+          participants: prev.participants.filter(pid => pid !== id),
+          splits: { ...prev.splits, [id]: undefined },
+        }));
+      })
+      .catch(() => {});
   };
 
   const moveMemberToGroup = (targetMember, groupKey) => {
     const normalizedGroup = normalizeMemberGroup(groupKey);
-    setMembers(prev =>
-      prev.map(member =>
-        isSameMember(member, targetMember)
-          ? { ...member, group: normalizedGroup }
-          : member
-      )
-    );
-    requestSave(`Đổi nhóm: ${targetMember?.name || ''} -> ${normalizedGroup}`);
+    performDataAction(
+      'member.setGroup',
+      { memberId: targetMember?.id, group: normalizedGroup },
+      `Đổi nhóm: ${targetMember?.name || ''} -> ${normalizedGroup}`
+    ).catch(() => {});
   };
 
   const handleMemberDragStart = (member, groupKey) => event => {
@@ -916,15 +766,20 @@ const SplitWiseTool = () => {
         setQrError(data?.error || 'Không tạo được payload VietQR');
       } else {
         setQrPayload(data.payload);
-        setQrCache(prev => ({
-          ...prev,
-          [cacheKey]: {
-            checksum: amount,
-            payload: data.payload,
-            addInfo,
-            updatedAt: new Date().toISOString(),
-          },
-        }));
+        const entry = {
+          checksum: amount,
+          payload: data.payload,
+          addInfo,
+          updatedAt: new Date().toISOString(),
+        };
+        setQrCache(prev => ({ ...prev, [cacheKey]: entry }));
+        // Cache QR chỉ để tránh gọi lại VietQR API, không quan trọng bằng dữ
+        // liệu chính -> lưu ngầm, lỗi thì bỏ qua, không cần toast.
+        runDataAction(
+          'qrCache.upsert',
+          { memberId, entry },
+          { route: saveRouteLabel, action: 'Cache QR', at: new Date().toISOString() }
+        ).catch(() => {});
       }
     } catch (err) {
       setQrError('Không gọi được VietQR API');
@@ -1976,8 +1831,12 @@ const SplitWiseTool = () => {
               <button
                 type="button"
                 onClick={() => {
-                  requestSave('Lưu cấu hình thủ quỹ');
-                  showAdminToast('success', 'Đã lưu cấu hình thủ quỹ');
+                  performDataAction(
+                    'treasurerConfig.update',
+                    { treasurerAccount, treasurerBankBin, treasurerAccountNo, treasurerAccountName },
+                    'Lưu cấu hình thủ quỹ',
+                    'Đã lưu cấu hình thủ quỹ'
+                  ).catch(() => {});
                 }}
                 className="px-4 py-2 rounded-lg bg-gray-900 text-white"
               >
