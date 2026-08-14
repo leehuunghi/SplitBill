@@ -208,6 +208,11 @@
       "id": 38,
       "name": "Hoà",
       "isTreasurer": false
+    },
+    {
+      "id": 39,
+      "name": "Thiện",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -6188,6 +6193,6 @@
       "updatedAt": "2026-08-12T02:31:48.485Z"
     }
   },
-  "nextMemberId": 39,
-  "savedAt": "2026-08-14T03:02:00.424Z"
+  "nextMemberId": 40,
+  "savedAt": "2026-08-14T06:34:27.250Z"
 }
