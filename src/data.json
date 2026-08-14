@@ -212,6 +212,40 @@
   ],
   "expenses": [
     {
+      "id": 1786676520424,
+      "amount": 340000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 4,
+          "amount": 56667
+        },
+        {
+          "memberId": 11,
+          "amount": 56667
+        },
+        {
+          "memberId": 8,
+          "amount": 56667
+        },
+        {
+          "memberId": 35,
+          "amount": 56667
+        },
+        {
+          "memberId": 9,
+          "amount": 56667
+        },
+        {
+          "memberId": 37,
+          "amount": 56665
+        }
+      ],
+      "note": "Tiền thua bóng đá ngày 2026-08-14 - Mobile thua",
+      "date": "2026-08-14",
+      "createdAt": "2026-08-14T03:02:00.424Z"
+    },
+    {
       "id": 1786500464272,
       "amount": 222000,
       "payerId": 14,
@@ -6155,5 +6189,5 @@
     }
   },
   "nextMemberId": 39,
-  "savedAt": "2026-08-14T02:58:46.385Z"
+  "savedAt": "2026-08-14T03:02:00.424Z"
 }
