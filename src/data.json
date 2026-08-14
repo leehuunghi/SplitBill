@@ -203,6 +203,11 @@
       "id": 37,
       "name": "Tuấn Anh",
       "isTreasurer": false
+    },
+    {
+      "id": 38,
+      "name": "Hoà",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -6149,6 +6154,6 @@
       "updatedAt": "2026-08-12T02:31:48.485Z"
     }
   },
-  "nextMemberId": 38,
-  "savedAt": "2026-08-14T02:58:37.586Z"
+  "nextMemberId": 39,
+  "savedAt": "2026-08-14T02:58:46.385Z"
 }
