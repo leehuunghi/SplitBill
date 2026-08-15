@@ -146,7 +146,7 @@
       "id": 26,
       "name": "Nguyên",
       "isTreasurer": false,
-      "group": "mobile"
+      "group": "remove"
     },
     {
       "id": 27,
@@ -6417,5 +6417,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T09:16:18.235Z"
+  "savedAt": "2026-08-15T09:16:21.050Z"
 }
