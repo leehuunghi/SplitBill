@@ -158,7 +158,7 @@
       "id": 28,
       "name": "Khải",
       "isTreasurer": false,
-      "group": "mobile"
+      "group": "remove"
     },
     {
       "id": 29,
@@ -6417,5 +6417,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T09:16:14.521Z"
+  "savedAt": "2026-08-15T09:16:18.235Z"
 }
