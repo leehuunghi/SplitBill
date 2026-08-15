@@ -51,7 +51,7 @@
       "id": 9,
       "name": "Nghị",
       "isTreasurer": false,
-      "group": "mobile"
+      "group": "outside"
     },
     {
       "id": 10,
@@ -6413,5 +6413,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T07:40:10.444Z"
+  "savedAt": "2026-08-15T08:07:51.067Z"
 }
