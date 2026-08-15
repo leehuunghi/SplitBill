@@ -177,7 +177,7 @@
       "id": 32,
       "name": "Việt",
       "isTreasurer": false,
-      "group": "server"
+      "group": "backend-core"
     },
     {
       "id": 33,
@@ -6413,5 +6413,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T08:44:46.137Z"
+  "savedAt": "2026-08-15T08:44:48.842Z"
 }
