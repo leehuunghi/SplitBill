@@ -149,7 +149,8 @@
     {
       "id": 27,
       "name": "Quân",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 28,
@@ -6414,5 +6415,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T09:15:46.784Z"
+  "savedAt": "2026-08-15T09:15:52.034Z"
 }
