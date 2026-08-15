@@ -86,7 +86,8 @@
     {
       "id": 15,
       "name": "Ngọc",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 16,
@@ -6417,5 +6418,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T09:16:30.451Z"
+  "savedAt": "2026-08-15T09:16:48.639Z"
 }
