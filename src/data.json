@@ -120,7 +120,8 @@
     {
       "id": 21,
       "name": "Tú",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 22,
@@ -6419,5 +6420,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T09:17:07.968Z"
+  "savedAt": "2026-08-15T09:17:12.141Z"
 }
