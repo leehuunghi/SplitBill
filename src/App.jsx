@@ -228,6 +228,8 @@ const SplitWiseTool = () => {
   const [monthFilter, setMonthFilter] = useState('');
   const [personFilter, setPersonFilter] = useState('');
   const [toast, setToast] = useState(null);
+  const [isSavingExpense, setIsSavingExpense] = useState(false);
+  const [isSavingPayment, setIsSavingPayment] = useState(false);
   const [lastQrMemberId, setLastQrMemberId] = useState(() => {
     if (typeof window === 'undefined') return null;
     const storedValue = window.localStorage.getItem('splitbill:lastQrMemberId');
@@ -470,13 +472,14 @@ const SplitWiseTool = () => {
     Number(expenseForm.amount || 0) > 0 && splitSum === Number(expenseForm.amount || 0);
 
   const addExpense = () => {
-    if (!splitValid) return;
+    if (!splitValid || isSavingExpense) return;
     const amount = Number(expenseForm.amount);
     const existingExpense =
       editingTransaction?.type === 'expense'
         ? expenses.find(expense => expense.id === editingTransaction.id) || null
         : null;
     const wasEditing = Boolean(existingExpense);
+    setIsSavingExpense(true);
     performDataAction(
       'expense.upsert',
       {
@@ -496,12 +499,14 @@ const SplitWiseTool = () => {
         resetExpenseForm();
         setActiveAdminPanel(null);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setIsSavingExpense(false));
   };
 
   const addPayment = () => {
     if (isRestrictedAdmin) return;
     if (!treasurerId) return;
+    if (isSavingPayment) return;
     const amount = Math.min(Number(paymentForm.amount || 0), paymentAmountLimit);
     if (!amount) return;
     const memberId = Number(paymentForm.memberId);
@@ -510,6 +515,7 @@ const SplitWiseTool = () => {
         ? payments.find(payment => payment.id === editingTransaction.id) || null
         : null;
     const wasEditingPayment = Boolean(existingPayment);
+    setIsSavingPayment(true);
     performDataAction(
       'payment.upsert',
       {
@@ -535,7 +541,8 @@ const SplitWiseTool = () => {
         resetPaymentForm();
         setActiveAdminPanel(null);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setIsSavingPayment(false));
   };
 
   const deleteExpense = expenseId => {
@@ -1208,7 +1215,6 @@ const SplitWiseTool = () => {
           </div>
         </section>
 
-        {!isRestrictedAdmin && (
         <section className="bg-white rounded-xl shadow p-5">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <h3 className="text-lg font-semibold">Danh sách thu chi</h3>
@@ -1336,7 +1342,6 @@ const SplitWiseTool = () => {
             })}
           </div>
         </section>
-        )}
 
         {showFullAdminControls && (
           <section className="bg-white rounded-xl shadow p-5">
@@ -1618,12 +1623,16 @@ const SplitWiseTool = () => {
                   <button
                     type="button"
                     onClick={addExpense}
-                    disabled={!splitValid}
+                    disabled={!splitValid || isSavingExpense}
                     className={`px-4 py-2 rounded-lg text-white ${
-                      splitValid ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'
+                      splitValid && !isSavingExpense ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'
                     }`}
                   >
-                    {editingTransaction?.type === 'expense' ? 'Cập nhật khoản chi' : 'Ghi nhận khoản chi'}
+                    {isSavingExpense
+                      ? 'Đang lưu...'
+                      : editingTransaction?.type === 'expense'
+                        ? 'Cập nhật khoản chi'
+                        : 'Ghi nhận khoản chi'}
                   </button>
                 </div>
               </div>
@@ -1760,14 +1769,16 @@ const SplitWiseTool = () => {
                 <button
                   type="button"
                   onClick={addPayment}
-                  disabled={!treasurerId}
+                  disabled={!treasurerId || isSavingPayment}
                   className={`px-4 py-2 rounded-lg text-white ${
-                    treasurerId ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'
+                    treasurerId && !isSavingPayment ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  {editingTransaction?.type === 'payment'
-                    ? 'Cập nhật thanh toán'
-                    : 'Ghi nhận thanh toán'}
+                  {isSavingPayment
+                    ? 'Đang lưu...'
+                    : editingTransaction?.type === 'payment'
+                      ? 'Cập nhật thanh toán'
+                      : 'Ghi nhận thanh toán'}
                 </button>
               </div>
               {!treasurerId && (
