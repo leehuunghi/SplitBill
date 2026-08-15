@@ -45,7 +45,7 @@
       "id": 8,
       "name": "Tuyến",
       "isTreasurer": false,
-      "group": "mobile"
+      "group": "mobile-ios"
     },
     {
       "id": 9,
@@ -6413,5 +6413,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T08:44:31.110Z"
+  "savedAt": "2026-08-15T08:44:35.063Z"
 }
