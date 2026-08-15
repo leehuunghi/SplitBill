@@ -130,7 +130,8 @@
     {
       "id": 23,
       "name": "Pphạm",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 24,
@@ -6418,5 +6419,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T09:16:48.639Z"
+  "savedAt": "2026-08-15T09:17:07.968Z"
 }
