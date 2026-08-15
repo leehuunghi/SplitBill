@@ -28,7 +28,7 @@ export default function ChiaTeamView() {
   const [treasurerAccountName, setTreasurerAccountName] = useState('');
   const [loadingMembers, setLoadingMembers] = useState(true);
   const [membersError, setMembersError] = useState('');
-  const [tab, setTab] = useState('doihinh'); // 'doihinh' | 'lichsu'
+  const [tab, setTab] = useState('lichsu'); // 'doihinh' | 'lichsu'
   const [matchHistory, setMatchHistory] = useState(emptyMatchHistory);
   const [loadingHistory, setLoadingHistory] = useState(true);
 
@@ -109,21 +109,21 @@ export default function ChiaTeamView() {
           <div className="flex rounded-lg border bg-white shadow-sm overflow-hidden w-fit">
             <button
               type="button"
-              onClick={() => setTab('doihinh')}
-              className={`px-4 py-2 text-sm font-medium flex items-center gap-1.5 ${
-                tab === 'doihinh' ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              <Shirt size={16} /> Đội hình
-            </button>
-            <button
-              type="button"
               onClick={() => setTab('lichsu')}
               className={`px-4 py-2 text-sm font-medium flex items-center gap-1.5 ${
                 tab === 'lichsu' ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               <History size={16} /> Lịch sử trận đấu
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('doihinh')}
+              className={`px-4 py-2 text-sm font-medium flex items-center gap-1.5 ${
+                tab === 'doihinh' ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <Shirt size={16} /> Đội hình
             </button>
           </div>
         </header>

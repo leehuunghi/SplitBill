@@ -9,6 +9,7 @@ import {
   X,
   ShieldCheck,
   History,
+  Goal,
 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getNextMemberId, dropQrCacheEntry, normalizeMemberGroup } from './shared/dataHelpers.js';
@@ -995,6 +996,12 @@ const SplitWiseTool = () => {
             <h1 className="text-2xl font-bold">Tool Chia Tiền Nhóm</h1>
           </div>
           <div className="flex items-center gap-3">
+            <a
+              href="/chiateam"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border bg-white shadow-sm text-gray-600 hover:bg-gray-100"
+            >
+              <Goal size={16} /> Football
+            </a>
             {isSuperAdmin && (
               <>
                 <div className="flex items-center gap-2 text-sm">
