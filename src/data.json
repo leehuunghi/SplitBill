@@ -75,7 +75,7 @@
       "id": 13,
       "name": "Nhân",
       "isTreasurer": false,
-      "group": "mobile"
+      "group": "remove"
     },
     {
       "id": 14,
@@ -6417,5 +6417,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T09:16:21.050Z"
+  "savedAt": "2026-08-15T09:16:25.557Z"
 }
