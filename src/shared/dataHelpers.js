@@ -18,12 +18,25 @@ const DIACRITICS_REGEX = new RegExp(
   'g'
 );
 
+const CANONICAL_GROUPS = [
+  'boss',
+  'mobile-android',
+  'mobile-ios',
+  'backend-common',
+  'backend-devops',
+  'backend-core',
+  'outside',
+  'remove',
+];
+
 export const normalizeMemberGroup = value => {
   const normalized = String(value || '')
     .normalize('NFD')
     .replace(DIACRITICS_REGEX, '')
     .trim()
     .toLowerCase();
+
+  if (CANONICAL_GROUPS.includes(normalized)) return normalized;
 
   if (['sep', 'boss', 'leader', 'quan ly', 'manager'].includes(normalized)) return 'boss';
   if (['android', 'mobile android'].includes(normalized)) return 'mobile-android';

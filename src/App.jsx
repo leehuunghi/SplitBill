@@ -43,14 +43,14 @@ const getPaymentAmountLimit = (balance, type) =>
 const PHAT_FIXED_PAYER_ID = 14;
 
 const MEMBER_GROUPS = [
-  { key: 'boss', label: 'Sếp' },
-  { key: 'mobile-android', label: 'Mobile - Android' },
-  { key: 'mobile-ios', label: 'Mobile - iOS' },
-  { key: 'backend-common', label: 'Backend - Common' },
-  { key: 'backend-devops', label: 'Backend - Dev Ops' },
-  { key: 'backend-core', label: 'Backend - Core' },
-  { key: 'outside', label: 'Người ngoài' },
-  { key: 'remove', label: 'Remove' },
+  { key: 'boss', label: 'Sếp', section: 'boss', sectionLabel: 'Sếp' },
+  { key: 'mobile-android', label: 'Android', section: 'mobile', sectionLabel: 'Mobile' },
+  { key: 'mobile-ios', label: 'iOS', section: 'mobile', sectionLabel: 'Mobile' },
+  { key: 'backend-common', label: 'Common', section: 'backend', sectionLabel: 'Backend' },
+  { key: 'backend-devops', label: 'Dev Ops', section: 'backend', sectionLabel: 'Backend' },
+  { key: 'backend-core', label: 'Core', section: 'backend', sectionLabel: 'Backend' },
+  { key: 'outside', label: 'Người ngoài', section: 'outside', sectionLabel: 'Người ngoài' },
+  { key: 'remove', label: 'Remove', section: 'remove', sectionLabel: 'Remove' },
 ];
 
 const normalizeLoadedData = rawData => {
@@ -405,6 +405,18 @@ const SplitWiseTool = () => {
       })),
     [eligibleParticipants]
   );
+  const participantSections = useMemo(() => {
+    const sections = [];
+    participantGroups.forEach(group => {
+      let section = sections.find(s => s.section === group.section);
+      if (!section) {
+        section = { section: group.section, sectionLabel: group.sectionLabel, groups: [] };
+        sections.push(section);
+      }
+      section.groups.push(group);
+    });
+    return sections;
+  }, [participantGroups]);
   const editingPayment =
     editingTransaction?.type === 'payment'
       ? payments.find(payment => payment.id === editingTransaction.id) || null
@@ -1486,53 +1498,83 @@ const SplitWiseTool = () => {
                   </button>
                 </div>
                 <div className="mt-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-                  {participantGroups.map(group => (
-                    <div
-                      key={group.key}
-                      onDragOver={handleGroupDragOver(group.key)}
-                      onDrop={handleGroupDrop(group.key)}
-                      onDragLeave={handleGroupDragLeave(group.key)}
-                      className={`rounded-xl border p-3 transition-colors ${
-                        dragOverGroup === group.key
-                          ? 'border-gray-900 bg-gray-100'
-                          : 'border-gray-200 bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2 mb-3">
-                        <span className="font-medium">{group.label}</span>
-                        <span className="text-xs text-gray-500">
-                          {group.members.filter(m => expenseForm.participants.includes(m.id)).length}/
-                          {group.members.length}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {group.members.length === 0 && (
-                          <div className="text-xs text-gray-400">Chưa có thành viên</div>
-                        )}
-                        {group.members.map(m => {
-                          const active = expenseForm.participants.includes(m.id);
-                          return (
-                            <button
-                              key={`${m.id}-${m.name}`}
-                              type="button"
-                              draggable
-                              onClick={() => toggleParticipant(m.id)}
-                              onDragStart={handleMemberDragStart(m, group.key)}
-                              onDragEnd={handleMemberDragEnd}
-                              className={`px-3 py-2 rounded-lg border text-sm text-left transition-all ${
-                                active
-                                  ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm ring-2 ring-indigo-200'
-                                  : 'bg-white border-gray-200 text-gray-700 hover:border-indigo-300 hover:bg-indigo-50'
+                  {participantSections.map(section => {
+                    const sectionMemberCount = section.groups.reduce(
+                      (sum, group) => sum + group.members.length,
+                      0
+                    );
+                    const sectionActiveCount = section.groups.reduce(
+                      (sum, group) =>
+                        sum + group.members.filter(m => expenseForm.participants.includes(m.id)).length,
+                      0
+                    );
+                    const nested = section.groups.length > 1;
+                    return (
+                      <div key={section.section} className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <span className="font-medium">{section.sectionLabel}</span>
+                          <span className="text-xs text-gray-500">
+                            {sectionActiveCount}/{sectionMemberCount}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          {section.groups.map(group => (
+                            <div
+                              key={group.key}
+                              onDragOver={handleGroupDragOver(group.key)}
+                              onDrop={handleGroupDrop(group.key)}
+                              onDragLeave={handleGroupDragLeave(group.key)}
+                              className={`rounded-lg transition-colors ${
+                                nested ? 'border p-2' : ''
+                              } ${
+                                dragOverGroup === group.key
+                                  ? 'border-gray-900 bg-gray-100'
+                                  : nested
+                                  ? 'border-gray-200 bg-white'
+                                  : ''
                               }`}
                             >
-                              {active && <UserCheck size={14} className="inline mr-1" />}
-                              {m.name}
-                            </button>
-                          );
-                        })}
+                              {nested && (
+                                <div className="flex items-center justify-between gap-2 mb-2">
+                                  <span className="text-xs font-medium text-gray-500">{group.label}</span>
+                                  <span className="text-xs text-gray-400">
+                                    {group.members.filter(m => expenseForm.participants.includes(m.id)).length}/
+                                    {group.members.length}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex flex-col gap-2">
+                                {group.members.length === 0 && (
+                                  <div className="text-xs text-gray-400">Chưa có thành viên</div>
+                                )}
+                                {group.members.map(m => {
+                                  const active = expenseForm.participants.includes(m.id);
+                                  return (
+                                    <button
+                                      key={`${m.id}-${m.name}`}
+                                      type="button"
+                                      draggable
+                                      onClick={() => toggleParticipant(m.id)}
+                                      onDragStart={handleMemberDragStart(m, group.key)}
+                                      onDragEnd={handleMemberDragEnd}
+                                      className={`px-3 py-2 rounded-lg border text-sm text-left transition-all ${
+                                        active
+                                          ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm ring-2 ring-indigo-200'
+                                          : 'bg-white border-gray-200 text-gray-700 hover:border-indigo-300 hover:bg-indigo-50'
+                                      }`}
+                                    >
+                                      {active && <UserCheck size={14} className="inline mr-1" />}
+                                      {m.name}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
               <div className="text-sm">

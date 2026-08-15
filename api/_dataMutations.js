@@ -76,6 +76,10 @@ const actions = {
   'member.setGroup': (base, payload) => {
     const memberId = Number(payload?.memberId);
     const group = normalizeMemberGroup(payload?.group);
+    const target = base.members.find(m => m.id === memberId);
+    if (!target) throw new DataActionError('Không tìm thấy thành viên');
+    if (normalizeMemberGroup(target.group) === group) return base;
+
     return {
       ...base,
       members: base.members.map(m => (m.id === memberId ? { ...m, group } : m)),
@@ -165,5 +169,9 @@ export const applyDataMutation = (data, action, payload) => {
   const handler = actions[action];
   if (!handler) throw new DataActionError(`Action không hợp lệ: ${action}`);
   const base = normalizeBase(data);
-  return withSavedAt(handler(base, payload));
+  const result = handler(base, payload);
+  // Handler trả về đúng `base` (không đổi gì) -> trả lại `data` gốc để
+  // dataStore.mutate() nhận ra no-op (next === current) và bỏ qua ghi/commit.
+  if (result === base) return data;
+  return withSavedAt(result);
 };
