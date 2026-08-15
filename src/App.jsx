@@ -44,9 +44,13 @@ const PHAT_FIXED_PAYER_ID = 14;
 
 const MEMBER_GROUPS = [
   { key: 'boss', label: 'Sếp' },
-  { key: 'mobile', label: 'Mobile' },
-  { key: 'server', label: 'Server' },
+  { key: 'mobile-android', label: 'Mobile - Android' },
+  { key: 'mobile-ios', label: 'Mobile - iOS' },
+  { key: 'backend-common', label: 'Backend - Common' },
+  { key: 'backend-devops', label: 'Backend - Dev Ops' },
+  { key: 'backend-core', label: 'Backend - Core' },
   { key: 'outside', label: 'Người ngoài' },
+  { key: 'remove', label: 'Remove' },
 ];
 
 const normalizeLoadedData = rawData => {
@@ -1155,7 +1159,7 @@ const SplitWiseTool = () => {
 
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             {members
-              .filter(m => !m.isTreasurer)
+              .filter(m => !m.isTreasurer && normalizeMemberGroup(m.group) !== 'remove')
               .slice()
               .sort((a, b) => {
                 if (isAdminView || !lastQrMemberId) return 0;

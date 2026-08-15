@@ -26,8 +26,18 @@ export const normalizeMemberGroup = value => {
     .toLowerCase();
 
   if (['sep', 'boss', 'leader', 'quan ly', 'manager'].includes(normalized)) return 'boss';
-  if (['mobile', 'app', 'ios', 'android'].includes(normalized)) return 'mobile';
-  if (['server', 'backend', 'be', 'api'].includes(normalized)) return 'server';
+  if (['android', 'mobile android'].includes(normalized)) return 'mobile-android';
+  if (['ios', 'mobile ios'].includes(normalized)) return 'mobile-ios';
+  if (['mobile', 'app'].includes(normalized)) return 'mobile-android';
+  if (['common', 'backend common'].includes(normalized)) return 'backend-common';
+  if (['dev ops', 'devops', 'backend dev ops', 'backend devops'].includes(normalized)) {
+    return 'backend-devops';
+  }
+  if (['core', 'backend core'].includes(normalized)) return 'backend-core';
+  if (['server', 'backend', 'be', 'api'].includes(normalized)) return 'backend-common';
+  if (['remove', 'removed', 'xoa', 'an', 'hidden', 'archive', 'archived'].includes(normalized)) {
+    return 'remove';
+  }
   if (['outside', 'outsider', 'ngoai', 'nguoi ngoai', 'external'].includes(normalized)) {
     return 'outside';
   }

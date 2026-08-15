@@ -20,9 +20,13 @@ export const teamMetaFromMatch = match => ({
 
 export const GROUP_LABELS = {
   boss: 'Sếp',
-  mobile: 'Mobile',
-  server: 'Server',
+  'mobile-android': 'Mobile - Android',
+  'mobile-ios': 'Mobile - iOS',
+  'backend-common': 'Backend - Common',
+  'backend-devops': 'Backend - Dev Ops',
+  'backend-core': 'Backend - Core',
   outside: 'Người ngoài',
+  remove: 'Remove',
 };
 
 export const groupLabel = group => GROUP_LABELS[group] || 'Khác';
