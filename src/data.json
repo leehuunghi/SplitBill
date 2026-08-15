@@ -81,7 +81,7 @@
       "id": 14,
       "name": "Phát",
       "isTreasurer": false,
-      "group": "server"
+      "group": "backend-devops"
     },
     {
       "id": 15,
@@ -6413,5 +6413,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-15T08:44:35.063Z"
+  "savedAt": "2026-08-15T08:44:43.605Z"
 }
