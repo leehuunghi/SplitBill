@@ -524,7 +524,7 @@ const SplitWiseTool = () => {
     if (isRestrictedAdmin) return;
     if (!treasurerId) return;
     if (isSavingPayment) return;
-    const amount = Math.min(Number(paymentForm.amount || 0), paymentAmountLimit);
+    const amount = Number(paymentForm.amount || 0);
     if (!amount) return;
     const memberId = Number(paymentForm.memberId);
     const existingPayment =
@@ -1737,9 +1737,7 @@ const SplitWiseTool = () => {
                   onChange={e =>
                     setPaymentForm(prev => ({
                       ...prev,
-                      amount: String(
-                        Math.min(Number(e.target.value || 0), paymentAmountLimit) || ''
-                      ),
+                      amount: e.target.value,
                     }))
                   }
                   onFocus={() =>
@@ -1748,7 +1746,6 @@ const SplitWiseTool = () => {
                       amount: paymentAmountLimit ? String(paymentAmountLimit) : '',
                     }))
                   }
-                  max={paymentAmountLimit || undefined}
                   placeholder="VD: 100000"
                 />
               </label>
