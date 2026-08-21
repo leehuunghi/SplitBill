@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Shuffle, Users, Trophy, History, Check, CalendarDays } from 'lucide-react';
+import { Shuffle, Users, Trophy, History, Check, CalendarDays, Scale } from 'lucide-react';
 import {
   GROUP_LABELS,
   groupLabel,
@@ -18,8 +18,11 @@ import {
   TeamBoard,
   Leaderboard,
   MatchList,
+  RatingGuide,
   useLeaderboard,
+  usePlayerRatings,
 } from './chiaTeamShared.jsx';
+import { splitBalancedTeams, teamAverageStars } from './playerRating.js';
 
 const TEAM_FIELD = { A: 'teamA', B: 'teamB' };
 
@@ -43,6 +46,7 @@ export default function ChiaTeamAdmin() {
   const [teamMeta, setTeamMeta] = useState(DEFAULT_TEAM_META); // { A: {name,color}, B: {name,color} }
   const [lossAmount, setLossAmount] = useState(''); // chuỗi số đã format dấu chấm, vd "100.000"
   const [courtAmount, setCourtAmount] = useState(''); // tiền sân, chia đều cho tất cả người tham gia
+  const [balanceTeams, setBalanceTeams] = useState(true); // chia đội cân theo level (sao) thay vì random thuần
 
   useEffect(() => {
     let cancelled = false;
@@ -134,7 +138,9 @@ export default function ChiaTeamAdmin() {
 
   const handleRandom = () => {
     if (selectedIds.length < 2) return;
-    setTeams(splitIntoTeams(selectedIds));
+    // Cân theo level: vẫn ngẫu nhiên, nhưng chỉ bốc trong nhóm các cách chia
+    // có sao trung bình 2 đội sát nhau nhất.
+    setTeams(balanceTeams ? splitBalancedTeams(selectedIds, playerRatings.byId) : splitIntoTeams(selectedIds));
     setSaveMessage('');
   };
 
@@ -246,7 +252,8 @@ export default function ChiaTeamAdmin() {
     setTab('chia');
   };
 
-  const leaderboard = useLeaderboard(matchHistory, memberName);
+  const playerRatings = usePlayerRatings(matchHistory);
+  const leaderboard = useLeaderboard(matchHistory, memberName, playerRatings.byId);
 
   const groupedMembers = useMemo(() => {
     const groups = {};
@@ -386,14 +393,26 @@ export default function ChiaTeamAdmin() {
               )}
 
               <div className="mt-5">
-                <button
-                  type="button"
-                  onClick={handleRandom}
-                  disabled={selectedIds.length < 2}
-                  className="px-4 py-2.5 rounded-lg bg-emerald-600 text-white font-medium flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-emerald-700"
-                >
-                  <Shuffle size={18} /> Random chia đội hình
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleRandom}
+                    disabled={selectedIds.length < 2}
+                    className="px-4 py-2.5 rounded-lg bg-emerald-600 text-white font-medium flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-emerald-700"
+                  >
+                    <Shuffle size={18} /> Random chia đội hình
+                  </button>
+                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={balanceTeams}
+                      onChange={e => setBalanceTeams(e.target.checked)}
+                      className="w-4 h-4 accent-emerald-600"
+                    />
+                    <Scale size={15} className="text-gray-500" />
+                    Cân bằng theo level (sao)
+                  </label>
+                </div>
                 {selectedIds.length > 0 && selectedIds.length < 2 && (
                   <p className="text-xs text-gray-500 mt-2">Cần chọn ít nhất 2 người để chia đội.</p>
                 )}
@@ -405,12 +424,20 @@ export default function ChiaTeamAdmin() {
                 <h3 className="text-lg font-semibold mb-4">Đội hình ngày {matchDate}</h3>
                 <p className="text-xs text-gray-400 mb-4">
                   Kéo thành viên giữa 2 đội để tự sắp xếp lại. Có thể đổi tên và màu đội ngay trên tiêu đề.
+                  {(() => {
+                    const gap = Math.abs(
+                      teamAverageStars(teams.teamA, playerRatings.byId) -
+                        teamAverageStars(teams.teamB, playerRatings.byId)
+                    );
+                    return ` Chênh lệch sao trung bình giữa 2 đội: ${gap.toFixed(1)}★.`;
+                  })()}
                 </p>
 
                 <TeamBoard
                   teamA={teams.teamA}
                   teamB={teams.teamB}
                   memberName={memberName}
+                  ratingById={playerRatings.byId}
                   teamMeta={teamMeta}
                   editable
                   onTeamMetaChange={handleTeamMetaChange}
@@ -533,11 +560,13 @@ export default function ChiaTeamAdmin() {
                 Tải lại
               </button>
             </div>
+            <RatingGuide />
             <Leaderboard leaderboard={leaderboard} loading={loadingHistory} />
             <h3 className="text-lg font-semibold mb-3">Các trận gần đây</h3>
             <MatchList
               matches={matchHistory.matches}
               memberName={memberName}
+              ratingEvents={playerRatings.eventsByMatchId}
               onEdit={handleEditMatch}
               onDelete={handleDeleteMatch}
             />
