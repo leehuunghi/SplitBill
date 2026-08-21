@@ -225,6 +225,44 @@
   ],
   "expenses": [
     {
+      "id": 1787302815551,
+      "amount": 565000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 80714
+        },
+        {
+          "memberId": 4,
+          "amount": 80714
+        },
+        {
+          "memberId": 7,
+          "amount": 80714
+        },
+        {
+          "memberId": 8,
+          "amount": 80714
+        },
+        {
+          "memberId": 9,
+          "amount": 80714
+        },
+        {
+          "memberId": 10,
+          "amount": 80714
+        },
+        {
+          "memberId": 11,
+          "amount": 80716
+        }
+      ],
+      "note": "ăn trưa 21/8 phở 24",
+      "date": "2026-08-21",
+      "createdAt": "2026-08-21T09:00:15.551Z"
+    },
+    {
       "id": 1787302771293,
       "amount": 240000,
       "payerId": 1,
@@ -6986,5 +7024,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-21T08:59:31.293Z"
+  "savedAt": "2026-08-21T09:00:15.551Z"
 }
