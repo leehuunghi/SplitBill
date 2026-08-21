@@ -44,6 +44,28 @@ export const starsFromRating = rating => {
   return 3;
 };
 
+// Bảng quy đổi 2 CHIỀU sao <-> rating, dùng đúng các mốc trong STAR_OFFSETS
+// nên round-trip khớp nhau: ratingFromStars(5) -> starsFromRating(...) vẫn
+// ra 5. Dùng khi admin XẾP HẠNG BAN ĐẦU thủ công (baseline) — chọn 1 mức
+// sao là quy được ra rating khởi điểm tương ứng.
+export const STAR_RATING_TABLE = [
+  ...STAR_OFFSETS.map(({ offset, stars }) => ({ stars, rating: BASE_RATING + offset })),
+  { stars: 3, rating: BASE_RATING },
+  ...STAR_OFFSETS.map(({ offset, stars }) => ({
+    stars: Number((MAX_STARS + MIN_STARS - stars).toFixed(1)),
+    rating: BASE_RATING - offset,
+  })),
+];
+
+export const STAR_LEVELS = STAR_RATING_TABLE.map(e => e.stars).sort((a, b) => b - a);
+
+export const ratingFromStars = stars => {
+  const entry = STAR_RATING_TABLE.find(e => e.stars === Number(stars));
+  return entry ? entry.rating : BASE_RATING;
+};
+
+export const isValidStarLevel = stars => STAR_RATING_TABLE.some(e => e.stars === Number(stars));
+
 // Người mới đá điểm nhảy mạnh cho nhanh về đúng trình, đá nhiều rồi thì
 // điểm ổn định dần (1 trận bất thường không làm rơi hạng ngay).
 export const kFactor = played => {
@@ -83,13 +105,21 @@ const averageRating = (ids, getRating) =>
 
 // Phát lại toàn bộ lịch sử để ra rating/sao hiện tại của từng người.
 //
+// `baseline`: { [memberId]: sốSao } admin xếp hạng thủ công ở tab "Level ban
+// đầu" — dùng làm ĐIỂM XUẤT PHÁT thay vì mặc định 1000/3★ cho những người có
+// trong bảng này, để tránh 1 người chơi giỏi nhưng chỉ mới đá vài trận (số
+// liệu ít, dễ lệch/"cảm tính") bị xếp ngang người mới. Có baseline thì
+// KHÔNG còn là "tạm tính" nữa dù chưa đủ 3 trận, vì đây là đánh giá có chủ
+// đích của admin chứ không phải suy ra từ mẫu nhỏ. Match sau đó vẫn cộng/trừ
+// điểm bình thường từ mốc này.
+//
 // Trả về:
 //   byId: { [memberId]: { rating, stars, played, wins, losses, draws, streak,
-//                         provisional, lastDelta } }
+//                         provisional, seeded, lastDelta } }
 //   eventsByMatchId: { [match.id]: { deltas: {id: điểm +/-},
 //                                    promotions: [{id, stars}],
 //                                    demotions: [{id, stars}] } }
-export const computePlayerRatings = matches => {
+export const computePlayerRatings = (matches, baseline = {}) => {
   const list = Array.isArray(matches) ? matches : [];
   // Lịch sử được lưu giảm dần theo ngày, phải đảo lại mới phát đúng thứ tự.
   const chronological = [...list].sort((a, b) => (a?.date < b?.date ? -1 : a?.date > b?.date ? 1 : 0));
@@ -101,6 +131,17 @@ export const computePlayerRatings = matches => {
     if (!state.has(key)) state.set(key, emptyPlayer());
     return state.get(key);
   };
+
+  Object.entries(baseline || {}).forEach(([id, stars]) => {
+    if (!isValidStarLevel(stars)) return;
+    const player = emptyPlayer();
+    const level = Number(stars);
+    player.rating = ratingFromStars(level);
+    player.stars = level;
+    player.bestRating = player.rating;
+    player.seeded = true;
+    state.set(Number(id), player);
+  });
 
   chronological.forEach(match => {
     if (!match || match.result === 'pending') return; // chưa có kết quả -> chưa tính điểm
@@ -168,8 +209,11 @@ export const computePlayerRatings = matches => {
   state.forEach((player, id) => {
     byId[id] = {
       ...player,
-      // Dưới 3 trận thì số sao mới chỉ là ước lượng, chưa đủ dữ liệu để tin.
-      provisional: player.played < PROVISIONAL_MATCHES,
+      seeded: Boolean(player.seeded),
+      // Dưới 3 trận thì số sao mới chỉ là ước lượng, chưa đủ dữ liệu để tin
+      // — TRỪ KHI admin đã xếp hạng ban đầu thủ công (seeded), lúc đó không
+      // còn là suy đoán từ mẫu nhỏ nữa.
+      provisional: player.played < PROVISIONAL_MATCHES && !player.seeded,
     };
   });
 

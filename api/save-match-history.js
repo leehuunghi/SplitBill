@@ -65,7 +65,7 @@ export default async function handler(req, res) {
     match.lossExpenseId = expenseResult.lossExpenseId;
 
     const matches = sortMatchesDesc([match, ...withoutSameDate]);
-    await matchHistoryStore.write({ matches }, saveMeta);
+    await matchHistoryStore.write({ matches, baseline: historyData?.baseline || {} }, saveMeta);
     res.status(200).json({ success: true, match, members: computeMemberStats(matches) });
   } catch (error) {
     res.status(500).json({
