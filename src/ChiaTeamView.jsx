@@ -11,7 +11,9 @@ import {
   TeamBoard,
   Leaderboard,
   MatchList,
+  RatingGuide,
   useLeaderboard,
+  usePlayerRatings,
   resultLabel,
   resultBadgeProps,
 } from './chiaTeamShared.jsx';
@@ -85,7 +87,8 @@ export default function ChiaTeamView() {
   }, [members]);
 
   const memberName = id => memberById.get(Number(id))?.name || `#${id}`;
-  const leaderboard = useLeaderboard(matchHistory, memberName);
+  const playerRatings = usePlayerRatings(matchHistory);
+  const leaderboard = useLeaderboard(matchHistory, memberName, playerRatings.byId);
   const latestMatch = matchHistory.matches[0] || null;
 
   const winRateById = useMemo(() => {
@@ -154,6 +157,7 @@ export default function ChiaTeamView() {
                   teamB={latestMatch.teamB}
                   memberName={memberName}
                   winRateById={winRateById}
+                  ratingById={playerRatings.byId}
                   teamMeta={teamMetaFromMatch(latestMatch)}
                   editable={false}
                 />
@@ -170,6 +174,7 @@ export default function ChiaTeamView() {
             <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
               <Trophy size={18} /> Bảng thắng thua theo thành viên
             </h3>
+            <RatingGuide />
             <Leaderboard
               leaderboard={leaderboard}
               loading={loadingHistory}
@@ -177,7 +182,11 @@ export default function ChiaTeamView() {
               onOpenQr={qr.openQrForMember}
             />
             <h3 className="text-lg font-semibold mb-3">Các trận gần đây</h3>
-            <MatchList matches={matchHistory.matches} memberName={memberName} />
+            <MatchList
+              matches={matchHistory.matches}
+              memberName={memberName}
+              ratingEvents={playerRatings.eventsByMatchId}
+            />
           </section>
         )}
       </div>

@@ -1,6 +1,19 @@
 import React from 'react';
-import { Trophy, GripVertical, QrCode, X } from 'lucide-react';
+import { Trophy, GripVertical, QrCode, X, Star, StarHalf, TrendingUp, TrendingDown } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
+import {
+  BASE_RATING,
+  MAX_STARS,
+  PLACEMENT_MATCHES,
+  PROVISIONAL_MATCHES,
+  STAR_HYSTERESIS,
+  STAR_OFFSETS,
+  STREAK_LENGTH,
+  STREAK_MULTIPLIER,
+  computePlayerRatings,
+  starsOf,
+  teamAverageStars,
+} from './playerRating.js';
 
 export const DEFAULT_TEAM_META = {
   A: { name: 'Đội A', color: '#059669' },
@@ -291,15 +304,63 @@ export function QrModal({ qr }) {
   );
 }
 
-function TeamHeader({ meta, editable, count, onNameChange, onColorChange }) {
+// Người chưa đá trận nào: hiện 3 sao mờ — đúng bằng mức mà thuật toán chia
+// đội đang tạm coi họ, để nhìn bảng là biết vì sao họ được xếp vào đội đó.
+export const UNRATED_PLAYER = { stars: 3, provisional: true };
+
+// Hiển thị level dạng sao (1 -> 5, có nửa sao). `provisional` = mới đá dưới
+// 3 trận, số sao chỉ là tạm tính nên làm mờ đi cho khỏi hiểu nhầm.
+export function StarRating({ stars, size = 13, showNumber = false, provisional = false }) {
+  const value = Number(stars) || 0;
+  const full = Math.floor(value);
+  const hasHalf = value - full >= 0.5;
+  const tone = provisional ? 'text-amber-300' : 'text-amber-400';
+  return (
+    <span
+      className="inline-flex items-center gap-px whitespace-nowrap align-middle"
+      title={`${value.toFixed(1)} sao${provisional ? ' (tạm tính, chưa đủ 3 trận)' : ''}`}
+    >
+      {Array.from({ length: MAX_STARS }).map((_, i) => {
+        if (i < full) return <Star key={i} size={size} className={`${tone} fill-current`} />;
+        if (i === full && hasHalf) return <StarHalf key={i} size={size} className={`${tone} fill-current`} />;
+        return <Star key={i} size={size} className="text-gray-200" />;
+      })}
+      {showNumber && (
+        <span className={`text-xs ml-1 ${provisional ? 'text-gray-400 italic' : 'text-gray-500'}`}>
+          {value.toFixed(1)}
+          {provisional && ' (tạm)'}
+        </span>
+      )}
+    </span>
+  );
+}
+
+// Tính level của toàn bộ cầu thủ từ lịch sử trận đấu. Bọc trong useMemo vì
+// phải phát lại toàn bộ matches (rẻ, nhưng không cần chạy lại mỗi lần render).
+export function usePlayerRatings(matchHistory) {
+  return React.useMemo(() => computePlayerRatings(matchHistory?.matches || []), [matchHistory]);
+}
+
+function TeamHeader({ meta, editable, count, avgStars, onNameChange, onColorChange }) {
+  // Sao trung bình của đội — nhìn vào là biết 2 đội đã cân chưa.
+  const strength =
+    avgStars > 0 ? (
+      <span className="text-white/90 text-xs whitespace-nowrap" title="Sao trung bình của đội">
+        TB {avgStars.toFixed(1)}★
+      </span>
+    ) : null;
+
   if (!editable) {
     return (
       <div
-        className="rounded-lg px-3 py-2 mb-3 flex items-center justify-between"
+        className="rounded-lg px-3 py-2 mb-3 flex items-center justify-between gap-2"
         style={{ backgroundColor: meta.color }}
       >
         <span className="text-white font-semibold">{meta.name}</span>
-        <span className="text-white/80 text-xs">{count} người</span>
+        <span className="flex items-center gap-2">
+          {strength}
+          <span className="text-white/80 text-xs">{count} người</span>
+        </span>
       </div>
     );
   }
@@ -318,12 +379,13 @@ function TeamHeader({ meta, editable, count, onNameChange, onColorChange }) {
         onChange={e => onNameChange(e.target.value)}
         className="flex-1 min-w-0 bg-white/90 rounded px-2 py-1 text-sm font-medium"
       />
+      {strength}
       <span className="text-white/80 text-xs whitespace-nowrap">{count} người</span>
     </div>
   );
 }
 
-function MemberRow({ name, winRate, editable, onDragStart }) {
+function MemberRow({ name, winRate, rating, editable, onDragStart }) {
   return (
     <li
       draggable={editable}
@@ -336,7 +398,10 @@ function MemberRow({ name, winRate, editable, onDragStart }) {
         {editable && <GripVertical size={14} className="text-gray-400 shrink-0" />}
         {name}
       </span>
-      {winRate !== undefined && <span className="text-xs text-gray-400 whitespace-nowrap">{winRate}% thắng</span>}
+      <span className="flex items-center gap-2 shrink-0">
+        {rating && <StarRating stars={rating.stars} provisional={rating.provisional} />}
+        {winRate !== undefined && <span className="text-xs text-gray-400 whitespace-nowrap">{winRate}% thắng</span>}
+      </span>
     </li>
   );
 }
@@ -344,7 +409,17 @@ function MemberRow({ name, winRate, editable, onDragStart }) {
 // Bảng 2 đội: header tên + màu (chỉnh được khi editable), danh sách thành viên
 // (kéo-thả đổi đội khi editable). Dùng chung cho cả trang xem (public, đọc-only)
 // và trang admin (được sửa tên/màu/đội hình bằng drag & drop).
-export function TeamBoard({ teamA, teamB, memberName, winRateById, teamMeta, editable, onTeamMetaChange, onMoveMember }) {
+export function TeamBoard({
+  teamA,
+  teamB,
+  memberName,
+  winRateById,
+  ratingById,
+  teamMeta,
+  editable,
+  onTeamMetaChange,
+  onMoveMember,
+}) {
   const handleDragStart = (id, from) => e => {
     e.dataTransfer.setData('text/plain', JSON.stringify({ id, from }));
     e.dataTransfer.effectAllowed = 'move';
@@ -373,6 +448,7 @@ export function TeamBoard({ teamA, teamB, memberName, winRateById, teamMeta, edi
         meta={teamMeta[key]}
         editable={editable}
         count={ids.length}
+        avgStars={ratingById ? teamAverageStars(ids, ratingById) : 0}
         onNameChange={name => onTeamMetaChange(key, { name })}
         onColorChange={color => onTeamMetaChange(key, { color })}
       />
@@ -382,6 +458,7 @@ export function TeamBoard({ teamA, teamB, memberName, winRateById, teamMeta, edi
             key={id}
             name={memberName(id)}
             winRate={winRateById ? winRateById[id] : undefined}
+            rating={ratingById ? ratingById[Number(id)] || UNRATED_PLAYER : undefined}
             editable={editable}
             onDragStart={handleDragStart(id, key)}
           />
@@ -406,6 +483,74 @@ export function TeamBoard({ teamA, teamB, memberName, winRateById, teamMeta, edi
 // balances (Map memberId->số dư) + onOpenQr là optional: có thì hiện thêm
 // cột QR ở cuối bảng để trả nợ nhanh, đồng bộ với nút QR ở trang chia bill
 // chính (âm = còn nợ thủ quỹ, mới hiện nút QR).
+// Bảng giải thích tiêu chuẩn xếp hạng. Các mốc được đọc thẳng từ hằng số
+// trong playerRating.js nên chỉnh công thức là phần mô tả tự khớp theo.
+const MIN_STARS_VALUE = 1;
+
+export function RatingGuide() {
+  const bands = [
+    ...STAR_OFFSETS.map(({ offset, stars }) => ({ stars, text: `từ ${BASE_RATING + offset} điểm trở lên` })),
+    { stars: 3, text: `quanh mốc ${BASE_RATING} điểm (khởi điểm của mọi người)` },
+    ...[...STAR_OFFSETS].reverse().map(({ offset, stars }) => ({
+      stars: MAX_STARS + MIN_STARS_VALUE - stars,
+      text: `từ ${BASE_RATING - offset} điểm trở xuống`,
+    })),
+  ];
+
+  return (
+    <details className="border rounded-lg bg-gray-50 text-sm mb-4">
+      <summary className="cursor-pointer px-3 py-2 font-medium text-gray-700 select-none">
+        Cách tính level (sao) và cơ chế thăng / giảm hạng
+      </summary>
+      <div className="px-3 pb-3 pt-1 flex flex-col gap-3 text-gray-600">
+        <p>
+          Mỗi người có 1 điểm ẩn, khởi điểm {BASE_RATING}. Sau mỗi trận điểm được cộng/trừ theo kết quả, rồi quy
+          ra số sao. Điểm luôn được tính lại từ đầu theo toàn bộ lịch sử — sửa hay xoá 1 trận cũ là cả bảng tự
+          khớp lại.
+        </p>
+        <div>
+          <p className="font-medium text-gray-700 mb-1">Thang quy đổi</p>
+          <ul className="flex flex-col gap-1">
+            {bands.map(band => (
+              <li key={band.stars} className="flex items-center gap-2">
+                <StarRating stars={band.stars} size={12} />
+                <span className="text-xs">{band.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="font-medium text-gray-700 mb-1">Được / mất bao nhiêu điểm</p>
+          <ul className="list-disc pl-5 text-xs flex flex-col gap-1">
+            <li>
+              Tính theo sao trung bình 2 đội: thắng đội mạnh hơn ăn nhiều điểm, thắng đội yếu hơn ăn ít; thua đội
+              yếu hơn mất nhiều, thua đội mạnh hơn mất ít.
+            </li>
+            <li>
+              {PLACEMENT_MATCHES} trận đầu là giai đoạn định hạng, điểm nhảy mạnh gấp đôi để nhanh về đúng trình.
+              Dưới {PROVISIONAL_MATCHES} trận thì sao chỉ là <em>tạm tính</em> (hiện mờ).
+            </li>
+            <li>
+              Thắng (hoặc thua) {STREAK_LENGTH} trận liên tiếp trở lên thì điểm ăn/mất được nhân{' '}
+              {STREAK_MULTIPLIER} — đang lên phong độ thì thăng hạng nhanh hơn.
+            </li>
+            <li>Trận hoà vẫn tính điểm (đội yếu hơn hoà đội mạnh vẫn được cộng), trận chưa có kết quả thì bỏ qua.</li>
+            <li>
+              Có vùng đệm {STAR_HYSTERESIS} điểm quanh mỗi mốc: đứng sát mốc thì 1 trận sát nút chưa đổi hạng
+              ngay, tránh tuần nào cũng nhảy lên nhảy xuống.
+            </li>
+          </ul>
+        </div>
+        <p className="text-xs">
+          Khi bấm <strong>Random chia đội hình</strong> với tuỳ chọn cân bằng, hệ thống bốc nhiều cách chia ngẫu
+          nhiên rồi chỉ giữ lại những cách có sao trung bình 2 đội sát nhau nhất — vẫn ngẫu nhiên nhưng không còn
+          cảnh một đội toàn người mạnh.
+        </p>
+      </div>
+    </details>
+  );
+}
+
 export function Leaderboard({ leaderboard, loading, balances, onOpenQr }) {
   if (loading) return <p className="text-gray-500 text-sm">Đang tải lịch sử...</p>;
   if (!leaderboard.length) {
@@ -418,6 +563,7 @@ export function Leaderboard({ leaderboard, loading, balances, onOpenQr }) {
         <thead>
           <tr className="text-left text-gray-500 border-b">
             <th className="py-2 pr-4">Thành viên</th>
+            <th className="py-2 pr-4">Level</th>
             <th className="py-2 pr-4">Số trận tham gia</th>
             <th className="py-2 pr-4">Thắng</th>
             <th className="py-2 pr-4">Thua</th>
@@ -432,6 +578,9 @@ export function Leaderboard({ leaderboard, loading, balances, onOpenQr }) {
             return (
               <tr key={row.id} className="border-b last:border-0">
                 <td className="py-2 pr-4 font-medium">{row.name}</td>
+                <td className="py-2 pr-4">
+                  <StarRating stars={row.stars} provisional={row.provisional} showNumber />
+                </td>
                 <td className="py-2 pr-4 text-gray-700">{row.total}</td>
                 <td className="py-2 pr-4 text-emerald-700">{row.wins}</td>
                 <td className="py-2 pr-4 text-red-600">{row.losses}</td>
@@ -462,7 +611,9 @@ export function Leaderboard({ leaderboard, loading, balances, onOpenQr }) {
   );
 }
 
-export function MatchList({ matches, memberName, onDelete, onEdit }) {
+// ratingEvents (eventsByMatchId từ usePlayerRatings) là tuỳ chọn: có thì mỗi
+// trận hiện thêm ai vừa thăng/giảm hạng sau trận đó.
+export function MatchList({ matches, memberName, onDelete, onEdit, ratingEvents }) {
   if (!matches.length) return <p className="text-gray-500 text-sm">Chưa có trận nào.</p>;
   return (
     <ul className="flex flex-col gap-3">
@@ -510,6 +661,27 @@ export function MatchList({ matches, memberName, onDelete, onEdit }) {
             </div>
           </div>
           {match.note && <p className="text-xs text-gray-400 mt-1">Ghi chú: {match.note}</p>}
+          {(() => {
+            const events = ratingEvents?.[match.id];
+            if (!events) return null;
+            const { promotions = [], demotions = [] } = events;
+            if (!promotions.length && !demotions.length) return null;
+            const names = list => list.map(e => `${memberName(e.id)} (${e.stars}★)`).join(', ');
+            return (
+              <div className="flex flex-col gap-0.5 mt-1">
+                {promotions.length > 0 && (
+                  <p className="text-xs text-emerald-600 flex items-center gap-1">
+                    <TrendingUp size={12} /> Thăng hạng: {names(promotions)}
+                  </p>
+                )}
+                {demotions.length > 0 && (
+                  <p className="text-xs text-rose-500 flex items-center gap-1">
+                    <TrendingDown size={12} /> Giảm hạng: {names(demotions)}
+                  </p>
+                )}
+              </div>
+            );
+          })()}
           {match.courtAmount > 0 &&
             (() => {
               const playerCount = new Set([...(match.teamA || []), ...(match.teamB || [])]).size;
@@ -541,7 +713,10 @@ export function MatchList({ matches, memberName, onDelete, onEdit }) {
   );
 }
 
-export function useLeaderboard(matchHistory, memberName) {
+// ratingById (từ usePlayerRatings) là tuỳ chọn: có thì bảng xếp theo level
+// (rating) thay vì theo số trận thắng — người thắng nhiều nhưng toàn gặp đội
+// yếu sẽ không còn đứng trên người ít trận mà toàn thắng đội mạnh.
+export function useLeaderboard(matchHistory, memberName, ratingById) {
   return React.useMemo(() => {
     return Object.entries(matchHistory.members)
       .map(([id, stat]) => {
@@ -549,6 +724,7 @@ export function useLeaderboard(matchHistory, memberName) {
         const losses = stat.losses || 0;
         const draws = stat.draws || 0;
         const total = wins + losses + draws;
+        const rating = ratingById ? ratingById[Number(id)] : undefined;
         return {
           id,
           name: memberName(id),
@@ -557,10 +733,18 @@ export function useLeaderboard(matchHistory, memberName) {
           draws,
           total,
           winRate: total ? Math.round((wins / total) * 100) : 0,
+          stars: rating ? rating.stars : starsOf(ratingById, id),
+          rating: rating ? rating.rating : undefined,
+          provisional: rating ? rating.provisional : true,
+          streak: rating ? rating.streak : 0,
         };
       })
-      .sort((a, b) => b.wins - a.wins || b.winRate - a.winRate);
-  }, [matchHistory, memberName]);
+      .sort((a, b) =>
+        ratingById
+          ? (b.rating || 0) - (a.rating || 0) || b.winRate - a.winRate
+          : b.wins - a.wins || b.winRate - a.winRate
+      );
+  }, [matchHistory, memberName, ratingById]);
 }
 
 export function LichSuTabHeader() {
