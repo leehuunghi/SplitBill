@@ -2,7 +2,7 @@ import { readJsonBody, matchHistoryStore, dataStore } from './_utils.js';
 import {
   computeMemberStats,
   sortMatchesDesc,
-  upsertLossExpense,
+  upsertMatchExpense,
   DEFAULT_TEAM_NAMES,
   DEFAULT_TEAM_COLORS,
 } from './_matchHistoryUtils.js';
@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
   try {
     const body = (await readJsonBody(req)) || {};
-    const { teamA, teamB, result, date, note, teamNames, teamColors, lossAmount } = body;
+    const { teamA, teamB, result, date, note, teamNames, teamColors, lossAmount, courtAmount } = body;
     const idsA = Array.isArray(teamA) ? teamA.map(Number).filter(Boolean) : [];
     const idsB = Array.isArray(teamB) ? teamB.map(Number).filter(Boolean) : [];
     const matchDate = date || new Date().toISOString().slice(0, 10);
@@ -57,9 +57,12 @@ export default async function handler(req, res) {
 
     const saveMeta = { route: '/chiateam', action: `Lưu kết quả trận đấu ngày ${matchDate}` };
 
-    const lossResult = await upsertLossExpense(match, lossAmount, dataStore, saveMeta);
-    match.lossAmount = lossResult.lossAmount;
-    match.lossExpenseId = lossResult.lossExpenseId;
+    // Tiền sân (chia đều cho cả 2 đội) + tiền thua (chỉ đội thua) gộp chung
+    // vào 1 khoản chi duy nhất của trận.
+    const expenseResult = await upsertMatchExpense(match, lossAmount, courtAmount, dataStore, saveMeta);
+    match.lossAmount = expenseResult.lossAmount;
+    match.courtAmount = expenseResult.courtAmount;
+    match.lossExpenseId = expenseResult.lossExpenseId;
 
     const matches = sortMatchesDesc([match, ...withoutSameDate]);
     await matchHistoryStore.write({ matches }, saveMeta);
