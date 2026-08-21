@@ -133,11 +133,21 @@ export const fetchMatchHistory = () =>
       matches: Array.isArray(data?.matches) ? data.matches : [],
     }));
 
-export const saveMatchResult = ({ teamA, teamB, result, date, note, teamNames, teamColors, lossAmount }) =>
+export const saveMatchResult = ({
+  teamA,
+  teamB,
+  result,
+  date,
+  note,
+  teamNames,
+  teamColors,
+  lossAmount,
+  courtAmount,
+}) =>
   fetch('/api/save-match-history', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ teamA, teamB, result, date, note, teamNames, teamColors, lossAmount }),
+    body: JSON.stringify({ teamA, teamB, result, date, note, teamNames, teamColors, lossAmount, courtAmount }),
   }).then(res => res.json());
 
 export const deleteMatchResult = date =>
@@ -500,6 +510,17 @@ export function MatchList({ matches, memberName, onDelete, onEdit }) {
             </div>
           </div>
           {match.note && <p className="text-xs text-gray-400 mt-1">Ghi chú: {match.note}</p>}
+          {match.courtAmount > 0 &&
+            (() => {
+              const playerCount = new Set([...(match.teamA || []), ...(match.teamB || [])]).size;
+              const per = playerCount ? Math.round(match.courtAmount / playerCount) : 0;
+              return (
+                <p className="text-xs text-sky-600 mt-1">
+                  Tiền sân: {formatVND(match.courtAmount)}
+                  {playerCount > 0 && ` (cả ${playerCount} người chia đều, ~${formatVND(per)}/người)`}
+                </p>
+              );
+            })()}
           {match.lossAmount > 0 &&
             (() => {
               const losingIds = match.result === 'A' ? match.teamB : match.result === 'B' ? match.teamA : [];

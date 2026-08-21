@@ -32,20 +32,49 @@ export const computeMemberStats = matches => {
 export const sortMatchesDesc = matches =>
   [...matches].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
-// Tạo/cập nhật khoản chi "tiền thua" gắn với 1 trận đấu, chia đều cho đội thua.
+// Tạo/cập nhật khoản chi của 1 trận đấu: gộp "tiền sân" + "tiền thua" vào
+// CÙNG 1 khoản chi.
+//   - Tiền sân: chia đều cho TẤT CẢ người tham gia (cả 2 đội).
+//   - Tiền thua: chỉ chia đều cho đội thua.
+// Nên người thua trả (tiền sân/người + tiền thua/người), người thắng chỉ trả
+// tiền sân/người.
 // Dùng match.lossExpenseId để UPDATE đúng khoản chi cũ thay vì tạo trùng mỗi
-// lần lưu lại trận. Nếu không còn đội thua (hoà/chưa có kết quả) hoặc
-// lossAmount <= 0, khoản chi cũ (nếu có) sẽ bị xoá khỏi data.json.
+// lần lưu lại trận. Nếu tổng tiền <= 0 (hoặc không có ai tham gia), khoản chi
+// cũ (nếu có) sẽ bị xoá khỏi data.json.
 // `dataStore` phải có `mutate(applyFn, saveMeta)` (vd. dataStore từ
 // ./_utils.js): đọc bản data.json MỚI NHẤT rồi mới áp dụng thay đổi, tránh
 // đè lên các thay đổi khác (vd. từ /api/data-action) xảy ra xen giữa.
-export const upsertLossExpense = async (match, lossAmountRaw, dataStore, saveMeta) => {
-  const lossAmount = Math.round(Number(lossAmountRaw) || 0);
-  const losingIds = match.result === 'A' ? match.teamB : match.result === 'B' ? match.teamA : [];
 
-  // Không còn đội thua hoặc số tiền <= 0: chỉ cần dọn khoản chi cũ (nếu có).
-  if (!losingIds.length || lossAmount <= 0) {
-    if (!match.lossExpenseId) return { lossAmount: 0, lossExpenseId: null };
+// Chia đều `total` cho `ids`, phần dư dồn vào người cuối cùng để tổng các
+// phần luôn khớp đúng `total` (không lệch do làm tròn).
+const addEvenShares = (bucket, ids, total) => {
+  if (!ids.length || total <= 0) return;
+  const per = Math.round(total / ids.length);
+  ids.forEach((memberId, idx) => {
+    const share = idx === ids.length - 1 ? total - per * (ids.length - 1) : per;
+    const key = Number(memberId);
+    bucket.set(key, (bucket.get(key) || 0) + share);
+  });
+};
+
+export const upsertMatchExpense = async (match, lossAmountRaw, courtAmountRaw, dataStore, saveMeta) => {
+  const lossAmountInput = Math.max(0, Math.round(Number(lossAmountRaw) || 0));
+  const courtAmountInput = Math.max(0, Math.round(Number(courtAmountRaw) || 0));
+
+  const idsA = Array.isArray(match.teamA) ? match.teamA.map(Number) : [];
+  const idsB = Array.isArray(match.teamB) ? match.teamB.map(Number) : [];
+  const participantIds = [...new Set([...idsA, ...idsB])];
+  const losingIds = match.result === 'A' ? idsB : match.result === 'B' ? idsA : [];
+
+  // Hoà / chưa có kết quả thì không có đội thua -> chỉ tính tiền sân.
+  const lossAmount = losingIds.length ? lossAmountInput : 0;
+  const courtAmount = participantIds.length ? courtAmountInput : 0;
+  const totalAmount = lossAmount + courtAmount;
+  const emptyResult = { lossAmount: 0, courtAmount: 0, lossExpenseId: null };
+
+  // Không có tiền để chia: chỉ cần dọn khoản chi cũ (nếu có).
+  if (totalAmount <= 0) {
+    if (!match.lossExpenseId) return emptyResult;
     try {
       await dataStore.mutate(current => {
         const expenses = Array.isArray(current.expenses) ? current.expenses : [];
@@ -56,7 +85,7 @@ export const upsertLossExpense = async (match, lossAmountRaw, dataStore, saveMet
     } catch (_error) {
       // Không chặn luồng lưu trận đấu nếu dọn khoản chi thất bại
     }
-    return { lossAmount: 0, lossExpenseId: null };
+    return emptyResult;
   }
 
   let resultLossExpenseId = null;
@@ -73,24 +102,32 @@ export const upsertLossExpense = async (match, lossAmountRaw, dataStore, saveMet
       }
 
       const expenses = Array.isArray(current.expenses) ? current.expenses : [];
-      const per = Math.round(lossAmount / losingIds.length);
-      const splits = losingIds.map((memberId, idx) => ({
-        memberId,
-        amount: idx === losingIds.length - 1 ? lossAmount - per * (losingIds.length - 1) : per,
-      }));
+
+      // Gộp 2 phần chia vào cùng 1 danh sách splits: người thua sẽ có
+      // (tiền sân/người + tiền thua/người), người thắng chỉ có tiền sân/người.
+      const bucket = new Map();
+      addEvenShares(bucket, participantIds, courtAmount);
+      addEvenShares(bucket, losingIds, lossAmount);
+      const splits = participantIds
+        .map(memberId => ({ memberId, amount: bucket.get(memberId) || 0 }))
+        .filter(s => s.amount > 0);
+
       const losingTeamName = match.result === 'A' ? match.teamNames?.B : match.teamNames?.A;
-      const note = `Tiền thua bóng đá ngày ${match.date}${losingTeamName ? ` - ${losingTeamName} thua` : ''}`;
+      const parts = [];
+      if (courtAmount > 0) parts.push('Tiền sân');
+      if (lossAmount > 0) parts.push(`tiền thua${losingTeamName ? ` (${losingTeamName} thua)` : ''}`);
+      const note = `${parts.join(' + ')} bóng đá ngày ${match.date}`;
 
       const existingIdx = expenses.findIndex(e => e.id === match.lossExpenseId);
       let expense;
       let nextExpenses;
       if (existingIdx !== -1) {
-        expense = { ...expenses[existingIdx], amount: lossAmount, payerId, splits, note, date: match.date };
+        expense = { ...expenses[existingIdx], amount: totalAmount, payerId, splits, note, date: match.date };
         nextExpenses = expenses.map((e, idx) => (idx === existingIdx ? expense : e));
       } else {
         expense = {
           id: Date.now(),
-          amount: lossAmount,
+          amount: totalAmount,
           payerId,
           splits,
           note,
@@ -104,9 +141,9 @@ export const upsertLossExpense = async (match, lossAmountRaw, dataStore, saveMet
       return { ...current, expenses: nextExpenses, savedAt: new Date().toISOString() };
     }, saveMeta);
   } catch (_error) {
-    return { lossAmount: 0, lossExpenseId: null };
+    return emptyResult;
   }
 
-  if (noPayer) return { lossAmount: 0, lossExpenseId: null };
-  return { lossAmount, lossExpenseId: resultLossExpenseId };
+  if (noPayer) return emptyResult;
+  return { lossAmount, courtAmount, lossExpenseId: resultLossExpenseId };
 };

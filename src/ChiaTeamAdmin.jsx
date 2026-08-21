@@ -42,6 +42,7 @@ export default function ChiaTeamAdmin() {
   const [existingMatchForDate, setExistingMatchForDate] = useState(null);
   const [teamMeta, setTeamMeta] = useState(DEFAULT_TEAM_META); // { A: {name,color}, B: {name,color} }
   const [lossAmount, setLossAmount] = useState(''); // chuỗi số đã format dấu chấm, vd "100.000"
+  const [courtAmount, setCourtAmount] = useState(''); // tiền sân, chia đều cho tất cả người tham gia
 
   useEffect(() => {
     let cancelled = false;
@@ -93,11 +94,13 @@ export default function ChiaTeamAdmin() {
       setMatchNote(existing.note || '');
       setTeamMeta(teamMetaFromMatch(existing));
       setLossAmount(existing.lossAmount > 0 ? formatNumberInput(String(existing.lossAmount)) : '');
+      setCourtAmount(existing.courtAmount > 0 ? formatNumberInput(String(existing.courtAmount)) : '');
     } else {
       setTeams(null);
       setMatchNote('');
       setTeamMeta(DEFAULT_TEAM_META);
       setLossAmount('');
+      setCourtAmount('');
     }
     setSaveMessage('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,6 +163,7 @@ export default function ChiaTeamAdmin() {
     setSaveMessage('');
     try {
       const lossValue = Number(String(lossAmount).replace(/\D/g, '') || 0);
+      const courtValue = Number(String(courtAmount).replace(/\D/g, '') || 0);
       const json = await saveMatchResult({
         teamA: teams.teamA,
         teamB: teams.teamB,
@@ -169,6 +173,7 @@ export default function ChiaTeamAdmin() {
         teamNames: { A: teamMeta.A.name, B: teamMeta.B.name },
         teamColors: { A: teamMeta.A.color, B: teamMeta.B.color },
         lossAmount: lossValue,
+        courtAmount: courtValue,
       });
       if (json.success) {
         setMatchHistory(prev => ({
@@ -177,12 +182,30 @@ export default function ChiaTeamAdmin() {
         }));
 
         let message = `Đã lưu kết quả cho ngày ${matchDate}!`;
-        if (json.match.lossExpenseId && json.match.lossAmount > 0) {
-          const losingIds = result === 'A' ? teams.teamB : result === 'B' ? teams.teamA : [];
-          const per = losingIds.length ? Math.round(json.match.lossAmount / losingIds.length) : 0;
-          message += ` Khoản chi tiền thua ${json.match.lossAmount.toLocaleString('vi-VN')}đ đã được lưu, chia đều cho ${losingIds.length} người (~${per.toLocaleString('vi-VN')}đ/người).`;
-        } else if (lossValue > 0 && result !== 'A' && result !== 'B') {
-          message += ' Tiền thua chỉ áp dụng khi chọn đội thắng, chưa tạo khoản chi.';
+        if (json.match.lossExpenseId) {
+          // Tiền sân + tiền thua nằm chung 1 khoản chi: nêu rõ từng phần chia
+          // cho ai để dễ đối chiếu với khoản chi vừa tạo.
+          const details = [];
+          if (json.match.courtAmount > 0) {
+            const playerCount = teams.teamA.length + teams.teamB.length;
+            const perCourt = playerCount ? Math.round(json.match.courtAmount / playerCount) : 0;
+            details.push(
+              `tiền sân ${json.match.courtAmount.toLocaleString('vi-VN')}đ chia đều cho ${playerCount} người (~${perCourt.toLocaleString('vi-VN')}đ/người)`
+            );
+          }
+          if (json.match.lossAmount > 0) {
+            const losingIds = result === 'A' ? teams.teamB : result === 'B' ? teams.teamA : [];
+            const perLoss = losingIds.length ? Math.round(json.match.lossAmount / losingIds.length) : 0;
+            details.push(
+              `tiền thua ${json.match.lossAmount.toLocaleString('vi-VN')}đ chia cho ${losingIds.length} người đội thua (~${perLoss.toLocaleString('vi-VN')}đ/người)`
+            );
+          }
+          if (details.length) {
+            message += ` Đã tạo 1 khoản chi ${(json.match.courtAmount + json.match.lossAmount).toLocaleString('vi-VN')}đ: ${details.join(', ')}.`;
+          }
+        }
+        if (lossValue > 0 && result !== 'A' && result !== 'B') {
+          message += ' Tiền thua chỉ áp dụng khi chọn đội thắng nên chưa được tính vào khoản chi.';
         }
         setSaveMessage(message);
       } else {
@@ -206,6 +229,7 @@ export default function ChiaTeamAdmin() {
           setExistingMatchForDate(null);
           setTeams(null);
           setLossAmount('');
+          setCourtAmount('');
         }
       } else {
         setSaveMessage('Xoá thất bại: ' + (json.error || 'Lỗi không xác định'));
@@ -412,23 +436,46 @@ export default function ChiaTeamAdmin() {
                     placeholder="Ghi chú (tuỳ chọn, vd: sân ABC)"
                     className="w-full border rounded-lg px-3 py-2 text-sm mb-3"
                   />
-                  <div className="mb-3">
-                    <label className="text-xs text-gray-500 mb-1 block" htmlFor="chiateam-loss-amount">
-                      Tiền thua (chia đều cho đội thua, cộng vào khoản chi khi bấm đội thắng bên dưới)
-                    </label>
-                    <div className="relative w-full sm:w-64">
-                      <input
-                        id="chiateam-loss-amount"
-                        type="text"
-                        inputMode="numeric"
-                        value={lossAmount}
-                        onChange={e => setLossAmount(formatNumberInput(e.target.value))}
-                        placeholder="0"
-                        className="w-full border rounded-lg px-3 py-2 text-sm pr-8"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">đ</span>
+                  <div className="flex flex-col sm:flex-row gap-3 mb-3">
+                    <div className="w-full sm:w-64">
+                      <label className="text-xs text-gray-500 mb-1 block" htmlFor="chiateam-court-amount">
+                        Tiền sân (chia đều cho tất cả người tham gia)
+                      </label>
+                      <div className="relative">
+                        <input
+                          id="chiateam-court-amount"
+                          type="text"
+                          inputMode="numeric"
+                          value={courtAmount}
+                          onChange={e => setCourtAmount(formatNumberInput(e.target.value))}
+                          placeholder="0"
+                          className="w-full border rounded-lg px-3 py-2 text-sm pr-8"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">đ</span>
+                      </div>
+                    </div>
+                    <div className="w-full sm:w-64">
+                      <label className="text-xs text-gray-500 mb-1 block" htmlFor="chiateam-loss-amount">
+                        Tiền thua (chỉ chia cho đội thua)
+                      </label>
+                      <div className="relative">
+                        <input
+                          id="chiateam-loss-amount"
+                          type="text"
+                          inputMode="numeric"
+                          value={lossAmount}
+                          onChange={e => setLossAmount(formatNumberInput(e.target.value))}
+                          placeholder="0"
+                          className="w-full border rounded-lg px-3 py-2 text-sm pr-8"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">đ</span>
+                      </div>
                     </div>
                   </div>
+                  <p className="text-xs text-gray-400 mb-3">
+                    Cả 2 khoản gộp vào cùng 1 giao dịch khi bấm nút kết quả bên dưới: người thua trả tiền sân +
+                    tiền thua, người thắng chỉ trả tiền sân.
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"

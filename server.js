@@ -4,7 +4,7 @@ import { dataStore, matchHistoryStore, defaultData } from './api/_utils.js';
 import {
   computeMemberStats,
   sortMatchesDesc,
-  upsertLossExpense,
+  upsertMatchExpense,
   DEFAULT_TEAM_NAMES,
   DEFAULT_TEAM_COLORS,
 } from './api/_matchHistoryUtils.js';
@@ -59,7 +59,7 @@ app.get('/api/match-history/load', async (_req, res) => {
 
 app.post('/api/save-match-history', async (req, res) => {
   try {
-    const { teamA, teamB, result, date, note, teamNames, teamColors, lossAmount } = req.body || {};
+    const { teamA, teamB, result, date, note, teamNames, teamColors, lossAmount, courtAmount } = req.body || {};
     const idsA = Array.isArray(teamA) ? teamA.map(Number).filter(Boolean) : [];
     const idsB = Array.isArray(teamB) ? teamB.map(Number).filter(Boolean) : [];
     const matchDate = date || new Date().toISOString().slice(0, 10);
@@ -101,9 +101,12 @@ app.post('/api/save-match-history', async (req, res) => {
 
     const saveMeta = { route: '/chiateam', action: `Lưu kết quả trận đấu ngày ${matchDate}` };
 
-    const lossResult = await upsertLossExpense(match, lossAmount, dataStore, saveMeta);
-    match.lossAmount = lossResult.lossAmount;
-    match.lossExpenseId = lossResult.lossExpenseId;
+    // Tiền sân (chia đều cho cả 2 đội) + tiền thua (chỉ đội thua) gộp chung
+    // vào 1 khoản chi duy nhất của trận.
+    const expenseResult = await upsertMatchExpense(match, lossAmount, courtAmount, dataStore, saveMeta);
+    match.lossAmount = expenseResult.lossAmount;
+    match.courtAmount = expenseResult.courtAmount;
+    match.lossExpenseId = expenseResult.lossExpenseId;
 
     const matches = sortMatchesDesc([match, ...withoutSameDate]);
     await matchHistoryStore.write({ matches }, saveMeta);
