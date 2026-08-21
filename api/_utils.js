@@ -237,7 +237,7 @@ export const dataStore = createJsonStore({
   defaultData,
 });
 
-export const emptyMatchHistory = { matches: [] };
+export const emptyMatchHistory = { matches: [], baseline: {} };
 
 export const matchHistoryStore = createJsonStore({
   localRelativePath: 'src/match-history.json',

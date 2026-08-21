@@ -10,6 +10,7 @@ import {
   STAR_OFFSETS,
   STREAK_LENGTH,
   STREAK_MULTIPLIER,
+  STAR_LEVELS,
   computePlayerRatings,
   starsOf,
   teamAverageStars,
@@ -61,7 +62,7 @@ export const splitIntoTeams = ids => {
 
 export const todayStr = () => new Date().toISOString().slice(0, 10);
 
-export const emptyMatchHistory = { members: {}, matches: [] };
+export const emptyMatchHistory = { members: {}, matches: [], baseline: {} };
 
 export const fetchMembers = () =>
   fetch('/api/load')
@@ -144,7 +145,18 @@ export const fetchMatchHistory = () =>
     .then(data => ({
       members: data?.members && typeof data.members === 'object' ? data.members : {},
       matches: Array.isArray(data?.matches) ? data.matches : [],
+      baseline: data?.baseline && typeof data.baseline === 'object' ? data.baseline : {},
     }));
+
+// Lưu "level ban đầu" admin xếp thủ công (baseline). `baseline` là object
+// { memberId: sốSao }; xoá 1 người khỏi object trước khi gọi để bỏ xếp hạng
+// thủ công của người đó (quay về tính hoàn toàn từ dữ liệu trận đấu).
+export const saveBaseline = baseline =>
+  fetch('/api/match-history/baseline', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ baseline }),
+  }).then(res => res.json());
 
 export const saveMatchResult = ({
   teamA,
@@ -338,7 +350,10 @@ export function StarRating({ stars, size = 13, showNumber = false, provisional =
 // Tính level của toàn bộ cầu thủ từ lịch sử trận đấu. Bọc trong useMemo vì
 // phải phát lại toàn bộ matches (rẻ, nhưng không cần chạy lại mỗi lần render).
 export function usePlayerRatings(matchHistory) {
-  return React.useMemo(() => computePlayerRatings(matchHistory?.matches || []), [matchHistory]);
+  return React.useMemo(
+    () => computePlayerRatings(matchHistory?.matches || [], matchHistory?.baseline || {}),
+    [matchHistory]
+  );
 }
 
 function TeamHeader({ meta, editable, count, avgStars, onNameChange, onColorChange }) {

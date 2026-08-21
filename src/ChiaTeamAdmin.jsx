@@ -1,5 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Shuffle, Users, Trophy, History, Check, CalendarDays, Scale } from 'lucide-react';
+import {
+  Shuffle,
+  Users,
+  Trophy,
+  History,
+  Check,
+  CalendarDays,
+  Scale,
+  ListOrdered,
+  Save,
+  RotateCcw,
+} from 'lucide-react';
 import {
   GROUP_LABELS,
   groupLabel,
@@ -10,6 +21,7 @@ import {
   fetchMatchHistory,
   saveMatchResult,
   deleteMatchResult,
+  saveBaseline,
   formatNumberInput,
   resultLabel,
   resultBadgeProps,
@@ -19,10 +31,144 @@ import {
   Leaderboard,
   MatchList,
   RatingGuide,
+  StarRating,
   useLeaderboard,
   usePlayerRatings,
 } from './chiaTeamShared.jsx';
-import { splitBalancedTeams, teamAverageStars } from './playerRating.js';
+import { splitBalancedTeams, teamAverageStars, computePlayerRatings, STAR_LEVELS } from './playerRating.js';
+
+// Tab "Level ban đầu": admin kéo-thả từng người vào 1 mức sao để làm điểm
+// XUẤT PHÁT cho hệ xếp hạng, thay vì mặc định 3★ cho tất cả. Mục đích: vài
+// trận đầu (mẫu nhỏ) không đủ để phân biệt trình độ thật — nếu chỉ dựa vào
+// đó thì bảng xếp hạng dễ trở nên "cảm tính" (nhiễu số liệu chứ không phải
+// đánh giá thật). Admin biết ai giỏi/yếu từ trước thì xếp thẳng vào đúng
+// mức, các trận sau đó vẫn cộng/trừ điểm bình thường từ mốc này.
+function BaselineBoard({ members, matchHistory, draft, onMove, onSave, onReset, saving, message }) {
+  // Gợi ý tham khảo: level suy ra THUẦN từ dữ liệu trận đấu (không tính
+  // baseline) — giúp admin đối chiếu trước khi quyết định xếp thủ công.
+  const dataOnlyRatings = useMemo(() => computePlayerRatings(matchHistory.matches, {}), [matchHistory]);
+
+  const groups = useMemo(() => {
+    const byTier = { unassigned: [] };
+    STAR_LEVELS.forEach(level => (byTier[level] = []));
+    members.forEach(m => {
+      const id = Number(m.id);
+      const tier = draft[id];
+      if (tier !== undefined && byTier[tier]) byTier[tier].push(id);
+      else byTier.unassigned.push(id);
+    });
+    // Trong nhóm "chưa xếp": người đã từng đá lên trước (có dữ liệu tham
+    // khảo), nhiều trận hơn lên trước nữa — dễ xử lý những người quen trước.
+    byTier.unassigned.sort((a, b) => (dataOnlyRatings.byId[b]?.played || 0) - (dataOnlyRatings.byId[a]?.played || 0));
+    return byTier;
+  }, [members, draft, dataOnlyRatings]);
+
+  const memberById = useMemo(() => {
+    const map = new Map();
+    members.forEach(m => map.set(Number(m.id), m));
+    return map;
+  }, [members]);
+
+  const handleDragStart = id => e => {
+    e.dataTransfer.setData('text/plain', String(id));
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDrop = tier => e => {
+    e.preventDefault();
+    const raw = e.dataTransfer.getData('text/plain');
+    if (!raw) return;
+    const id = Number(raw);
+    if (!Number.isNaN(id)) onMove(id, tier);
+  };
+
+  const renderChip = id => {
+    const m = memberById.get(id);
+    const ref = dataOnlyRatings.byId[id];
+    const hint = ref?.played
+      ? `gợi ý ${ref.stars}★ (${ref.played} trận)`
+      : 'chưa từng đá';
+    return (
+      <span
+        key={id}
+        draggable
+        onDragStart={handleDragStart(id)}
+        title="Kéo sang mức sao khác để xếp lại"
+        className="cursor-move px-2.5 py-1.5 rounded-lg border bg-white text-sm flex items-center gap-1.5 hover:border-emerald-400 hover:shadow-sm"
+      >
+        {m?.name || `#${id}`}
+        <span className="text-[10px] text-gray-400 whitespace-nowrap">{hint}</span>
+      </span>
+    );
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="text-sm text-gray-500">
+        Kéo từng người vào đúng mức sao mà bạn cho là trình độ thật của họ. Đây sẽ là điểm xuất phát của hệ xếp
+        hạng thay vì mặc định 3★ — các trận sau đó vẫn cộng/trừ điểm bình thường từ mốc này. Nhãn nhỏ dưới mỗi tên
+        là gợi ý tính thuần từ dữ liệu trận đấu (nếu có) để bạn đối chiếu.
+      </p>
+
+      <div
+        onDragOver={e => e.preventDefault()}
+        onDrop={handleDrop('unassigned')}
+        className="border border-dashed rounded-xl p-3 bg-gray-50 min-h-[56px]"
+      >
+        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">
+          Chưa xếp hạng thủ công ({groups.unassigned.length}) — dùng level tự tính hoặc 3★ mặc định
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {groups.unassigned.length === 0 ? (
+            <span className="text-xs text-gray-400 italic px-1">Đã xếp hết mọi người.</span>
+          ) : (
+            groups.unassigned.map(renderChip)
+          )}
+        </div>
+      </div>
+
+      {STAR_LEVELS.map(level => (
+        <div
+          key={level}
+          onDragOver={e => e.preventDefault()}
+          onDrop={handleDrop(level)}
+          className="border rounded-xl p-3 bg-white min-h-[56px]"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <StarRating stars={level} size={14} />
+            <span className="text-xs text-gray-400">{level.toFixed(1)} sao</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {groups[level].length === 0 ? (
+              <span className="text-xs text-gray-300 italic px-1">Kéo người vào đây</span>
+            ) : (
+              groups[level].map(renderChip)
+            )}
+          </div>
+        </div>
+      ))}
+
+      <div className="flex items-center gap-3 border-t pt-4">
+        <button
+          type="button"
+          disabled={saving}
+          onClick={onSave}
+          className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium flex items-center gap-2 disabled:opacity-40"
+        >
+          <Save size={16} /> Lưu bảng xếp hạng ban đầu
+        </button>
+        <button
+          type="button"
+          onClick={onReset}
+          className="px-4 py-2 rounded-lg border text-sm font-medium flex items-center gap-2 hover:bg-gray-50"
+        >
+          <RotateCcw size={16} /> Khôi phục
+        </button>
+        {message && <p className="text-sm text-emerald-700">{message}</p>}
+      </div>
+    </div>
+  );
+}
 
 const TEAM_FIELD = { A: 'teamA', B: 'teamB' };
 
@@ -47,6 +193,9 @@ export default function ChiaTeamAdmin() {
   const [lossAmount, setLossAmount] = useState(''); // chuỗi số đã format dấu chấm, vd "100.000"
   const [courtAmount, setCourtAmount] = useState(''); // tiền sân, chia đều cho tất cả người tham gia
   const [balanceTeams, setBalanceTeams] = useState(true); // chia đội cân theo level (sao) thay vì random thuần
+  const [baselineDraft, setBaselineDraft] = useState({}); // { memberId: sốSao } đang chỉnh ở tab "Level ban đầu"
+  const [savingBaseline, setSavingBaseline] = useState(false);
+  const [baselineMessage, setBaselineMessage] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -87,6 +236,50 @@ export default function ChiaTeamAdmin() {
   useEffect(() => {
     if (tab === 'lichsu') loadHistory();
   }, [tab]);
+
+  // Vào tab "Level ban đầu" thì nạp lại đúng bảng đã lưu — tránh việc chỉnh
+  // dở ở lần vào trước còn sót lại làm sai lệch với dữ liệu thật.
+  useEffect(() => {
+    if (tab === 'baseline') {
+      setBaselineDraft(matchHistory.baseline || {});
+      setBaselineMessage('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
+
+  const handleMoveBaseline = (memberId, tier) => {
+    setBaselineDraft(prev => {
+      const next = { ...prev };
+      if (tier === 'unassigned') delete next[memberId];
+      else next[memberId] = tier;
+      return next;
+    });
+    setBaselineMessage('');
+  };
+
+  const handleSaveBaseline = async () => {
+    setSavingBaseline(true);
+    setBaselineMessage('');
+    try {
+      const json = await saveBaseline(baselineDraft);
+      if (json.success) {
+        setMatchHistory(prev => ({ ...prev, baseline: json.baseline || {} }));
+        setBaselineDraft(json.baseline || {});
+        setBaselineMessage('Đã lưu bảng xếp hạng ban đầu!');
+      } else {
+        setBaselineMessage('Lưu thất bại: ' + (json.error || 'Lỗi không xác định'));
+      }
+    } catch (err) {
+      setBaselineMessage('Lỗi kết nối khi lưu.');
+    } finally {
+      setSavingBaseline(false);
+    }
+  };
+
+  const handleResetBaseline = () => {
+    setBaselineDraft(matchHistory.baseline || {});
+    setBaselineMessage('');
+  };
 
   // Khi đổi ngày: nếu ngày đó đã có trận lưu rồi, load lại lên để xem/sửa.
   useEffect(() => {
@@ -183,6 +376,7 @@ export default function ChiaTeamAdmin() {
       });
       if (json.success) {
         setMatchHistory(prev => ({
+          ...prev,
           members: json.members || prev.members,
           matches: [json.match, ...prev.matches.filter(m => m.date !== matchDate)],
         }));
@@ -230,7 +424,7 @@ export default function ChiaTeamAdmin() {
     try {
       const json = await deleteMatchResult(date);
       if (json.success) {
-        setMatchHistory({ members: json.members || {}, matches: json.matches || [] });
+        setMatchHistory(prev => ({ ...prev, members: json.members || {}, matches: json.matches || [] }));
         if (date === matchDate) {
           setExistingMatchForDate(null);
           setTeams(null);
@@ -290,6 +484,15 @@ export default function ChiaTeamAdmin() {
               }`}
             >
               <History size={16} /> Lịch sử thắng thua
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('baseline')}
+              className={`px-4 py-2 text-sm font-medium flex items-center gap-1.5 ${
+                tab === 'baseline' ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <ListOrdered size={16} /> Level ban đầu
             </button>
           </div>
         </header>
@@ -570,6 +773,28 @@ export default function ChiaTeamAdmin() {
               onEdit={handleEditMatch}
               onDelete={handleDeleteMatch}
             />
+          </section>
+        )}
+
+        {tab === 'baseline' && (
+          <section className="bg-white rounded-xl shadow p-5">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-1">
+              <ListOrdered size={18} /> Xếp hạng ban đầu (baseline)
+            </h3>
+            {loadingMembers ? (
+              <p className="text-gray-500 text-sm">Đang tải danh sách thành viên...</p>
+            ) : (
+              <BaselineBoard
+                members={members}
+                matchHistory={matchHistory}
+                draft={baselineDraft}
+                onMove={handleMoveBaseline}
+                onSave={handleSaveBaseline}
+                onReset={handleResetBaseline}
+                saving={savingBaseline}
+                message={baselineMessage}
+              />
+            )}
           </section>
         )}
       </div>

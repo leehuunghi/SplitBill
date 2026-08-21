@@ -9,6 +9,7 @@ import {
   DEFAULT_TEAM_COLORS,
 } from './api/_matchHistoryUtils.js';
 import { applyDataMutation, DataActionError } from './api/_dataMutations.js';
+import { STAR_LEVELS } from './src/playerRating.js';
 
 const app = express();
 const PORT = 5174;
@@ -54,7 +55,34 @@ app.post('/api/data-action', async (req, res) => {
 app.get('/api/match-history/load', async (_req, res) => {
   const historyData = await matchHistoryStore.read();
   const matches = sortMatchesDesc(Array.isArray(historyData?.matches) ? historyData.matches : []);
-  res.json({ members: computeMemberStats(matches), matches });
+  const baseline = historyData?.baseline && typeof historyData.baseline === 'object' ? historyData.baseline : {};
+  res.json({ members: computeMemberStats(matches), matches, baseline });
+});
+
+// Lưu "level ban đầu" (baseline) admin xếp thủ công ở tab riêng trong
+// /admin/chiateam — { memberId: sốSao }. Chỉ ghi đè field baseline, giữ
+// nguyên toàn bộ matches hiện có.
+app.post('/api/match-history/baseline', async (req, res) => {
+  try {
+    const baselineInput = req.body?.baseline;
+    if (!baselineInput || typeof baselineInput !== 'object' || Array.isArray(baselineInput)) {
+      return res.status(400).json({ success: false, error: 'baseline phải là object { memberId: sốSao }' });
+    }
+    const baseline = {};
+    Object.entries(baselineInput).forEach(([id, stars]) => {
+      const numId = Number(id);
+      const numStars = Number(stars);
+      if (Number.isFinite(numId) && STAR_LEVELS.includes(numStars)) baseline[numId] = numStars;
+    });
+
+    const saveMeta = { route: '/admin/chiateam', action: 'Cập nhật level ban đầu (baseline)' };
+    const historyData = await matchHistoryStore.read();
+    const matches = Array.isArray(historyData?.matches) ? historyData.matches : [];
+    await matchHistoryStore.write({ matches, baseline }, saveMeta);
+    res.json({ success: true, baseline });
+  } catch (_err) {
+    res.status(500).json({ success: false, error: 'Failed to save baseline' });
+  }
 });
 
 app.post('/api/save-match-history', async (req, res) => {
@@ -109,7 +137,7 @@ app.post('/api/save-match-history', async (req, res) => {
     match.lossExpenseId = expenseResult.lossExpenseId;
 
     const matches = sortMatchesDesc([match, ...withoutSameDate]);
-    await matchHistoryStore.write({ matches }, saveMeta);
+    await matchHistoryStore.write({ matches, baseline: historyData?.baseline || {} }, saveMeta);
     res.json({ success: true, match, members: computeMemberStats(matches) });
   } catch (_err) {
     res.status(500).json({ success: false, error: 'Failed to save match history' });
@@ -140,7 +168,7 @@ app.delete('/api/match-history/:date', async (req, res) => {
     }
 
     const matches = sortMatchesDesc(current.filter(m => m.date !== date));
-    await matchHistoryStore.write({ matches }, saveMeta);
+    await matchHistoryStore.write({ matches, baseline: historyData?.baseline || {} }, saveMeta);
     res.json({ success: true, members: computeMemberStats(matches), matches });
   } catch (_err) {
     res.status(500).json({ success: false, error: 'Failed to delete match' });

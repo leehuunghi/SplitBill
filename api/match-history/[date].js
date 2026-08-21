@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     }
 
     const matches = sortMatchesDesc(current.filter(m => m.date !== date));
-    await matchHistoryStore.write({ matches }, saveMeta);
+    await matchHistoryStore.write({ matches, baseline: historyData?.baseline || {} }, saveMeta);
     res.status(200).json({ success: true, members: computeMemberStats(matches), matches });
   } catch (_error) {
     res.status(500).json({ success: false, error: 'Failed to delete match' });
