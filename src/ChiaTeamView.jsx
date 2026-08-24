@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Users, Trophy, History, Shirt } from 'lucide-react';
+import { Users, Trophy, History, Shirt, Shuffle, Check, Scale } from 'lucide-react';
 import {
   fetchBillData,
   fetchMatchHistory,
@@ -16,10 +16,19 @@ import {
   usePlayerRatings,
   resultLabel,
   resultBadgeProps,
+  GROUP_LABELS,
+  groupLabel,
+  DEFAULT_TEAM_META,
+  splitIntoTeams,
 } from './chiaTeamShared.jsx';
+import { splitBalancedTeams, teamAverageStars } from './playerRating.js';
 
-// Trang công khai /chiateam: chỉ xem đội hình gần nhất + lịch sử, không có
-// quyền chọn thành viên / random / lưu kết quả (những thao tác đó nằm ở /admin/chiateam).
+const TEAM_FIELD = { A: 'teamA', B: 'teamB' };
+
+// Trang công khai /chiateam: xem đội hình gần nhất + lịch sử, và tab "Thử
+// chia đội" để tự chọn người rồi random xem đội hình cân không — thuần
+// client-side, KHÔNG lưu kết quả / tiền thắng thua (những thao tác đó chỉ
+// có ở /admin/chiateam).
 export default function ChiaTeamView() {
   const [members, setMembers] = useState([]);
   const [expenses, setExpenses] = useState([]);
@@ -30,9 +39,13 @@ export default function ChiaTeamView() {
   const [treasurerAccountName, setTreasurerAccountName] = useState('');
   const [loadingMembers, setLoadingMembers] = useState(true);
   const [membersError, setMembersError] = useState('');
-  const [tab, setTab] = useState('lichsu'); // 'doihinh' | 'lichsu'
+  const [tab, setTab] = useState('lichsu'); // 'doihinh' | 'lichsu' | 'chia'
   const [matchHistory, setMatchHistory] = useState(emptyMatchHistory);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [tryTeams, setTryTeams] = useState(null); // { teamA: [ids], teamB: [ids] } — chỉ để thử, không lưu
+  const [tryTeamMeta, setTryTeamMeta] = useState(DEFAULT_TEAM_META);
+  const [balanceTeams, setBalanceTeams] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -102,6 +115,55 @@ export default function ChiaTeamView() {
   const balances = useMemo(() => computeBalances(members, expenses, payments), [members, expenses, payments]);
   const qr = useQrModal({ members, treasurerAccount, treasurerBankBin, treasurerAccountNo, treasurerAccountName });
 
+  const groupedMembers = useMemo(() => {
+    const groups = {};
+    members.forEach(m => {
+      const key = m.group || 'outside';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(m);
+    });
+    return groups;
+  }, [members]);
+
+  const toggleMember = id => {
+    setTryTeams(null);
+    setSelectedIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
+  };
+
+  const selectAll = () => {
+    setTryTeams(null);
+    setSelectedIds(members.map(m => Number(m.id)));
+  };
+
+  const clearSelection = () => {
+    setTryTeams(null);
+    setSelectedIds([]);
+  };
+
+  const handleTryRandom = () => {
+    if (selectedIds.length < 2) return;
+    setTryTeams(balanceTeams ? splitBalancedTeams(selectedIds, playerRatings.byId) : splitIntoTeams(selectedIds));
+    setTryTeamMeta(DEFAULT_TEAM_META);
+  };
+
+  const handleTryTeamMetaChange = (key, patch) => {
+    setTryTeamMeta(prev => ({ ...prev, [key]: { ...prev[key], ...patch } }));
+  };
+
+  const handleTryMoveMember = (memberId, fromKey, toKey) => {
+    setTryTeams(prev => {
+      if (!prev) return prev;
+      const fromField = TEAM_FIELD[fromKey];
+      const toField = TEAM_FIELD[toKey];
+      if (!prev[fromField]?.includes(memberId)) return prev;
+      return {
+        ...prev,
+        [fromField]: prev[fromField].filter(id => id !== memberId),
+        [toField]: [...prev[toField], memberId],
+      };
+    });
+  };
+
   return (
     <div className="p-6 max-w-5xl mx-auto bg-gray-50 min-h-screen">
       <div className="flex flex-col gap-6">
@@ -128,10 +190,139 @@ export default function ChiaTeamView() {
             >
               <Shirt size={16} /> Đội hình
             </button>
+            <button
+              type="button"
+              onClick={() => setTab('chia')}
+              className={`px-4 py-2 text-sm font-medium flex items-center gap-1.5 ${
+                tab === 'chia' ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <Shuffle size={16} /> Thử chia đội
+            </button>
           </div>
         </header>
 
         {membersError && <p className="text-red-600 text-sm">{membersError}</p>}
+
+        {tab === 'chia' && (
+          <>
+            <section className="bg-white rounded-xl shadow p-5">
+              <p className="text-xs text-gray-400 mb-4">
+                Chỉ để thử xem đội hình chia ra thế nào — không lưu kết quả hay tiền thắng thua. Muốn lưu thật thì
+                vào trang quản trị.
+              </p>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Chọn người tham gia ({selectedIds.length})</h3>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={selectAll}
+                    className="text-sm px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+                  >
+                    Chọn tất cả
+                  </button>
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    className="text-sm px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+                  >
+                    Bỏ chọn
+                  </button>
+                </div>
+              </div>
+
+              {loadingMembers ? (
+                <p className="text-gray-500 text-sm">Đang tải danh sách thành viên...</p>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {Object.keys(GROUP_LABELS)
+                    .concat(Object.keys(groupedMembers).filter(k => !GROUP_LABELS[k]))
+                    .filter(key => groupedMembers[key]?.length)
+                    .map(groupKey => (
+                      <div key={groupKey}>
+                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">
+                          {groupLabel(groupKey)}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {groupedMembers[groupKey].map(m => {
+                            const id = Number(m.id);
+                            const active = selectedIds.includes(id);
+                            return (
+                              <button
+                                key={id}
+                                type="button"
+                                onClick={() => toggleMember(id)}
+                                className={`px-3 py-1.5 rounded-full text-sm border flex items-center gap-1.5 transition-colors ${
+                                  active
+                                    ? 'bg-emerald-600 text-white border-emerald-600'
+                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                }`}
+                              >
+                                {active ? <Check size={14} /> : null}
+                                {m.name}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+
+              <div className="mt-5">
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleTryRandom}
+                    disabled={selectedIds.length < 2}
+                    className="px-4 py-2.5 rounded-lg bg-emerald-600 text-white font-medium flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-emerald-700"
+                  >
+                    <Shuffle size={18} /> Random chia đội hình
+                  </button>
+                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={balanceTeams}
+                      onChange={e => setBalanceTeams(e.target.checked)}
+                      className="w-4 h-4 accent-emerald-600"
+                    />
+                    <Scale size={15} className="text-gray-500" />
+                    Cân bằng theo level (sao)
+                  </label>
+                </div>
+                {selectedIds.length > 0 && selectedIds.length < 2 && (
+                  <p className="text-xs text-gray-500 mt-2">Cần chọn ít nhất 2 người để chia đội.</p>
+                )}
+              </div>
+            </section>
+
+            {tryTeams && (
+              <section className="bg-white rounded-xl shadow p-5">
+                <h3 className="text-lg font-semibold mb-4">Đội hình thử</h3>
+                <p className="text-xs text-gray-400 mb-4">
+                  Kéo thành viên giữa 2 đội để tự sắp xếp lại. Có thể đổi tên và màu đội ngay trên tiêu đề.
+                  {(() => {
+                    const gap = Math.abs(
+                      teamAverageStars(tryTeams.teamA, playerRatings.byId) -
+                        teamAverageStars(tryTeams.teamB, playerRatings.byId)
+                    );
+                    return ` Chênh lệch sao trung bình giữa 2 đội: ${gap.toFixed(1)}★.`;
+                  })()}
+                </p>
+                <TeamBoard
+                  teamA={tryTeams.teamA}
+                  teamB={tryTeams.teamB}
+                  memberName={memberName}
+                  ratingById={playerRatings.byId}
+                  teamMeta={tryTeamMeta}
+                  editable
+                  onTeamMetaChange={handleTryTeamMetaChange}
+                  onMoveMember={handleTryMoveMember}
+                />
+              </section>
+            )}
+          </>
+        )}
 
         {tab === 'doihinh' && (
           <section className="bg-white rounded-xl shadow p-5">
