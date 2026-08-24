@@ -225,6 +225,36 @@
   ],
   "expenses": [
     {
+      "id": 1787553825674,
+      "amount": 255000,
+      "payerId": 19,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 51000
+        },
+        {
+          "memberId": 6,
+          "amount": 51000
+        },
+        {
+          "memberId": 12,
+          "amount": 51000
+        },
+        {
+          "memberId": 18,
+          "amount": 51000
+        },
+        {
+          "memberId": 19,
+          "amount": 51000
+        }
+      ],
+      "note": "ngày 21/08 - pho24 - Danh Trả",
+      "date": "2026-08-21",
+      "createdAt": "2026-08-24T06:43:45.674Z"
+    },
+    {
       "id": 1787302815551,
       "amount": 565000,
       "payerId": 1,
@@ -7060,5 +7090,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-24T04:13:12.219Z"
+  "savedAt": "2026-08-24T06:43:45.674Z"
 }
