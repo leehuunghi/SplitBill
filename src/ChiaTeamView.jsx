@@ -16,8 +16,6 @@ import {
   usePlayerRatings,
   resultLabel,
   resultBadgeProps,
-  GROUP_LABELS,
-  groupLabel,
   DEFAULT_TEAM_META,
   splitIntoTeams,
 } from './chiaTeamShared.jsx';
@@ -115,15 +113,17 @@ export default function ChiaTeamView() {
   const balances = useMemo(() => computeBalances(members, expenses, payments), [members, expenses, payments]);
   const qr = useQrModal({ members, treasurerAccount, treasurerBankBin, treasurerAccountNo, treasurerAccountName });
 
-  const groupedMembers = useMemo(() => {
-    const groups = {};
-    members.forEach(m => {
-      const key = m.group || 'outside';
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(m);
+  // Trang public chỉ cho chọn trong số người ĐÃ TỪNG THAM GIA ít nhất 1 trận
+  // (không hiện chia theo phòng ban như trang admin — ai lạ hoắc, chưa đá
+  // trận nào thì không có trong danh sách để thử chia đội ở đây).
+  const participantMembers = useMemo(() => {
+    const playedIds = new Set();
+    matchHistory.matches.forEach(m => {
+      (m?.teamA || []).forEach(id => playedIds.add(Number(id)));
+      (m?.teamB || []).forEach(id => playedIds.add(Number(id)));
     });
-    return groups;
-  }, [members]);
+    return members.filter(m => playedIds.has(Number(m.id))).sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+  }, [members, matchHistory.matches]);
 
   const toggleMember = id => {
     setTryTeams(null);
@@ -132,7 +132,7 @@ export default function ChiaTeamView() {
 
   const selectAll = () => {
     setTryTeams(null);
-    setSelectedIds(members.map(m => Number(m.id)));
+    setSelectedIds(participantMembers.map(m => Number(m.id)));
   };
 
   const clearSelection = () => {
@@ -233,39 +233,29 @@ export default function ChiaTeamView() {
 
               {loadingMembers ? (
                 <p className="text-gray-500 text-sm">Đang tải danh sách thành viên...</p>
+              ) : !participantMembers.length ? (
+                <p className="text-gray-500 text-sm">Chưa có ai từng tham gia trận nào để thử chia đội.</p>
               ) : (
-                <div className="flex flex-col gap-4">
-                  {Object.keys(GROUP_LABELS)
-                    .concat(Object.keys(groupedMembers).filter(k => !GROUP_LABELS[k]))
-                    .filter(key => groupedMembers[key]?.length)
-                    .map(groupKey => (
-                      <div key={groupKey}>
-                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                          {groupLabel(groupKey)}
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {groupedMembers[groupKey].map(m => {
-                            const id = Number(m.id);
-                            const active = selectedIds.includes(id);
-                            return (
-                              <button
-                                key={id}
-                                type="button"
-                                onClick={() => toggleMember(id)}
-                                className={`px-3 py-1.5 rounded-full text-sm border flex items-center gap-1.5 transition-colors ${
-                                  active
-                                    ? 'bg-emerald-600 text-white border-emerald-600'
-                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                                }`}
-                              >
-                                {active ? <Check size={14} /> : null}
-                                {m.name}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
+                <div className="flex flex-wrap gap-2">
+                  {participantMembers.map(m => {
+                    const id = Number(m.id);
+                    const active = selectedIds.includes(id);
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => toggleMember(id)}
+                        className={`px-3 py-1.5 rounded-full text-sm border flex items-center gap-1.5 transition-colors ${
+                          active
+                            ? 'bg-emerald-600 text-white border-emerald-600'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {active ? <Check size={14} /> : null}
+                        {m.name}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
