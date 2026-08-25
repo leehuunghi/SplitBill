@@ -225,6 +225,36 @@
   ],
   "expenses": [
     {
+      "id": 1787634331033,
+      "amount": 130300,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 7,
+          "amount": 26060
+        },
+        {
+          "memberId": 9,
+          "amount": 26060
+        },
+        {
+          "memberId": 14,
+          "amount": 26060
+        },
+        {
+          "memberId": 19,
+          "amount": 26060
+        },
+        {
+          "memberId": 39,
+          "amount": 26060
+        }
+      ],
+      "note": "nước dừa",
+      "date": "2026-08-24",
+      "createdAt": "2026-08-25T05:05:31.033Z"
+    },
+    {
       "id": 1787553825674,
       "amount": 255000,
       "payerId": 19,
@@ -7128,5 +7158,5 @@
     }
   },
   "nextMemberId": 40,
-  "savedAt": "2026-08-25T05:04:17.334Z"
+  "savedAt": "2026-08-25T05:05:31.033Z"
 }
