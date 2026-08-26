@@ -225,7 +225,8 @@
     {
       "id": 40,
       "name": "Luận",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "backend-common"
     }
   ],
   "expenses": [
@@ -7253,5 +7254,5 @@
     }
   },
   "nextMemberId": 41,
-  "savedAt": "2026-08-26T06:38:48.688Z"
+  "savedAt": "2026-08-26T06:39:51.958Z"
 }
