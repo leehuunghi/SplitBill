@@ -221,6 +221,11 @@
       "name": "Thiện",
       "isTreasurer": false,
       "group": "backend-devops"
+    },
+    {
+      "id": 40,
+      "name": "Luận",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -7247,6 +7252,6 @@
       "updatedAt": "2026-08-24T04:13:09.932Z"
     }
   },
-  "nextMemberId": 40,
-  "savedAt": "2026-08-26T06:36:33.900Z"
+  "nextMemberId": 41,
+  "savedAt": "2026-08-26T06:38:48.688Z"
 }
