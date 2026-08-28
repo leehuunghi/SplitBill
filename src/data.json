@@ -231,6 +231,40 @@
   ],
   "expenses": [
     {
+      "id": 1787899974777,
+      "amount": 312000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 60579
+        },
+        {
+          "memberId": 7,
+          "amount": 60576
+        },
+        {
+          "memberId": 8,
+          "amount": 60579
+        },
+        {
+          "memberId": 11,
+          "amount": 47325
+        },
+        {
+          "memberId": 32,
+          "amount": 35413
+        },
+        {
+          "memberId": 39,
+          "amount": 47528
+        }
+      ],
+      "note": "trung nguyên 28/8",
+      "date": "2026-08-28",
+      "createdAt": "2026-08-28T06:52:54.777Z"
+    },
+    {
       "id": 1787899823790,
       "amount": 918000,
       "payerId": 1,
@@ -7480,5 +7514,5 @@
     }
   },
   "nextMemberId": 41,
-  "savedAt": "2026-08-28T06:50:23.790Z"
+  "savedAt": "2026-08-28T06:52:54.777Z"
 }
