@@ -1,6 +1,40 @@
 {
   "matches": [
     {
+      "id": 1787890308039,
+      "date": "2026-08-28",
+      "teamA": [
+        12,
+        7,
+        11,
+        9,
+        4,
+        35
+      ],
+      "teamB": [
+        19,
+        6,
+        37,
+        3,
+        22
+      ],
+      "teamNames": {
+        "A": "Mobile",
+        "B": "Server"
+      },
+      "teamColors": {
+        "A": "#059669",
+        "B": "#2563eb"
+      },
+      "result": "B",
+      "note": "",
+      "lossExpenseId": 1787890308228,
+      "createdAt": "2026-08-28T04:11:48.039Z",
+      "updatedAt": "2026-08-28T04:11:48.039Z",
+      "lossAmount": 180000,
+      "courtAmount": 570000
+    },
+    {
       "id": 1787278904954,
       "date": "2026-08-21",
       "teamA": [
