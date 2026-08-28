@@ -97,7 +97,8 @@
     {
       "id": 17,
       "name": "Tín",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 18,
@@ -7556,5 +7557,5 @@
     }
   },
   "nextMemberId": 41,
-  "savedAt": "2026-08-28T07:52:41.265Z"
+  "savedAt": "2026-08-28T07:56:41.010Z"
 }
