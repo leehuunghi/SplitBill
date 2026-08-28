@@ -231,6 +231,60 @@
   ],
   "expenses": [
     {
+      "id": 1787890308228,
+      "amount": 750000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 12,
+          "amount": 81818
+        },
+        {
+          "memberId": 7,
+          "amount": 81818
+        },
+        {
+          "memberId": 11,
+          "amount": 81818
+        },
+        {
+          "memberId": 9,
+          "amount": 81818
+        },
+        {
+          "memberId": 4,
+          "amount": 81818
+        },
+        {
+          "memberId": 35,
+          "amount": 81818
+        },
+        {
+          "memberId": 19,
+          "amount": 51818
+        },
+        {
+          "memberId": 6,
+          "amount": 51818
+        },
+        {
+          "memberId": 37,
+          "amount": 51818
+        },
+        {
+          "memberId": 3,
+          "amount": 51818
+        },
+        {
+          "memberId": 22,
+          "amount": 51820
+        }
+      ],
+      "note": "Tiền sân + tiền thua (Mobile thua) bóng đá ngày 2026-08-28",
+      "date": "2026-08-28",
+      "createdAt": "2026-08-28T04:11:48.228Z"
+    },
+    {
       "id": 1787812671092,
       "amount": 428760,
       "payerId": 1,
@@ -7384,5 +7438,5 @@
     }
   },
   "nextMemberId": 41,
-  "savedAt": "2026-08-27T11:11:11.407Z"
+  "savedAt": "2026-08-28T04:11:48.228Z"
 }
