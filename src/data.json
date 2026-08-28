@@ -92,7 +92,8 @@
     {
       "id": 16,
       "name": "Linh",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 17,
@@ -7557,5 +7558,5 @@
     }
   },
   "nextMemberId": 41,
-  "savedAt": "2026-08-28T07:56:41.010Z"
+  "savedAt": "2026-08-28T07:56:49.912Z"
 }
