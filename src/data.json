@@ -233,6 +233,32 @@
   ],
   "expenses": [
     {
+      "id": 1788923916126,
+      "amount": 90000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 9,
+          "amount": 38000
+        },
+        {
+          "memberId": 10,
+          "amount": 13000
+        },
+        {
+          "memberId": 14,
+          "amount": 27000
+        },
+        {
+          "memberId": 19,
+          "amount": 12000
+        }
+      ],
+      "note": "Trung Nguyên cf",
+      "date": "2026-09-08",
+      "createdAt": "2026-09-09T03:18:36.126Z"
+    },
+    {
       "id": 1788923814761,
       "amount": 240000,
       "payerId": 1,
@@ -7992,5 +8018,5 @@
     }
   },
   "nextMemberId": 41,
-  "savedAt": "2026-09-09T03:16:54.761Z"
+  "savedAt": "2026-09-09T03:18:36.126Z"
 }
