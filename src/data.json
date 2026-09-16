@@ -235,7 +235,7 @@
     {
       "id": 1789534071199,
       "amount": 125000,
-      "payerId": 1,
+      "payerId": 12,
       "splits": [
         {
           "memberId": 5,
@@ -8364,5 +8364,5 @@
     }
   },
   "nextMemberId": 41,
-  "savedAt": "2026-09-16T04:47:51.199Z"
+  "savedAt": "2026-09-16T04:48:05.736Z"
 }
