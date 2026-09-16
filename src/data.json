@@ -233,6 +233,24 @@
   ],
   "expenses": [
     {
+      "id": 1789534112970,
+      "amount": 70000,
+      "payerId": 12,
+      "splits": [
+        {
+          "memberId": 12,
+          "amount": 35000
+        },
+        {
+          "memberId": 40,
+          "amount": 35000
+        }
+      ],
+      "note": "ăn trưa cùng Tuấn t3",
+      "date": "2026-09-16",
+      "createdAt": "2026-09-16T04:48:32.970Z"
+    },
+    {
       "id": 1789534071199,
       "amount": 125000,
       "payerId": 12,
@@ -8364,5 +8382,5 @@
     }
   },
   "nextMemberId": 41,
-  "savedAt": "2026-09-16T04:48:05.736Z"
+  "savedAt": "2026-09-16T04:48:32.970Z"
 }
