@@ -233,7 +233,8 @@
     {
       "id": 41,
       "name": "Thạo",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "mobile-android"
     }
   ],
   "expenses": [
@@ -8773,5 +8774,5 @@
     }
   },
   "nextMemberId": 42,
-  "savedAt": "2026-09-25T06:39:51.425Z"
+  "savedAt": "2026-09-25T06:42:23.580Z"
 }
