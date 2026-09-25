@@ -229,6 +229,11 @@
       "name": "Luận",
       "isTreasurer": false,
       "group": "backend-common"
+    },
+    {
+      "id": 41,
+      "name": "Thạo",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -8767,6 +8772,6 @@
       "updatedAt": "2026-09-22T09:41:08.579Z"
     }
   },
-  "nextMemberId": 41,
-  "savedAt": "2026-09-24T05:18:55.591Z"
+  "nextMemberId": 42,
+  "savedAt": "2026-09-25T06:39:51.425Z"
 }
