@@ -254,6 +254,32 @@
   ],
   "expenses": [
     {
+      "id": 1790749944917,
+      "amount": 657720,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 164430
+        },
+        {
+          "memberId": 8,
+          "amount": 164430
+        },
+        {
+          "memberId": 9,
+          "amount": 164430
+        },
+        {
+          "memberId": 41,
+          "amount": 164430
+        }
+      ],
+      "note": "Mì Sanfulou 30/9",
+      "date": "2026-09-30",
+      "createdAt": "2026-09-30T06:32:24.917Z"
+    },
+    {
       "id": 1790749912406,
       "amount": 115000,
       "payerId": 1,
@@ -9081,5 +9107,5 @@
     }
   },
   "nextMemberId": 46,
-  "savedAt": "2026-09-30T06:31:52.406Z"
+  "savedAt": "2026-09-30T06:32:24.918Z"
 }
