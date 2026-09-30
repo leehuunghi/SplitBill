@@ -27,11 +27,11 @@
       },
       "result": "draw",
       "note": "",
-      "lossExpenseId": null,
+      "lossExpenseId": 1790742338096,
       "createdAt": "2026-09-30T04:25:19.129Z",
-      "updatedAt": "2026-09-30T04:25:19.129Z",
+      "updatedAt": "2026-09-30T04:25:37.656Z",
       "lossAmount": 0,
-      "courtAmount": 0
+      "courtAmount": 660000
     },
     {
       "id": 1787890308039,
