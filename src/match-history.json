@@ -1,6 +1,39 @@
 {
   "matches": [
     {
+      "id": 1790742319129,
+      "date": "2026-09-24",
+      "teamA": [
+        7,
+        35,
+        5,
+        14,
+        3
+      ],
+      "teamB": [
+        42,
+        45,
+        4,
+        9,
+        43
+      ],
+      "teamNames": {
+        "A": "Đội A",
+        "B": "Đội B"
+      },
+      "teamColors": {
+        "A": "#059669",
+        "B": "#2563eb"
+      },
+      "result": "draw",
+      "note": "",
+      "lossExpenseId": null,
+      "createdAt": "2026-09-30T04:25:19.129Z",
+      "updatedAt": "2026-09-30T04:25:19.129Z",
+      "lossAmount": 0,
+      "courtAmount": 0
+    },
+    {
       "id": 1787890308039,
       "date": "2026-08-28",
       "teamA": [
