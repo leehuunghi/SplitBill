@@ -254,6 +254,56 @@
   ],
   "expenses": [
     {
+      "id": 1790742338096,
+      "amount": 660000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 7,
+          "amount": 66000
+        },
+        {
+          "memberId": 35,
+          "amount": 66000
+        },
+        {
+          "memberId": 5,
+          "amount": 66000
+        },
+        {
+          "memberId": 14,
+          "amount": 66000
+        },
+        {
+          "memberId": 3,
+          "amount": 66000
+        },
+        {
+          "memberId": 42,
+          "amount": 66000
+        },
+        {
+          "memberId": 45,
+          "amount": 66000
+        },
+        {
+          "memberId": 4,
+          "amount": 66000
+        },
+        {
+          "memberId": 9,
+          "amount": 66000
+        },
+        {
+          "memberId": 43,
+          "amount": 66000
+        }
+      ],
+      "note": "Tiền sân bóng đá ngày 2026-09-24",
+      "date": "2026-09-24",
+      "createdAt": "2026-09-30T04:25:38.096Z"
+    },
+    {
       "id": 1790738728216,
       "amount": 205000,
       "payerId": 1,
@@ -8997,5 +9047,5 @@
     }
   },
   "nextMemberId": 46,
-  "savedAt": "2026-09-30T04:21:45.790Z"
+  "savedAt": "2026-09-30T04:25:38.096Z"
 }
