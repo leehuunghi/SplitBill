@@ -240,6 +240,11 @@
       "id": 42,
       "name": "Khoa",
       "isTreasurer": false
+    },
+    {
+      "id": 43,
+      "name": "Phú",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -8986,6 +8991,6 @@
       "updatedAt": "2026-09-11T11:21:48.485Z"
     }
   },
-  "nextMemberId": 43,
-  "savedAt": "2026-09-30T04:20:31.322Z"
+  "nextMemberId": 44,
+  "savedAt": "2026-09-30T04:20:44.199Z"
 }
