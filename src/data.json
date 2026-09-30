@@ -235,6 +235,11 @@
       "name": "Thạo",
       "isTreasurer": false,
       "group": "mobile-android"
+    },
+    {
+      "id": 42,
+      "name": "Khoa",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -8981,6 +8986,6 @@
       "updatedAt": "2026-09-11T11:21:48.485Z"
     }
   },
-  "nextMemberId": 42,
-  "savedAt": "2026-09-30T03:25:28.216Z"
+  "nextMemberId": 43,
+  "savedAt": "2026-09-30T04:20:31.322Z"
 }
