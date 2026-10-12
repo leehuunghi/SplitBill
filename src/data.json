@@ -254,6 +254,44 @@
   ],
   "expenses": [
     {
+      "id": 1791787188224,
+      "amount": 195000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 27857
+        },
+        {
+          "memberId": 7,
+          "amount": 27857
+        },
+        {
+          "memberId": 8,
+          "amount": 27857
+        },
+        {
+          "memberId": 9,
+          "amount": 27857
+        },
+        {
+          "memberId": 14,
+          "amount": 27857
+        },
+        {
+          "memberId": 19,
+          "amount": 27857
+        },
+        {
+          "memberId": 40,
+          "amount": 27858
+        }
+      ],
+      "note": "nước ép cuối tuần 9/10",
+      "date": "2026-10-09",
+      "createdAt": "2026-10-12T06:39:48.224Z"
+    },
+    {
       "id": 1791529609271,
       "amount": 240000,
       "payerId": 1,
@@ -9699,5 +9737,5 @@
     }
   },
   "nextMemberId": 46,
-  "savedAt": "2026-10-12T03:01:30.811Z"
+  "savedAt": "2026-10-12T06:39:48.224Z"
 }
