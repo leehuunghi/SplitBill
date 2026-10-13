@@ -8025,8 +8025,8 @@
       "id": 1791860029775,
       "memberId": 41,
       "amount": 500000,
-      "type": "receive",
-      "note": "",
+      "type": "pay",
+      "note": "Nhận tiền",
       "createdAt": "2026-10-13T02:53:49.775Z"
     },
     {
@@ -9745,5 +9745,5 @@
     }
   },
   "nextMemberId": 46,
-  "savedAt": "2026-10-13T02:53:49.775Z"
+  "savedAt": "2026-10-13T02:54:25.287Z"
 }
