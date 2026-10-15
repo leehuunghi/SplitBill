@@ -254,6 +254,40 @@
   ],
   "expenses": [
     {
+      "id": 1792048443294,
+      "amount": 320000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 5,
+          "amount": 53333
+        },
+        {
+          "memberId": 9,
+          "amount": 53333
+        },
+        {
+          "memberId": 10,
+          "amount": 53333
+        },
+        {
+          "memberId": 11,
+          "amount": 53333
+        },
+        {
+          "memberId": 12,
+          "amount": 53333
+        },
+        {
+          "memberId": 40,
+          "amount": 53335
+        }
+      ],
+      "note": "ăn trưa 15/10",
+      "date": "2026-10-15",
+      "createdAt": "2026-10-15T07:14:03.294Z"
+    },
+    {
       "id": 1792031392997,
       "amount": 320000,
       "payerId": 1,
@@ -9873,5 +9907,5 @@
     }
   },
   "nextMemberId": 46,
-  "savedAt": "2026-10-15T02:29:52.998Z"
+  "savedAt": "2026-10-15T07:14:03.294Z"
 }
