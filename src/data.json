@@ -250,6 +250,11 @@
       "id": 45,
       "name": "Trí",
       "isTreasurer": false
+    },
+    {
+      "id": 46,
+      "name": "Nam",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -9974,6 +9979,6 @@
       "updatedAt": "2026-10-19T06:59:41.878Z"
     }
   },
-  "nextMemberId": 46,
-  "savedAt": "2026-10-20T07:21:42.437Z"
+  "nextMemberId": 47,
+  "savedAt": "2026-10-20T07:22:07.722Z"
 }
