@@ -254,7 +254,8 @@
     {
       "id": 46,
       "name": "Nam",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "mobile-android"
     }
   ],
   "expenses": [
@@ -9980,5 +9981,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-10-20T07:22:07.722Z"
+  "savedAt": "2026-10-20T07:22:56.831Z"
 }
