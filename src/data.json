@@ -254,6 +254,20 @@
   ],
   "expenses": [
     {
+      "id": 1792480902437,
+      "amount": 491160,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 14,
+          "amount": 491160
+        }
+      ],
+      "note": "Trung Nguyên 20/10",
+      "date": "2026-10-20",
+      "createdAt": "2026-10-20T07:21:42.437Z"
+    },
+    {
       "id": 1792060795060,
       "amount": 234200,
       "payerId": 1,
@@ -9961,5 +9975,5 @@
     }
   },
   "nextMemberId": 46,
-  "savedAt": "2026-10-20T03:35:50.353Z"
+  "savedAt": "2026-10-20T07:21:42.437Z"
 }
