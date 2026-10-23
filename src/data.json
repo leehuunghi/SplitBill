@@ -260,6 +260,52 @@
   ],
   "expenses": [
     {
+      "id": 1792740253577,
+      "amount": 312500,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 34722
+        },
+        {
+          "memberId": 8,
+          "amount": 34722
+        },
+        {
+          "memberId": 9,
+          "amount": 34722
+        },
+        {
+          "memberId": 14,
+          "amount": 34722
+        },
+        {
+          "memberId": 18,
+          "amount": 34722
+        },
+        {
+          "memberId": 19,
+          "amount": 34722
+        },
+        {
+          "memberId": 40,
+          "amount": 34722
+        },
+        {
+          "memberId": 41,
+          "amount": 34722
+        },
+        {
+          "memberId": 46,
+          "amount": 34724
+        }
+      ],
+      "note": "sinh tố 23/10",
+      "date": "2026-10-23",
+      "createdAt": "2026-10-23T07:24:13.577Z"
+    },
+    {
       "id": 1792737355146,
       "amount": 400000,
       "payerId": 1,
@@ -10267,5 +10313,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-10-23T06:35:55.146Z"
+  "savedAt": "2026-10-23T07:24:13.577Z"
 }
