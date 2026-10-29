@@ -74,6 +74,44 @@ function Brand() {
   );
 }
 
+// Thẻ tổng quan cả nhóm: lấp chỗ trống bên phải màn chọn tên trên màn rộng.
+function GroupSummaryCard({ people, balances, formatVND }) {
+  const rows = people.map(m => ({ member: m, balance: balances.get(m.id) || 0 }));
+  const debtors = rows.filter(x => x.balance < -EPS).sort((a, b) => a.balance - b.balance);
+  const surplus = rows.filter(x => x.balance > EPS);
+  const totalDebt = debtors.reduce((sum, x) => sum - x.balance, 0);
+  const totalSurplus = surplus.reduce((sum, x) => sum + x.balance, 0);
+  const top = debtors[0];
+
+  return (
+    <aside
+      aria-label="Tổng quan cả nhóm"
+      className="hero-gradient anim-pop relative mt-5 hidden overflow-hidden rounded-[32px] p-6 text-white shadow-[0_10px_0_-2px_rgba(91,63,224,.28)] lg:block"
+      style={{ backgroundImage: 'linear-gradient(120deg,#5B3FE0,#B93FD9,#F0568C)', animationDelay: '.1s' }}
+    >
+      <div aria-hidden="true" className="absolute -right-10 -top-10 h-40 w-40 rounded-[38%] bg-white/15" />
+      <div className="relative">
+        <div className="text-sm font-extrabold opacity-90">Tổng nợ cả nhóm</div>
+        <div className="font-display text-[52px] font-extrabold leading-[1.1]">{formatVND(totalDebt)}</div>
+        <div className="text-sm font-bold opacity-90">{debtors.length} người đang nợ</div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="rounded-2xl bg-white/15 px-3.5 py-3">
+            <div className="text-xs font-extrabold opacity-85">Nợ nhiều nhất</div>
+            <div className="break-words font-display text-lg font-extrabold leading-tight">{top ? top.member.name : '—'}</div>
+            <div className="text-[13px] font-bold">{top ? formatVND(-top.balance) : ''}</div>
+          </div>
+          <div className="rounded-2xl bg-white/15 px-3.5 py-3">
+            <div className="text-xs font-extrabold opacity-85">Đang dư tiền</div>
+            <div className="font-display text-lg font-extrabold leading-tight">{surplus.length} người</div>
+            <div className="text-[13px] font-bold">{formatVND(totalSurplus)}</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 function Picker({ people, balances, lastId, formatVND, onChoose }) {
   const [query, setQuery] = useState('');
   const q = normalizeText(query.trim());
@@ -86,6 +124,8 @@ function Picker({ people, balances, lastId, formatVND, onChoose }) {
         <Brand />
         <FootballLink />
       </div>
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start lg:gap-10">
+        <div>
       <h1 className="anim-up mt-5 font-display text-[40px] font-extrabold leading-none tracking-tight">Tìm tên bạn</h1>
       <p className="anim-up mt-1.5 text-sm font-bold text-ink-soft" style={{ animationDelay: '.06s' }}>
         Chọn một lần, lần sau vào thẳng thẻ của bạn.
@@ -123,6 +163,10 @@ function Picker({ people, balances, lastId, formatVND, onChoose }) {
           </span>
         </button>
       )}
+
+        </div>
+        <GroupSummaryCard people={people} balances={balances} formatVND={formatVND} />
+      </div>
 
       <h2 className="mt-4 font-display text-xl font-extrabold">Cả nhóm</h2>
       <ul className="mt-2.5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
