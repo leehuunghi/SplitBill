@@ -14,6 +14,7 @@ import {
 import { QRCodeCanvas } from 'qrcode.react';
 import { getNextMemberId, dropQrCacheEntry, normalizeMemberGroup } from './shared/dataHelpers.js';
 import { AppShell, Avatar } from './ui.jsx';
+import UserView from './UserView.jsx';
 
 const formatVND = value =>
   Number(value || 0).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + 'đ';
@@ -1002,6 +1003,7 @@ const SplitWiseTool = () => {
           </div>
         </div>
       )}
+      {isAdminView && (
       <div className="flex flex-col gap-6">
         <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="anim-pop flex items-center gap-3">
@@ -1927,6 +1929,26 @@ const SplitWiseTool = () => {
           </section>
         )}
       </div>
+      )}
+
+      {!isAdminView && (
+        <UserView
+          members={members}
+          balances={balances}
+          treasurer={members.find(m => m.isTreasurer) || null}
+          expenses={expenses}
+          payments={payments}
+          isHydrated={isHydrated}
+          formatVND={formatVND}
+          onOpenQr={openQrForMember}
+          monthFilter={monthFilter}
+          setMonthFilter={setMonthFilter}
+          availableMonths={availableMonths}
+          transactions={filteredTransactions}
+          isSuperAdmin={isSuperAdmin}
+          onSwitchAdmin={() => setIsAdminView(true)}
+        />
+      )}
 
       {qrModal.open && (
         <div className="anim-fade fixed inset-0 z-50 flex items-end justify-center bg-ink/55 sm:items-center sm:p-4">

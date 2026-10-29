@@ -55,6 +55,11 @@ button {
   animation: anim-fade 0.25s ease backwards;
 }
 
+.anim-grow {
+  transform-origin: left center;
+  animation: anim-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
 .no-scrollbar {
   scrollbar-width: none;
 }
@@ -102,11 +107,18 @@ button {
   }
 }
 
+@keyframes anim-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-gradient,
   .blob-float,
   .anim-up,
   .anim-pop,
+  .anim-grow,
   .anim-fade {
     animation: none;
   }
