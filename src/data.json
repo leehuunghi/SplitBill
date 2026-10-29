@@ -9,19 +9,22 @@
       "id": 2,
       "name": "Sếp Cường",
       "isTreasurer": false,
-      "group": "boss"
+      "group": "boss",
+      "avatar": "https://cdn.v-app.vn/avatar/91fcb36a-21d0-4cec-b4f1-d8d2c7d5c12f.webp"
     },
     {
       "id": 3,
       "name": "Thảo",
       "isTreasurer": false,
-      "group": "boss"
+      "group": "boss",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/a390b77fb8988115/original/01M4AGK8W3BVMNWCFCG4N2PH9J"
     },
     {
       "id": 4,
       "name": "Vũ",
       "isTreasurer": false,
-      "group": "boss"
+      "group": "boss",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/22af632ac57cbaa2/original/01M3V9HY47WK556E2Q5Y4K4203"
     },
     {
       "id": 5,
@@ -33,43 +36,50 @@
       "id": 6,
       "name": "Tâm ja",
       "isTreasurer": false,
-      "group": "boss"
+      "group": "boss",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/536706585840780/original/01KPFA75WP8F338C7RB6E7CDYD"
     },
     {
       "id": 7,
       "name": "Lâm",
       "isTreasurer": false,
-      "group": "mobile"
+      "group": "mobile",
+      "avatar": "https://cdn.v-app.vn/avatar/1b970bb4-a829-4b66-a119-14667b4f525c.webp"
     },
     {
       "id": 8,
       "name": "Tuyến",
       "isTreasurer": false,
-      "group": "mobile-ios"
+      "group": "mobile-ios",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/a6e8faf4f83ee0dc/original/01M3V9HK1VCB4A1XWE1HNTCMPQ"
     },
     {
       "id": 9,
       "name": "Nghị",
       "isTreasurer": false,
-      "group": "mobile-ios"
+      "group": "mobile-ios",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/b647af094c208eea/original/01M3V9MC5NTRZ8XPK374YPF40T"
     },
     {
       "id": 10,
       "name": "Minh",
       "isTreasurer": false,
-      "group": "server"
+      "group": "server",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/e5b35bbc2ff5716a/original/01M62S46ETE5SX4NM457M3W2CX"
     },
     {
       "id": 11,
       "name": "Duy",
       "isTreasurer": false,
-      "group": "mobile"
+      "group": "mobile",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/8f9557ae7692c79c/original/01M482ZBK874MCHKDCQJXKZ0AD"
     },
     {
       "id": 12,
       "name": "Tuấn",
       "isTreasurer": false,
-      "group": "server"
+      "group": "server",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/726771011210911/original/01KQXM0EDMZMG3H0DXFSTGKJN4"
     },
     {
       "id": 13,
@@ -81,7 +91,8 @@
       "id": 14,
       "name": "Phát",
       "isTreasurer": false,
-      "group": "backend-devops"
+      "group": "backend-devops",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/0c084770c14816a3/original/01M60TNTJA5G2FXHMDZQ7Y4J69"
     },
     {
       "id": 15,
@@ -105,13 +116,15 @@
       "id": 18,
       "name": "Thái",
       "isTreasurer": false,
-      "group": "backend-core"
+      "group": "backend-core",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/b4f35eff2f2bab71/original/01KZ5S87AE2GQ7MD8SNBB243ND"
     },
     {
       "id": 19,
       "name": "Danh",
       "isTreasurer": false,
-      "group": "server"
+      "group": "server",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/bf9da0bffa4c16a0/original/01M4AH4EMF2RM29ED94V87NW9M"
     },
     {
       "id": 20,
@@ -186,7 +199,8 @@
       "id": 32,
       "name": "Việt",
       "isTreasurer": false,
-      "group": "backend-core"
+      "group": "backend-core",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/807194221933640/original/01KX31EJ9DYQZ9A9GMND2EA6KF"
     },
     {
       "id": 33,
@@ -222,19 +236,22 @@
       "id": 39,
       "name": "Thiện",
       "isTreasurer": false,
-      "group": "backend-devops"
+      "group": "backend-devops",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/5522355fa47598b5/original/01M5S47GC118EK2M49A71AEW7Q"
     },
     {
       "id": 40,
       "name": "Luận",
       "isTreasurer": false,
-      "group": "backend-common"
+      "group": "backend-common",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/5223a83bd3bf028a/original/01M51RC7461HPHAQAWKV34Q7X8"
     },
     {
       "id": 41,
       "name": "Thạo",
       "isTreasurer": false,
-      "group": "mobile-android"
+      "group": "mobile-android",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/6a0ff249e0d775db/original/01M3XCV9TH5FQK1QTCCRB1SNBZ"
     },
     {
       "id": 42,
@@ -255,7 +272,8 @@
       "id": 46,
       "name": "Nam",
       "isTreasurer": false,
-      "group": "mobile-android"
+      "group": "mobile-android",
+      "avatar": "https://avatars.hermes-api.net/avatars/users/cfb36e1f4bcee7be/original/01M51NRQYQ5K6WSV415FHE584B"
     }
   ],
   "expenses": [
