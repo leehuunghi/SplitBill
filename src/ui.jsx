@@ -60,7 +60,7 @@ export function AppShell({ children }) {
         className="blob-float pointer-events-none absolute -left-20 bottom-24 h-52 w-52 rounded-full bg-mint/70 md:h-72 md:w-72"
         style={{ animationDelay: '-1.4s' }}
       />
-      <div className="relative mx-auto max-w-5xl p-4 md:p-6">{children}</div>
+      <div className="relative mx-auto max-w-6xl p-4 md:p-6">{children}</div>
     </div>
   );
 }

@@ -91,7 +91,7 @@ function Picker({ people, balances, lastId, formatVND, onChoose }) {
         Chọn một lần, lần sau vào thẳng thẻ của bạn.
       </p>
 
-      <div className="anim-up relative mt-4" style={{ animationDelay: '.1s' }}>
+      <div className="anim-up relative mt-4 max-w-xl" style={{ animationDelay: '.1s' }}>
         <label htmlFor="member-search" className="sr-only">
           Tìm thành viên
         </label>
@@ -110,7 +110,7 @@ function Picker({ people, balances, lastId, formatVND, onChoose }) {
         <button
           type="button"
           onClick={() => onChoose(lastMember.id)}
-          className="anim-pop mt-3.5 flex w-full items-center gap-3 rounded-3xl bg-sun px-4 py-3 text-left shadow-[0_5px_0_rgba(30,27,58,.14)] transition-transform hover:scale-[1.02]"
+          className="anim-pop mt-3.5 flex w-full max-w-xl items-center gap-3 rounded-3xl bg-sun px-4 py-3 text-left shadow-[0_5px_0_rgba(30,27,58,.14)] transition-transform hover:scale-[1.02]"
           style={{ animationDelay: '.14s' }}
         >
           <Avatar member={lastMember} size={46} />
@@ -125,7 +125,7 @@ function Picker({ people, balances, lastId, formatVND, onChoose }) {
       )}
 
       <h2 className="mt-4 font-display text-xl font-extrabold">Cả nhóm</h2>
-      <ul className="mt-2.5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <ul className="mt-2.5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {filtered.map((m, index) => {
           const label = balanceLabel(balances.get(m.id) || 0, formatVND);
           return (
@@ -318,7 +318,7 @@ export default function UserView({
 
   if (!me) {
     return (
-      <div className="mx-auto max-w-xl pb-10 pt-2">
+      <div className="mx-auto w-full max-w-6xl pb-10 pt-2">
         {switchAdmin}
         <Picker people={people} balances={balances} lastId={lastId} formatVND={formatVND} onChoose={choose} />
       </div>
@@ -340,11 +340,12 @@ export default function UserView({
   const maxDebt = Math.max(1, ...debtors.map(x => -x.balance));
 
   return (
-    <div className="mx-auto max-w-xl pb-28 pt-2">
+    <div className="mx-auto w-full max-w-6xl pb-28 pt-2 lg:pb-10 lg:pt-20">
       {switchAdmin}
 
       {tab === 'me' && (
-        <div>
+        <div className="lg:grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
+          <div>
           <div className="anim-up flex items-center gap-3">
             <Avatar member={me} size={52} />
             <div className="min-w-0 flex-1">
@@ -380,17 +381,20 @@ export default function UserView({
             </div>
           </div>
 
-          <div className="mt-5 flex items-baseline justify-between">
+          </div>
+
+          <div>
+          <div className="mt-5 flex items-baseline justify-between lg:mt-0">
             <h2 className="font-display text-[22px] font-extrabold">Khoản của tôi</h2>
             <button type="button" onClick={() => setTab('history')} className="py-2 text-[13px] font-extrabold text-brand">
               Lịch sử của tôi
             </button>
           </div>
-          <ul className="mt-1.5 flex flex-col gap-2.5">
-            {mine.slice(0, 3).map((e, index) => (
+          <ul className="mt-1.5 grid grid-cols-1 gap-2.5 xl:grid-cols-2">
+            {mine.slice(0, 6).map((e, index) => (
               <li
                 key={e.id}
-                className="anim-up flex items-center gap-2.5 rounded-3xl bg-white px-4 py-3.5 shadow-chunk"
+                className={`anim-up items-center gap-2.5 rounded-3xl bg-white px-4 py-3.5 shadow-chunk ${index >= 3 ? 'hidden lg:flex' : 'flex'}`}
                 style={{ animationDelay: `${0.16 + index * 0.06}s` }}
               >
                 <div className="min-w-0 flex-1">
@@ -411,11 +415,13 @@ export default function UserView({
               Bạn chưa tham gia khoản nào.
             </p>
           )}
+          </div>
         </div>
       )}
 
       {tab === 'group' && (
-        <div>
+        <div className="lg:grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
+          <div>
           <h1 className="anim-up font-display text-[34px] font-extrabold leading-none">Cả nhóm</h1>
           <section
             className="hero-gradient anim-pop relative mt-3.5 overflow-hidden rounded-[32px] p-[22px] text-white shadow-[0_10px_0_-2px_rgba(91,63,224,.28)]"
@@ -473,7 +479,10 @@ export default function UserView({
             </section>
           )}
 
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-2">
+          </div>
+
+          <div>
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-2 lg:mt-1.5">
             <h2 className="font-display text-xl font-extrabold">Tất cả khoản chi</h2>
             <select
               className="rounded-full border-2 border-[#E4DDFB] bg-white px-4 py-2 text-sm font-bold text-ink outline-none focus:border-brand"
@@ -493,7 +502,7 @@ export default function UserView({
               })}
             </select>
           </div>
-          <ul className="mt-2.5 flex max-h-[28rem] flex-col gap-2 overflow-y-auto">
+          <ul className="mt-2.5 flex max-h-[28rem] flex-col gap-2 overflow-y-auto lg:max-h-[calc(100vh-11rem)]">
             {transactions.map(tx => {
               const payer = members.find(m => m.id === tx.payerId)?.name || 'Không rõ';
               const joined = (tx.splits || []).some(s => s.memberId === me.id);
@@ -518,6 +527,7 @@ export default function UserView({
               </li>
             )}
           </ul>
+          </div>
         </div>
       )}
 
@@ -527,7 +537,7 @@ export default function UserView({
           <p className="anim-up mt-1 text-sm font-bold text-ink-soft" style={{ animationDelay: '.06s' }}>
             Mọi khoản bạn đã tham gia và đã gửi, mới nhất trước.
           </p>
-          <ul className="mt-3.5 flex flex-col gap-2.5">
+          <ul className="mt-3.5 lg:columns-2 lg:gap-6 xl:columns-3 [&>li]:mb-2.5 [&>li]:break-inside-avoid">
             {timeline.map((item, index) => (
               <li key={item.key}>
                 {(index === 0 || monthLabelOf(timeline[index - 1].date) !== monthLabelOf(item.date)) && (
@@ -559,7 +569,7 @@ export default function UserView({
 
       <nav
         aria-label="Điều hướng"
-        className="fixed inset-x-3.5 bottom-3.5 z-30 mx-auto flex h-[68px] max-w-xl items-center gap-1 rounded-full bg-white p-1.5 shadow-[0_6px_0_rgba(30,27,58,.12)]"
+        className="fixed inset-x-3.5 bottom-3.5 z-30 mx-auto flex h-[68px] max-w-xl items-center gap-1 rounded-full bg-white p-1.5 shadow-[0_6px_0_rgba(30,27,58,.12)] lg:bottom-auto lg:left-1/2 lg:right-auto lg:top-4 lg:mx-0 lg:h-[60px] lg:w-[440px] lg:-translate-x-1/2"
       >
         {TABS.map(({ key, label, Icon }) => (
           <button
