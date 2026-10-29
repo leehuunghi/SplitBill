@@ -278,6 +278,28 @@
   ],
   "expenses": [
     {
+      "id": 1793311772448,
+      "amount": 409450,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 136483
+        },
+        {
+          "memberId": 6,
+          "amount": 136483
+        },
+        {
+          "memberId": 9,
+          "amount": 136484
+        }
+      ],
+      "note": "Phở sân bay 30/10",
+      "date": "2026-10-30",
+      "createdAt": "2026-10-29T22:09:32.448Z"
+    },
+    {
       "id": 1793255016178,
       "amount": 137000,
       "payerId": 1,
@@ -10747,5 +10769,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-10-29T06:47:00.667Z"
+  "savedAt": "2026-10-29T22:09:32.448Z"
 }
