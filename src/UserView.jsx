@@ -116,7 +116,7 @@ function Picker({ people, balances, lastId, formatVND, onChoose }) {
           <Avatar member={lastMember} size={46} />
           <div className="min-w-0 flex-1">
             <div className="text-xs font-extrabold text-ink-soft">Lần trước</div>
-            <div className="truncate font-display text-[22px] font-extrabold leading-tight">{lastMember.name}</div>
+            <div className="break-words font-display text-[22px] font-extrabold leading-tight">{lastMember.name}</div>
           </div>
           <span className={`font-display text-[15px] font-extrabold ${balanceLabel(balances.get(lastMember.id) || 0, formatVND).className}`}>
             {balanceLabel(balances.get(lastMember.id) || 0, formatVND).text}
@@ -136,7 +136,7 @@ function Picker({ people, balances, lastId, formatVND, onChoose }) {
                 className="flex w-full items-center gap-3 rounded-[22px] bg-white py-2.5 pl-2.5 pr-4 text-left shadow-chunk transition-transform hover:-translate-y-0.5"
               >
                 <Avatar member={m} size={42} />
-                <span className="min-w-0 flex-1 truncate text-base font-extrabold">{m.name}</span>
+                <span className="min-w-0 flex-1 break-words text-base font-extrabold leading-tight">{m.name}</span>
                 <span className={`flex-none font-display text-[15px] font-extrabold ${label.className}`}>{label.text}</span>
               </button>
             </li>
@@ -347,7 +347,7 @@ export default function UserView({
             <Avatar member={me} size={52} />
             <div className="min-w-0 flex-1">
               <div className="text-[13px] font-extrabold text-ink-soft">Chào bạn</div>
-              <div className="truncate font-display text-[26px] font-extrabold leading-none">{me.name}</div>
+              <div className="break-words font-display text-[26px] font-extrabold leading-tight">{me.name}</div>
             </div>
             <FootballLink />
             <button
@@ -432,7 +432,7 @@ export default function UserView({
                   <Avatar member={member} size={34} />
                   <div className="min-w-0 flex-1">
                     <div className="flex justify-between text-[13px] font-extrabold">
-                      <span className="truncate">
+                      <span className="break-words">
                         {member.name}
                         {member.id === me.id ? ' (bạn)' : ''}
                       </span>

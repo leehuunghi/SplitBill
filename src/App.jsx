@@ -1212,7 +1212,7 @@ const SplitWiseTool = () => {
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <Avatar member={m} size={40} />
-                    <span className="truncate font-extrabold">{m.name}</span>
+                    <span className="break-words font-extrabold leading-tight">{m.name}</span>
                   </div>
                   <div
                     className={`text-right font-display text-lg font-extrabold ${balance < 0 ? 'text-debt' : 'text-pine'}`}
