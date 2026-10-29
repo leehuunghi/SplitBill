@@ -278,6 +278,32 @@
   ],
   "expenses": [
     {
+      "id": 1793255016178,
+      "amount": 137000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 9,
+          "amount": 34250
+        },
+        {
+          "memberId": 12,
+          "amount": 34250
+        },
+        {
+          "memberId": 19,
+          "amount": 34250
+        },
+        {
+          "memberId": 40,
+          "amount": 34250
+        }
+      ],
+      "note": "sinh tố 29/10",
+      "date": "2026-10-29",
+      "createdAt": "2026-10-29T06:23:36.178Z"
+    },
+    {
       "id": 1793253889201,
       "amount": 440000,
       "payerId": 1,
@@ -10703,5 +10729,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-10-29T06:09:44.213Z"
+  "savedAt": "2026-10-29T06:23:36.178Z"
 }
