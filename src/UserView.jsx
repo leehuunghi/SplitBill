@@ -125,19 +125,21 @@ function Picker({ people, balances, lastId, formatVND, onChoose }) {
       )}
 
       <h2 className="mt-4 font-display text-xl font-extrabold">Cả nhóm</h2>
-      <ul className="mt-2 flex flex-col gap-2">
+      <ul className="mt-2.5 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {filtered.map((m, index) => {
           const label = balanceLabel(balances.get(m.id) || 0, formatVND);
           return (
-            <li key={m.id} className="anim-up" style={{ animationDelay: `${0.16 + Math.min(index, 8) * 0.04}s` }}>
+            <li key={m.id} className="anim-pop" style={{ animationDelay: `${0.16 + Math.min(index, 12) * 0.03}s` }}>
               <button
                 type="button"
                 onClick={() => onChoose(m.id)}
-                className="flex w-full items-center gap-3 rounded-[22px] bg-white py-2.5 pl-2.5 pr-4 text-left shadow-chunk transition-transform hover:-translate-y-0.5"
+                className="flex h-full w-full flex-col items-center gap-1.5 rounded-[26px] bg-white px-2.5 pb-3.5 pt-4 text-center shadow-chunk transition-transform hover:-translate-y-1 hover:rotate-[-1.5deg] active:translate-y-0.5"
               >
-                <Avatar member={m} size={42} />
-                <span className="min-w-0 flex-1 break-words text-base font-extrabold leading-tight">{m.name}</span>
-                <span className={`flex-none font-display text-[15px] font-extrabold ${label.className}`}>{label.text}</span>
+                <Avatar member={m} size={60} />
+                <span className="w-full break-words text-[15px] font-extrabold leading-tight">{m.name}</span>
+                <span className={`mt-auto rounded-full bg-[#FAF8FF] px-3 py-1 font-display text-[14px] font-extrabold ${label.className}`}>
+                  {label.text}
+                </span>
               </button>
             </li>
           );
