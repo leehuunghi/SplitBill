@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getNextMemberId, dropQrCacheEntry, normalizeMemberGroup } from './shared/dataHelpers.js';
+import { AppShell, Avatar } from './ui.jsx';
 
 const formatVND = value =>
   Number(value || 0).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + 'đ';
@@ -324,7 +325,9 @@ const SplitWiseTool = () => {
               fixedPayer?.id ||
               normalizedData.members.find(m => m.isTreasurer)?.id ||
               normalizedData.members[0].id,
-            participants: normalizedData.members.filter(m => !m.isTreasurer).map(m => m.id),
+            participants: normalizedData.members
+              .filter(m => !m.isTreasurer && normalizeMemberGroup(m.group) !== 'remove')
+              .map(m => m.id),
           }));
           const firstNonTreasurer = normalizedData.members.find(m => !m.isTreasurer);
           setPaymentForm(prev => ({
@@ -395,13 +398,22 @@ const SplitWiseTool = () => {
   }, [members, balances]);
 
   const eligibleParticipants = members.filter(m => !m.isTreasurer);
+  // Nhóm "remove" bị ẩn: không chọn sẵn, và chỉ hiện trong danh sách chọn khi đang ở chế độ admin
+  // đầy đủ (để kéo thả) hoặc khi người đó đã nằm trong khoản chi đang sửa.
+  const selectableParticipants = eligibleParticipants.filter(
+    m => normalizeMemberGroup(m.group) !== 'remove'
+  );
   const participantList = eligibleParticipants.filter(m => expenseForm.participants.includes(m.id));
   const participantGroups = useMemo(
     () =>
       MEMBER_GROUPS.map(group => ({
         ...group,
         members: eligibleParticipants.filter(
-          member => normalizeMemberGroup(member.group) === group.key
+          member =>
+            normalizeMemberGroup(member.group) === group.key &&
+            (group.key !== 'remove' ||
+              showFullAdminControls ||
+              expenseForm.participants.includes(member.id))
         ),
       })),
     [eligibleParticipants]
@@ -444,7 +456,7 @@ const SplitWiseTool = () => {
     setExpenseForm({
       amount: '',
       payerId: defaultPayerId,
-      participants: eligibleParticipants.map(m => m.id),
+      participants: selectableParticipants.map(m => m.id),
       splitMode: 'equal',
       splits: {},
       note: '',
@@ -978,12 +990,12 @@ const SplitWiseTool = () => {
   }, [payments, historyModal.memberId, monthFilter]);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto bg-gray-50 min-h-screen">
+    <AppShell>
       {isAdminView && toast && (
         <div className="fixed top-4 right-4 z-50">
           <div
-            className={`rounded-xl px-4 py-3 shadow-lg text-sm font-medium text-white ${
-              toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-500'
+            className={`anim-pop rounded-full px-5 py-3 text-sm font-extrabold text-white shadow-[0_8px_0_rgba(0,0,0,.15)] ${
+              toast.type === 'success' ? 'bg-ink' : 'bg-debt'
             }`}
           >
             {toast.message}
@@ -992,34 +1004,39 @@ const SplitWiseTool = () => {
       )}
       <div className="flex flex-col gap-6">
         <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">Tool Chia Tiền Nhóm</h1>
+          <div className="anim-pop flex items-center gap-3">
+            <div className="flex h-12 w-12 -rotate-6 items-center justify-center rounded-2xl bg-brand font-display text-[28px] font-extrabold text-white shadow-[0_5px_0_rgba(30,27,58,.2)]">
+              S
+            </div>
+            <h1 className="font-display text-[26px] font-extrabold leading-tight tracking-tight md:text-3xl">
+              Tool Chia Tiền Nhóm
+            </h1>
           </div>
           <div className="flex items-center gap-3">
             <a
               href="/chiateam"
-              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border bg-white shadow-sm text-gray-600 hover:bg-gray-100"
+              className="chunk-btn h-11 bg-white px-4 text-sm"
             >
               <Goal size={16} /> Football
             </a>
             {isSuperAdmin && (
               <>
                 <div className="flex items-center gap-2 text-sm">
-                  <ShieldCheck size={16} className="text-gray-500" />
-                  <span className="text-gray-600">Chế độ:</span>
+                  <ShieldCheck size={16} className="text-ink-soft" />
+                  <span className="text-ink-soft">Chế độ:</span>
                 </div>
-                <div className="flex rounded-lg border bg-white shadow-sm overflow-hidden">
+                <div className="flex gap-1 rounded-full bg-white p-1 shadow-chunk">
                   <button
-                    className={`px-3 py-2 text-sm ${
-                      !isAdminView ? 'bg-gray-900 text-white' : 'text-gray-600'
+                    className={`h-10 rounded-full px-4 text-sm font-extrabold transition-colors ${
+                      !isAdminView ? 'bg-ink text-white' : 'text-ink-soft'
                     }`}
                     onClick={() => setIsAdminView(false)}
                   >
                     Người dùng
                   </button>
                   <button
-                    className={`px-3 py-2 text-sm ${
-                      isAdminView ? 'bg-gray-900 text-white' : 'text-gray-600'
+                    className={`h-10 rounded-full px-4 text-sm font-extrabold transition-colors ${
+                      isAdminView ? 'bg-ink text-white' : 'text-ink-soft'
                     }`}
                     onClick={() => setIsAdminView(true)}
                   >
@@ -1034,8 +1051,8 @@ const SplitWiseTool = () => {
         {showFullAdminControls && (
           <div className="flex flex-wrap gap-2">
                         <button
-              className={`px-3 py-2 rounded-lg border shadow-sm flex items-center gap-2 ${
-                activeAdminPanel === 'expense' ? 'bg-gray-900 text-white' : 'bg-white'
+              className={`chunk-btn h-11 px-4 text-sm ${
+                activeAdminPanel === 'expense' ? 'bg-ink text-white' : 'bg-white'
               }`}
               onClick={() =>
                 setActiveAdminPanel(prev => (prev === 'expense' ? null : 'expense'))
@@ -1047,8 +1064,8 @@ const SplitWiseTool = () => {
             {showFullAdminControls && (
               <>
                 <button
-                  className={`px-3 py-2 rounded-lg border shadow-sm flex items-center gap-2 ${
-                    activeAdminPanel === 'member' ? 'bg-gray-900 text-white' : 'bg-white'
+                  className={`chunk-btn h-11 px-4 text-sm ${
+                    activeAdminPanel === 'member' ? 'bg-ink text-white' : 'bg-white'
                   }`}
                   onClick={() =>
                     setActiveAdminPanel(prev => (prev === 'member' ? null : 'member'))
@@ -1058,8 +1075,8 @@ const SplitWiseTool = () => {
                   Thêm thành viên
                 </button>
                 <button
-                  className={`px-3 py-2 rounded-lg border shadow-sm flex items-center gap-2 ${
-                    activeAdminPanel === 'payment' ? 'bg-gray-900 text-white' : 'bg-white'
+                  className={`chunk-btn h-11 px-4 text-sm ${
+                    activeAdminPanel === 'payment' ? 'bg-ink text-white' : 'bg-white'
                   }`}
                   onClick={() =>
                     setActiveAdminPanel(prev => (prev === 'payment' ? null : 'payment'))
@@ -1074,25 +1091,25 @@ const SplitWiseTool = () => {
         )}
 
         {showFullAdminControls && activeAdminPanel === 'member' && (
-          <section className="bg-white rounded-xl shadow p-5">
-            <h3 className="text-lg font-semibold mb-4">Thêm thành viên mới</h3>
+          <section className="card-surface anim-up p-5 md:p-6">
+            <h3 className="section-title mb-4">Thêm thành viên mới</h3>
             <div className="flex flex-col md:flex-row gap-3">
               <input
                 type="text"
-                className="flex-1 border rounded-lg px-3 py-2"
+                className="input-field flex-1"
                 placeholder="Tên thành viên"
                 value={newMemberName}
                 onChange={e => setNewMemberName(e.target.value)}
               />
               <div className="flex gap-2">
                 <button
-                  className="px-4 py-2 rounded-lg bg-gray-900 text-white"
+                  className="chunk-btn bg-ink px-5 py-2.5 text-white"
                   onClick={addMember}
                 >
                   Lưu
                 </button>
                 <button
-                  className="px-4 py-2 rounded-lg border"
+                  className="chunk-btn bg-white px-5 py-2.5"
                   onClick={() => {
                     setActiveAdminPanel(null);
                     setNewMemberName('');
@@ -1105,17 +1122,17 @@ const SplitWiseTool = () => {
           </section>
         )}
 
-        <section className="bg-white rounded-xl shadow p-5">
+        <section className="card-surface anim-up p-5 md:p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div className="flex items-center gap-2">
-              <Users size={18} className="text-gray-500" />
-              <h2 className="text-lg font-semibold">Danh sách thành viên</h2>
+              <Users size={18} className="text-ink-soft" />
+              <h2 className="section-title">Danh sách thành viên</h2>
             </div>
             {showFullAdminControls && (
               <div className="flex items-center gap-3">
-                <label className="text-sm text-gray-500">Chọn thủ quỹ</label>
+                <label className="label-text">Chọn thủ quỹ</label>
                 <select
-                  className="border rounded-lg px-3 py-2 text-sm"
+                  className="rounded-full border-2 border-[#E4DDFB] bg-white px-4 py-2 text-sm font-bold text-ink outline-none focus:border-brand"
                   value={treasurerId || ''}
                   onChange={e => selectTreasurer(Number(e.target.value))}
                 >
@@ -1137,33 +1154,30 @@ const SplitWiseTool = () => {
                   return (
                     <div
                       key={m.id}
-                      className={`bg-yellow-50 p-4 rounded-lg border border-yellow-200 ${
+                      style={{ backgroundImage: 'linear-gradient(120deg,#5B3FE0,#B93FD9,#F0568C)' }}
+                      className={`hero-gradient rounded-[28px] p-5 text-white shadow-[0_10px_0_-2px_rgba(91,63,224,.28)] ${
                         isAdminView
                           ? 'grid grid-cols-[1fr_auto_auto] items-center gap-3'
                           : 'flex flex-col items-center justify-center text-center gap-2'
                       }`}
                     >
                       {isAdminView ? (
-                        <div>
+                        <div className="flex flex-wrap items-center gap-1.5">
                           <span className="font-semibold">{m.name}</span>
-                          <span className="ml-2 text-xs bg-yellow-200 px-2 py-1 rounded">Thủ quỹ</span>
+                          <span className="rounded-full bg-sun px-2.5 py-1 text-xs font-extrabold text-ink">Thủ quỹ</span>
                         </div>
                       ) : (
                         <div
-                          className={`font-mono font-bold text-3xl md:text-4xl ${
-                            totalDebtAmount > 0 ? 'text-red-500' : 'text-green-600'
-                          }`}
+                          className="font-display text-4xl font-extrabold text-white md:text-5xl"
                         >
                           Tổng nợ: {formatVND(totalDebtAmount)}
                         </div>
                       )}
                       {isAdminView && (
                         <div className="text-right">
-                          <div className="text-xs text-gray-500">Tổng của các thành viên</div>
+                          <div className="text-xs font-extrabold text-white/80">Tổng của các thành viên</div>
                           <div
-                            className={`font-mono font-bold ${
-                              nonTreasurerTotal < 0 ? 'text-red-500' : 'text-green-600'
-                            }`}
+                            className="font-display text-xl font-extrabold text-white"
                           >
                             {nonTreasurerTotal > 0 ? '+' : ''}
                             {formatVND(nonTreasurerTotal)}
@@ -1186,26 +1200,31 @@ const SplitWiseTool = () => {
                 if (b.id === lastQrMemberId) return 1;
                 return 0;
               })
-              .map(m => {
+              .map((m, rowIndex) => {
               const balance = balances.get(m.id) || 0;
               return (
-                <div key={m.id} className="bg-gray-50 p-4 rounded-lg border grid grid-cols-[1fr_auto_auto] items-center gap-3">
-                  <div>
-                    <span className="font-semibold">{m.name}</span>
+                <div
+                  key={m.id}
+                  style={{ animationDelay: `${Math.min(rowIndex, 12) * 0.04}s` }}
+                  className="anim-up grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2.5 rounded-[24px] bg-[#FAF8FF] p-3.5 transition-transform hover:-translate-y-0.5 sm:grid-cols-[minmax(0,1fr)_auto_auto]"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Avatar member={m} size={40} />
+                    <span className="truncate font-extrabold">{m.name}</span>
                   </div>
                   <div
-                    className={`font-mono font-bold text-right ${balance < 0 ? 'text-red-500' : 'text-green-600'}`}
+                    className={`text-right font-display text-lg font-extrabold ${balance < 0 ? 'text-debt' : 'text-pine'}`}
                   >
                     {balance > 0 ? '+' : ''}
                     {formatVND(balance)}
                   </div>
-                  <div className="ml-4 flex items-center gap-2">
+                  <div className="col-span-2 flex items-center justify-end gap-2 empty:hidden sm:col-span-1 sm:ml-2 sm:min-w-[40px] sm:empty:flex">
                     {balance < 0 && treasurerId && (
                       <>
                         {!isRestrictedAdmin && (
                           <button
                             onClick={() => openQrForMember(m.id, Math.abs(balance))}
-                            className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EFEAFF] text-brand transition-transform hover:scale-110"
                             title="Tạo QR thanh toán"
                           >
                             <QrCode size={18} />
@@ -1214,7 +1233,7 @@ const SplitWiseTool = () => {
                         {showFullAdminControls && (
                           <button
                             onClick={() => completeMemberPayment(m.id)}
-                            className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700"
+                            className="chunk-btn h-10 bg-pine px-4 text-sm text-white"
                             title="Complete thanh toán"
                           >
                             Complete
@@ -1225,7 +1244,7 @@ const SplitWiseTool = () => {
                     {showFullAdminControls && (
                       <button
                         onClick={() => deleteMember(m.id)}
-                        className="px-3 py-2 rounded-lg border text-sm hover:bg-red-50"
+                        className="chunk-btn h-10 bg-[#FFD6DC] px-4 text-sm text-[#9B1C3A]"
                         title="Xóa thành viên"
                       >
                         Xóa
@@ -1238,13 +1257,13 @@ const SplitWiseTool = () => {
           </div>
         </section>
 
-        <section className="bg-white rounded-xl shadow p-5">
+        <section className="card-surface anim-up p-5 md:p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <h3 className="text-lg font-semibold">Danh sách thu chi</h3>
+            <h3 className="section-title">Danh sách thu chi</h3>
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-gray-500">Lọc theo tháng</span>
+              <span className="text-ink-soft">Lọc theo tháng</span>
               <select
-                className="border rounded-lg px-3 py-2 text-sm"
+                className="rounded-full border-2 border-[#E4DDFB] bg-white px-4 py-2 text-sm font-bold text-ink outline-none focus:border-brand"
                 value={monthFilter}
                 onChange={e => setMonthFilter(e.target.value)}
                 disabled={availableMonths.length === 0}
@@ -1261,9 +1280,9 @@ const SplitWiseTool = () => {
                   );
                 })}
               </select>
-              <span className="text-gray-500">Lọc theo người</span>
+              <span className="text-ink-soft">Lọc theo người</span>
               <select
-                className="border rounded-lg px-3 py-2 text-sm"
+                className="rounded-full border-2 border-[#E4DDFB] bg-white px-4 py-2 text-sm font-bold text-ink outline-none focus:border-brand"
                 value={personFilter}
                 onChange={e => setPersonFilter(e.target.value)}
                 disabled={availablePeople.length === 0}
@@ -1277,7 +1296,7 @@ const SplitWiseTool = () => {
               </select>
               {personFilter && (
                 <button
-                  className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EFEAFF] text-brand transition-transform hover:scale-110"
                   onClick={() => openHistoryForMember(Number(personFilter))}
                   title="Xem lịch sử"
                 >
@@ -1286,9 +1305,9 @@ const SplitWiseTool = () => {
               )}
             </div>
           </div>
-          <div className="mt-4 border rounded-lg divide-y max-h-80 overflow-y-auto">
+          <div className="mt-4 divide-y divide-[#F0ECFB] overflow-hidden rounded-[20px] border-2 border-[#F0ECFB] bg-white max-h-80 overflow-y-auto">
             {filteredTransactions.length === 0 && (
-              <div className="p-4 text-sm text-gray-500">Không có giao dịch phù hợp.</div>
+              <div className="p-4 text-sm text-ink-soft">Không có giao dịch phù hợp.</div>
             )}
             {filteredTransactions.map(tx => {
               const dateLabel = tx.date
@@ -1304,26 +1323,26 @@ const SplitWiseTool = () => {
                   <div
                     key={tx.id}
                     className={`p-4 flex items-center justify-between gap-4 ${
-                      showFullAdminControls ? 'cursor-pointer hover:bg-gray-50' : ''
+                      showFullAdminControls ? 'cursor-pointer hover:bg-[#FAF8FF]' : ''
                     }`}
                     onClick={() => startEditingTransaction(tx)}
                   >
                     <div>
                       <div className="font-medium">{tx.note}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-ink-soft">
                         {dateLabel} • Người trả: {payer}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-ink-soft">
                         Tham gia: {participantNames || 'Chưa có'}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm text-gray-500">Chi</div>
-                      <div className="font-semibold text-red-500">{formatVND(tx.amount)}</div>
+                      <div className="text-sm text-ink-soft">Chi</div>
+                      <div className="font-semibold text-debt">{formatVND(tx.amount)}</div>
                     </div>
                     {showFullAdminControls && (
                       <button
-                        className="px-3 py-2 rounded-lg border text-sm hover:bg-red-50"
+                        className="chunk-btn h-10 bg-[#FFD6DC] px-4 text-sm text-[#9B1C3A]"
                         onClick={event => {
                           event.stopPropagation();
                           deleteExpense(Number(tx.id.replace('exp-', '')));
@@ -1339,23 +1358,23 @@ const SplitWiseTool = () => {
               const paymentLabel =
                 tx.paymentType === 'pay' ? 'Thanh toán nợ' : 'Nhận tiền';
               const paymentAmountClass =
-                tx.paymentType === 'pay' ? 'text-blue-600' : 'text-emerald-600';
+                tx.paymentType === 'pay' ? 'text-brand' : 'text-pine';
               return (
                 <div
                   key={tx.id}
                   className={`p-4 flex items-center justify-between gap-4 ${
-                    showFullAdminControls ? 'cursor-pointer hover:bg-gray-50' : ''
+                    showFullAdminControls ? 'cursor-pointer hover:bg-[#FAF8FF]' : ''
                   }`}
                   onClick={() => startEditingTransaction(tx)}
                 >
                   <div>
                     <div className="font-medium">{tx.note}</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-ink-soft">
                       {dateLabel} • {memberName} • {paymentLabel}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-500">{paymentLabel}</div>
+                    <div className="text-sm text-ink-soft">{paymentLabel}</div>
                     <div className={`font-semibold ${paymentAmountClass}`}>
                       {formatVND(tx.amount)}
                     </div>
@@ -1367,16 +1386,16 @@ const SplitWiseTool = () => {
         </section>
 
         {showFullAdminControls && (
-          <section className="bg-white rounded-xl shadow p-5">
+          <section className="card-surface anim-up p-5 md:p-6">
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-lg font-semibold">Lịch sử nhận tiền</h3>
-              <span className="text-sm text-gray-500">
+              <h3 className="section-title">Lịch sử nhận tiền</h3>
+              <span className="text-sm text-ink-soft">
                 {filteredReceivedPayments.length} giao dịch
               </span>
             </div>
-            <div className="mt-4 border rounded-lg divide-y max-h-80 overflow-y-auto">
+            <div className="mt-4 divide-y divide-[#F0ECFB] overflow-hidden rounded-[20px] border-2 border-[#F0ECFB] bg-white max-h-80 overflow-y-auto">
               {filteredReceivedPayments.length === 0 && (
-                <div className="p-4 text-sm text-gray-500">
+                <div className="p-4 text-sm text-ink-soft">
                   Chưa có giao dịch nhận tiền trong tháng này.
                 </div>
               )}
@@ -1391,12 +1410,12 @@ const SplitWiseTool = () => {
                 const paymentBadge =
                   payment.type === 'pay' ? 'Đã thanh toán' : 'Đã nhận';
                 const paymentAmountClass =
-                  payment.type === 'pay' ? 'text-blue-600' : 'text-emerald-600';
+                  payment.type === 'pay' ? 'text-brand' : 'text-pine';
 
                 return (
                   <div
                     key={`received-${payment.id}`}
-                    className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-gray-50"
+                    className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-[#FAF8FF]"
                     onClick={() =>
                       startEditingTransaction({
                         id: `pay-${payment.id}`,
@@ -1412,12 +1431,12 @@ const SplitWiseTool = () => {
                   >
                     <div>
                       <div className="font-medium">{payment.note || paymentLabel}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-ink-soft">
                         {dateLabel} • {memberName} • {paymentLabel}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm text-gray-500">{paymentBadge}</div>
+                      <div className="text-sm text-ink-soft">{paymentBadge}</div>
                       <div className={`font-semibold ${paymentAmountClass}`}>
                         {formatVND(payment.amount)}
                       </div>
@@ -1430,17 +1449,17 @@ const SplitWiseTool = () => {
         )}
 
         {isAdminView && activeAdminPanel === 'expense' && (
-          <section className="bg-white rounded-xl shadow p-5">
-            <h3 className="text-lg font-semibold mb-4">
+          <section className="card-surface anim-up p-5 md:p-6">
+            <h3 className="section-title mb-4">
               {editingTransaction?.type === 'expense' ? 'Sửa khoản chi' : 'Thêm khoản chi'}
             </h3>
             <div className="grid grid-cols-1 gap-4">
-              <label className="text-sm">
+              <label className="label-text block">
                 Số tiền
                 <input
                   type="text"
                   inputMode="numeric"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={formatNumberInput(expenseForm.amount)}
                   onChange={e =>
                     setExpenseForm(prev => ({
@@ -1451,22 +1470,22 @@ const SplitWiseTool = () => {
                   placeholder="VD: 250000"
                 />
               </label>
-              <label className="text-sm">
+              <label className="label-text block">
                 Ngày
                 <input
                   type="date"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={expenseForm.date}
                   onChange={e =>
                     setExpenseForm(prev => ({ ...prev, date: e.target.value }))
                   }
                 />
               </label>
-              <label className="text-sm">
+              <label className="label-text block">
                 Người trả
                 <select
-                  className={`mt-1 w-full border rounded-lg px-3 py-2 ${
-                    isRestrictedAdmin ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : ''
+                  className={`input-field mt-1.5 ${
+                    isRestrictedAdmin ? 'bg-gray-100 text-ink-soft cursor-not-allowed' : ''
                   }`}
                   value={expenseForm.payerId}
                   disabled={isRestrictedAdmin}
@@ -1484,22 +1503,22 @@ const SplitWiseTool = () => {
               <div className="text-sm">
                 <div className="flex items-center justify-between gap-3">
                   <span>Người tham gia</span>
-                  <span className="text-xs text-gray-500">
-                    Đã chọn {participantList.length}/{eligibleParticipants.length} người
+                  <span className="text-xs text-ink-soft">
+                    Đã chọn {participantList.length}/{selectableParticipants.length} người
                   </span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() => {
-                      const allIds = eligibleParticipants.map(m => m.id);
+                      const allIds = selectableParticipants.map(m => m.id);
                       const isAll = allIds.every(id => expenseForm.participants.includes(id));
                       setExpenseForm(prev => ({
                         ...prev,
                         participants: isAll ? [] : allIds,
                       }));
                     }}
-                    className="px-3 py-2 rounded-lg border text-sm bg-white"
+                    className="chunk-btn h-10 bg-white px-4 text-sm"
                   >
                     Chọn tất cả
                   </button>
@@ -1515,12 +1534,13 @@ const SplitWiseTool = () => {
                         sum + group.members.filter(m => expenseForm.participants.includes(m.id)).length,
                       0
                     );
+                    if (section.section === 'remove' && sectionMemberCount === 0) return null;
                     const nested = section.groups.length > 1;
                     return (
-                      <div key={section.section} className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                      <div key={section.section} className="rounded-[22px] bg-[#FAF8FF] p-3">
                         <div className="flex items-center justify-between gap-2 mb-3">
                           <span className="font-medium">{section.sectionLabel}</span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-ink-soft">
                             {sectionActiveCount}/{sectionMemberCount}
                           </span>
                         </div>
@@ -1535,16 +1555,16 @@ const SplitWiseTool = () => {
                                 nested ? 'border p-2' : ''
                               } ${
                                 dragOverGroup === group.key
-                                  ? 'border-gray-900 bg-gray-100'
+                                  ? 'border-brand bg-[#EFEAFF]'
                                   : nested
-                                  ? 'border-gray-200 bg-white'
+                                  ? 'border-[#E4DDFB] bg-white'
                                   : ''
                               }`}
                             >
                               {nested && (
                                 <div className="flex items-center justify-between gap-2 mb-2">
-                                  <span className="text-xs font-medium text-gray-500">{group.label}</span>
-                                  <span className="text-xs text-gray-400">
+                                  <span className="text-xs font-medium text-ink-soft">{group.label}</span>
+                                  <span className="text-xs text-[#9a95b8]">
                                     {group.members.filter(m => expenseForm.participants.includes(m.id)).length}/
                                     {group.members.length}
                                   </span>
@@ -1552,7 +1572,7 @@ const SplitWiseTool = () => {
                               )}
                               <div className="flex flex-col gap-2">
                                 {group.members.length === 0 && (
-                                  <div className="text-xs text-gray-400">Chưa có thành viên</div>
+                                  <div className="text-xs text-[#9a95b8]">Chưa có thành viên</div>
                                 )}
                                 {group.members.map(m => {
                                   const active = expenseForm.participants.includes(m.id);
@@ -1564,10 +1584,10 @@ const SplitWiseTool = () => {
                                       onClick={() => toggleParticipant(m.id)}
                                       onDragStart={handleMemberDragStart(m, group.key)}
                                       onDragEnd={handleMemberDragEnd}
-                                      className={`px-3 py-2 rounded-lg border text-sm text-left transition-all ${
+                                      className={`rounded-full border-2 px-3.5 py-2 text-left text-sm font-extrabold transition-all ${
                                         active
-                                          ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm ring-2 ring-indigo-200'
-                                          : 'bg-white border-gray-200 text-gray-700 hover:border-indigo-300 hover:bg-indigo-50'
+                                          ? 'bg-ink border-ink text-white'
+                                          : 'bg-white border-[#E4DDFB] text-ink hover:border-brand'
                                       }`}
                                     >
                                       {active && <UserCheck size={14} className="inline mr-1" />}
@@ -1592,9 +1612,9 @@ const SplitWiseTool = () => {
                     onClick={() =>
                       setExpenseForm(prev => ({ ...prev, splitMode: 'equal' }))
                     }
-                    className={`px-3 py-2 rounded-lg border ${
+                    className={`h-11 rounded-full px-4 text-sm font-extrabold transition-colors ${
                       expenseForm.splitMode === 'equal'
-                        ? 'bg-gray-900 text-white'
+                        ? 'bg-ink text-white'
                         : 'bg-white'
                     }`}
                   >
@@ -1605,9 +1625,9 @@ const SplitWiseTool = () => {
                     onClick={() =>
                       setExpenseForm(prev => ({ ...prev, splitMode: 'custom' }))
                     }
-                    className={`px-3 py-2 rounded-lg border ${
+                    className={`h-11 rounded-full px-4 text-sm font-extrabold transition-colors ${
                       expenseForm.splitMode === 'custom'
-                        ? 'bg-gray-900 text-white'
+                        ? 'bg-ink text-white'
                         : 'bg-white'
                     }`}
                   >
@@ -1617,9 +1637,9 @@ const SplitWiseTool = () => {
               </div>
 
               {expenseForm.splitMode === 'custom' && (
-                <div className="bg-gray-50 rounded-lg p-3">
+                <div className="rounded-[22px] bg-[#FAF8FF] p-3">
                   {participantList.length === 0 ? (
-                    <p className="text-sm text-gray-500">Chọn ít nhất 1 người tham gia.</p>
+                    <p className="text-sm text-ink-soft">Chọn ít nhất 1 người tham gia.</p>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {participantList.map(m => (
@@ -1627,7 +1647,7 @@ const SplitWiseTool = () => {
                           {m.name}
                           <input
                             type="number"
-                            className="mt-1 w-full border rounded-lg px-3 py-2"
+                            className="input-field mt-1.5"
                             value={expenseForm.splits[m.id] || ''}
                             onChange={e =>
                               setExpenseForm(prev => ({
@@ -1646,11 +1666,11 @@ const SplitWiseTool = () => {
                 </div>
               )}
 
-              <label className="text-sm">
+              <label className="label-text block">
                 Ghi chú
                 <input
                   type="text"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={expenseForm.note}
                   onChange={e =>
                     setExpenseForm(prev => ({ ...prev, note: e.target.value }))
@@ -1660,7 +1680,7 @@ const SplitWiseTool = () => {
               </label>
 
               <div className="flex items-center justify-between text-sm">
-                <span className={splitValid ? 'text-green-600' : 'text-red-500'}>
+                <span className={splitValid ? 'text-pine' : 'text-debt'}>
                   Tổng chia: {formatVND(splitSum)} / {formatVND(expenseForm.amount)}
                 </span>
                 <div className="flex items-center gap-2">
@@ -1668,7 +1688,7 @@ const SplitWiseTool = () => {
                     <button
                       type="button"
                       onClick={cancelEditingTransaction}
-                      className="px-4 py-2 rounded-lg border"
+                      className="chunk-btn bg-white px-5 py-2.5"
                     >
                       Hủy sửa
                     </button>
@@ -1677,8 +1697,8 @@ const SplitWiseTool = () => {
                     type="button"
                     onClick={addExpense}
                     disabled={!splitValid || isSavingExpense}
-                    className={`px-4 py-2 rounded-lg text-white ${
-                      splitValid && !isSavingExpense ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'
+                    className={`chunk-btn px-5 py-2.5 text-white ${
+                      splitValid && !isSavingExpense ? 'bg-brand' : 'bg-[#B9B4D4]'
                     }`}
                   >
                     {isSavingExpense
@@ -1694,17 +1714,17 @@ const SplitWiseTool = () => {
         )}
 
         {showFullAdminControls && activeAdminPanel === 'payment' && (
-          <section className="bg-white rounded-xl shadow p-5">
-            <h3 className="text-lg font-semibold mb-4">
+          <section className="card-surface anim-up p-5 md:p-6">
+            <h3 className="section-title mb-4">
               {editingTransaction?.type === 'payment'
                 ? 'Sửa thanh toán / đã nhận'
                 : 'Thanh toán / Đã nhận'}
             </h3>
             <div className="grid grid-cols-1 gap-4">
-              <label className="text-sm">
+              <label className="label-text block">
                 Người thanh toán
                 <select
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={paymentForm.memberId}
                   onChange={e =>
                     setPaymentForm(prev => {
@@ -1728,11 +1748,11 @@ const SplitWiseTool = () => {
                     ))}
                 </select>
               </label>
-              <label className="text-sm">
+              <label className="label-text block">
                 Số tiền
                 <input
                   type="number"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={paymentForm.amount}
                   onChange={e =>
                     setPaymentForm(prev => ({
@@ -1764,9 +1784,9 @@ const SplitWiseTool = () => {
                             : '',
                       }))
                     }
-                    className={`px-3 py-2 rounded-lg border ${
+                    className={`h-11 rounded-full px-4 text-sm font-extrabold transition-colors ${
                       paymentForm.type === 'pay'
-                        ? 'bg-gray-900 text-white'
+                        ? 'bg-ink text-white'
                         : 'bg-white'
                     }`}
                   >
@@ -1784,9 +1804,9 @@ const SplitWiseTool = () => {
                             : '',
                       }))
                     }
-                    className={`px-3 py-2 rounded-lg border ${
+                    className={`h-11 rounded-full px-4 text-sm font-extrabold transition-colors ${
                       paymentForm.type === 'receive'
-                        ? 'bg-gray-900 text-white'
+                        ? 'bg-ink text-white'
                         : 'bg-white'
                     }`}
                   >
@@ -1794,11 +1814,11 @@ const SplitWiseTool = () => {
                   </button>
                 </div>
               </div>
-              <label className="text-sm">
+              <label className="label-text block">
                 Ghi chú
                 <input
                   type="text"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={paymentForm.note}
                   onChange={e =>
                     setPaymentForm(prev => ({ ...prev, note: e.target.value }))
@@ -1811,7 +1831,7 @@ const SplitWiseTool = () => {
                   <button
                     type="button"
                     onClick={cancelEditingTransaction}
-                    className="px-4 py-2 rounded-lg border"
+                    className="chunk-btn bg-white px-5 py-2.5"
                   >
                     Hủy sửa
                   </button>
@@ -1820,8 +1840,8 @@ const SplitWiseTool = () => {
                   type="button"
                   onClick={addPayment}
                   disabled={!treasurerId || isSavingPayment}
-                  className={`px-4 py-2 rounded-lg text-white ${
-                    treasurerId && !isSavingPayment ? 'bg-gray-900' : 'bg-gray-400 cursor-not-allowed'
+                  className={`chunk-btn px-5 py-2.5 text-white ${
+                    treasurerId && !isSavingPayment ? 'bg-brand' : 'bg-[#B9B4D4]'
                   }`}
                 >
                   {isSavingPayment
@@ -1832,7 +1852,7 @@ const SplitWiseTool = () => {
                 </button>
               </div>
               {!treasurerId && (
-                <p className="text-sm text-red-500">
+                <p className="text-sm text-debt">
                   Cần chọn thủ quỹ để ghi nhận thanh toán.
                 </p>
               )}
@@ -1841,50 +1861,50 @@ const SplitWiseTool = () => {
         )}
 
         {showFullAdminControls && (
-          <section className="bg-white rounded-xl shadow p-5">
-            <h3 className="text-lg font-semibold mb-4">Cấu hình thủ quỹ</h3>
+          <section className="card-surface anim-up p-5 md:p-6">
+            <h3 className="section-title mb-4">Cấu hình thủ quỹ</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className="text-sm">
+              <label className="label-text block">
                 Tài khoản nhận (hiển thị trên QR)
                 <input
                   type="text"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={treasurerAccount}
                   onChange={e => setTreasurerAccount(e.target.value)}
                   placeholder="VD: VCB - 0123456789"
                 />
               </label>
-              <label className="text-sm">
+              <label className="label-text block">
                 BIN ngân hàng (acqId)
                 <input
                   type="text"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={treasurerBankBin}
                   onChange={e => setTreasurerBankBin(e.target.value)}
                   placeholder="VD: 970415"
                 />
               </label>
-              <label className="text-sm">
+              <label className="label-text block">
                 Số tài khoản
                 <input
                   type="text"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={treasurerAccountNo}
                   onChange={e => setTreasurerAccountNo(e.target.value)}
                   placeholder="VD: 0123456789"
                 />
               </label>
-              <label className="text-sm">
+              <label className="label-text block">
                 Tên tài khoản (không dấu, viết hoa)
                 <input
                   type="text"
-                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  className="input-field mt-1.5"
                   value={treasurerAccountName}
                   onChange={e => setTreasurerAccountName(e.target.value)}
                   placeholder="VD: THU QUY"
                 />
               </label>
-              <div className="text-sm text-gray-500 flex items-end">
+              <div className="text-sm text-ink-soft flex items-end">
                 Mã QR hiện tại dùng chuỗi nội dung cơ bản. Có thể thay bằng payload VietQR thực tế khi kết nối ngân hàng.
               </div>
             </div>
@@ -1899,7 +1919,7 @@ const SplitWiseTool = () => {
                     'Đã lưu cấu hình thủ quỹ'
                   ).catch(() => {});
                 }}
-                className="px-4 py-2 rounded-lg bg-gray-900 text-white"
+                className="chunk-btn bg-ink px-5 py-2.5 text-white"
               >
                 Lưu cấu hình
               </button>
@@ -1909,39 +1929,43 @@ const SplitWiseTool = () => {
       </div>
 
       {qrModal.open && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-sm relative">
+        <div className="anim-fade fixed inset-0 z-50 flex items-end justify-center bg-ink/55 sm:items-center sm:p-4">
+          <div className="anim-pop relative max-h-[94vh] w-full max-w-sm overflow-y-auto rounded-t-[36px] bg-canvas p-5 pb-8 sm:rounded-[36px] sm:p-6">
             <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-chunk transition-transform hover:scale-105"
               onClick={closeQr}
               aria-label="Close"
             >
               <X size={18} />
             </button>
-            <h4 className="text-lg font-semibold mb-2">QR Thanh toán</h4>
-            <p className="text-sm text-gray-500 mb-4">
+            <h4 className="section-title mb-1">QR Thanh toán</h4>
+            <p className="text-sm text-ink-soft mb-4">
               Chuyển đến thủ quỹ: {treasurerAccount}
             </p>
             <div className="flex items-center justify-center mb-4">
               {qrLoading && (
-                <div className="w-[232px] h-[232px] rounded-xl border border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center text-gray-500">
-                  <div className="w-8 h-8 rounded-full border-4 border-gray-300 border-t-gray-700 animate-spin mb-3" />
+                <div className="w-[232px] h-[232px] rounded-[24px] border-2 border-dashed border-[#C9BEF2] bg-white flex flex-col items-center justify-center text-ink-soft">
+                  <div className="w-8 h-8 rounded-full border-4 border-[#E4DDFB] border-t-brand animate-spin mb-3" />
                   <div className="text-sm font-medium">Đang tạo VietQR...</div>
                   <div className="text-xs">Vui lòng chờ trong giây lát</div>
                 </div>
               )}
               {!qrLoading && qrContent && (
-                <QRCodeCanvas value={qrContent} size={200} includeMargin />
+                <div className="anim-pop rounded-[28px] bg-sun p-3 shadow-[0_8px_0_rgba(30,27,58,.14)]">
+                  <div className="rounded-2xl bg-white p-1">
+                    <QRCodeCanvas value={qrContent} size={200} includeMargin />
+                  </div>
+                </div>
               )}
               {!qrLoading && !qrContent && !qrError && (
-                <div className="w-[232px] h-[232px] rounded-xl border border-dashed border-gray-300 bg-gray-50 flex items-center justify-center text-sm text-gray-500 text-center px-6">
+                <div className="w-[232px] h-[232px] rounded-[24px] border-2 border-dashed border-[#C9BEF2] bg-white flex items-center justify-center text-sm text-ink-soft text-center px-6">
                   Chưa có mã QR để hiển thị.
                 </div>
               )}
             </div>
             <div className="text-sm">
               {qrError && (
-                <div className="text-xs text-red-500 mb-2">{qrError}</div>
+                <div className="text-xs text-debt mb-2">{qrError}</div>
               )}
               <div className="flex items-center justify-between">
                 <span>Số tiền</span>
@@ -1952,10 +1976,10 @@ const SplitWiseTool = () => {
                 <span className="font-semibold">{qrAddInfo || qrMember?.name}</span>
               </div>
               <div className="mt-3">
-                <div className="text-xs text-gray-500 mb-2">Khoản đã tham gia</div>
-                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                <div className="text-xs text-ink-soft mb-2">Khoản đã tham gia</div>
+                <div className="max-h-40 overflow-y-auto divide-y divide-[#F0ECFB] overflow-hidden rounded-[20px] border-2 border-[#F0ECFB] bg-white">
                   {qrMemberExpenses.length === 0 && (
-                    <div className="p-3 text-xs text-gray-500">Chưa có khoản tham gia.</div>
+                    <div className="p-3 text-xs text-ink-soft">Chưa có khoản tham gia.</div>
                   )}
                   {qrMemberExpenses.map(exp => {
                     const share = exp.splits.find(s => s.memberId === qrModal.memberId)?.amount || 0;
@@ -1966,11 +1990,11 @@ const SplitWiseTool = () => {
                       <div key={exp.id} className="p-3 text-xs flex items-center justify-between gap-3">
                         <div>
                           <div className="font-medium">{exp.note || 'Khoản chi'}</div>
-                          <div className="text-gray-500">{when}</div>
+                          <div className="text-ink-soft">{when}</div>
                         </div>
                         <div className="text-right">
                           <div className="font-semibold">{formatVND(share)}</div>
-                          <div className="text-gray-500">Tổng: {formatVND(exp.amount)}</div>
+                          <div className="text-ink-soft">Tổng: {formatVND(exp.amount)}</div>
                         </div>
                       </div>
                     );
@@ -1983,39 +2007,39 @@ const SplitWiseTool = () => {
       )}
 
       {historyModal.open && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md relative">
+        <div className="anim-fade fixed inset-0 z-50 flex items-end justify-center bg-ink/55 sm:items-center sm:p-4">
+          <div className="anim-pop relative max-h-[94vh] w-full max-w-md overflow-y-auto rounded-t-[36px] bg-canvas p-5 pb-8 sm:rounded-[36px] sm:p-6">
             <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-chunk transition-transform hover:scale-105"
               onClick={closeHistory}
               aria-label="Close"
             >
               <X size={18} />
             </button>
-            <h4 className="text-lg font-semibold mb-1">
+            <h4 className="section-title mb-1">
               Lịch sử: {historyMember?.name || 'Không rõ'}
             </h4>
-            <p className="text-xs text-gray-500 mb-4">
+            <p className="text-xs text-ink-soft mb-4">
               {monthFilter
                 ? `Tháng ${monthFilter.split('-')[1]}/${monthFilter.split('-')[0]}`
                 : 'Tất cả các tháng'}
             </p>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="border rounded-lg p-3">
-                <div className="text-xs text-gray-500">Tổng đã trả</div>
-                <div className="font-semibold text-emerald-600">{formatVND(historyTotalPaid)}</div>
+              <div className="rounded-[20px] bg-white p-3">
+                <div className="text-xs text-ink-soft">Tổng đã trả</div>
+                <div className="font-semibold text-pine">{formatVND(historyTotalPaid)}</div>
               </div>
-              <div className="border rounded-lg p-3">
-                <div className="text-xs text-gray-500">Tổng cần trả</div>
-                <div className="font-semibold text-red-500">{formatVND(historyTotalOwed)}</div>
+              <div className="rounded-[20px] bg-white p-3">
+                <div className="text-xs text-ink-soft">Tổng cần trả</div>
+                <div className="font-semibold text-debt">{formatVND(historyTotalOwed)}</div>
               </div>
             </div>
             <div className="text-sm">
               <div className="mb-4">
-                <div className="text-xs text-gray-500 mb-2">Các khoản đã đứng ra chi</div>
-                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                <div className="text-xs text-ink-soft mb-2">Các khoản đã đứng ra chi</div>
+                <div className="max-h-40 overflow-y-auto divide-y divide-[#F0ECFB] overflow-hidden rounded-[20px] border-2 border-[#F0ECFB] bg-white">
                   {historyPaidExpenses.length === 0 && (
-                    <div className="p-3 text-xs text-gray-500">Chưa chi khoản nào.</div>
+                    <div className="p-3 text-xs text-ink-soft">Chưa chi khoản nào.</div>
                   )}
                   {historyPaidExpenses.map(exp => {
                     const when = exp.date
@@ -2025,19 +2049,19 @@ const SplitWiseTool = () => {
                       <div key={exp.id} className="p-3 text-xs flex items-center justify-between gap-3">
                         <div>
                           <div className="font-medium">{exp.note || 'Khoản chi'}</div>
-                          <div className="text-gray-500">{when}</div>
+                          <div className="text-ink-soft">{when}</div>
                         </div>
-                        <div className="font-semibold text-emerald-600">{formatVND(exp.amount)}</div>
+                        <div className="font-semibold text-pine">{formatVND(exp.amount)}</div>
                       </div>
                     );
                   })}
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-500 mb-2">Các khoản cần trả (phần chia)</div>
-                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                <div className="text-xs text-ink-soft mb-2">Các khoản cần trả (phần chia)</div>
+                <div className="max-h-40 overflow-y-auto divide-y divide-[#F0ECFB] overflow-hidden rounded-[20px] border-2 border-[#F0ECFB] bg-white">
                   {historyOwedExpenses.length === 0 && (
-                    <div className="p-3 text-xs text-gray-500">Chưa tham gia khoản nào.</div>
+                    <div className="p-3 text-xs text-ink-soft">Chưa tham gia khoản nào.</div>
                   )}
                   {historyOwedExpenses.map(exp => {
                     const when = exp.date
@@ -2047,19 +2071,19 @@ const SplitWiseTool = () => {
                       <div key={exp.id} className="p-3 text-xs flex items-center justify-between gap-3">
                         <div>
                           <div className="font-medium">{exp.note || 'Khoản chi'}</div>
-                          <div className="text-gray-500">{when}</div>
+                          <div className="text-ink-soft">{when}</div>
                         </div>
-                        <div className="font-semibold text-red-500">{formatVND(exp.shareAmount)}</div>
+                        <div className="font-semibold text-debt">{formatVND(exp.shareAmount)}</div>
                       </div>
                     );
                   })}
                 </div>
               </div>
               <div className="mb-4">
-                <div className="text-xs text-gray-500 mb-2">Tiền đã gửi</div>
-                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                <div className="text-xs text-ink-soft mb-2">Tiền đã gửi</div>
+                <div className="max-h-40 overflow-y-auto divide-y divide-[#F0ECFB] overflow-hidden rounded-[20px] border-2 border-[#F0ECFB] bg-white">
                   {historySentPayments.length === 0 && (
-                    <div className="p-3 text-xs text-gray-500">Chưa có khoản nào.</div>
+                    <div className="p-3 text-xs text-ink-soft">Chưa có khoản nào.</div>
                   )}
                   {historySentPayments.map(payment => {
                     const when = payment.createdAt
@@ -2069,19 +2093,19 @@ const SplitWiseTool = () => {
                       <div key={payment.id} className="p-3 text-xs flex items-center justify-between gap-3">
                         <div>
                           <div className="font-medium">{payment.note || 'Thanh toán nợ'}</div>
-                          <div className="text-gray-500">{when}</div>
+                          <div className="text-ink-soft">{when}</div>
                         </div>
-                        <div className="font-semibold text-blue-600">{formatVND(payment.amount)}</div>
+                        <div className="font-semibold text-brand">{formatVND(payment.amount)}</div>
                       </div>
                     );
                   })}
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-500 mb-2">Tiền đã nhận</div>
-                <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                <div className="text-xs text-ink-soft mb-2">Tiền đã nhận</div>
+                <div className="max-h-40 overflow-y-auto divide-y divide-[#F0ECFB] overflow-hidden rounded-[20px] border-2 border-[#F0ECFB] bg-white">
                   {historyReceivedPayments.length === 0 && (
-                    <div className="p-3 text-xs text-gray-500">Chưa có khoản nào.</div>
+                    <div className="p-3 text-xs text-ink-soft">Chưa có khoản nào.</div>
                   )}
                   {historyReceivedPayments.map(payment => {
                     const when = payment.createdAt
@@ -2091,9 +2115,9 @@ const SplitWiseTool = () => {
                       <div key={payment.id} className="p-3 text-xs flex items-center justify-between gap-3">
                         <div>
                           <div className="font-medium">{payment.note || 'Nhận tiền'}</div>
-                          <div className="text-gray-500">{when}</div>
+                          <div className="text-ink-soft">{when}</div>
                         </div>
-                        <div className="font-semibold text-emerald-600">{formatVND(payment.amount)}</div>
+                        <div className="font-semibold text-pine">{formatVND(payment.amount)}</div>
                       </div>
                     );
                   })}
@@ -2103,7 +2127,7 @@ const SplitWiseTool = () => {
           </div>
         </div>
       )}
-    </div>
+    </AppShell>
   );
 };
 
