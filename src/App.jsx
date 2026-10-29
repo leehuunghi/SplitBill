@@ -1006,10 +1006,10 @@ const SplitWiseTool = () => {
         <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="anim-pop flex items-center gap-3">
             <div className="flex h-12 w-12 -rotate-6 items-center justify-center rounded-2xl bg-brand font-display text-[28px] font-extrabold text-white shadow-[0_5px_0_rgba(30,27,58,.2)]">
-              S
+              N
             </div>
             <h1 className="font-display text-[26px] font-extrabold leading-tight tracking-tight md:text-3xl">
-              Tool Chia Tiền Nhóm
+              NBill
             </h1>
           </div>
           <div className="flex items-center gap-3">
