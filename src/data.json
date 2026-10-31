@@ -278,6 +278,40 @@
   ],
   "expenses": [
     {
+      "id": 1793454269039,
+      "amount": 344000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 5,
+          "amount": 57333
+        },
+        {
+          "memberId": 8,
+          "amount": 57333
+        },
+        {
+          "memberId": 9,
+          "amount": 57333
+        },
+        {
+          "memberId": 19,
+          "amount": 57333
+        },
+        {
+          "memberId": 39,
+          "amount": 57333
+        },
+        {
+          "memberId": 40,
+          "amount": 57335
+        }
+      ],
+      "note": "Taxi ra sân bay",
+      "date": "2026-10-31",
+      "createdAt": "2026-10-31T13:44:29.039Z"
+    },
+    {
       "id": 1793452938674,
       "amount": 425000,
       "payerId": 1,
@@ -10837,5 +10871,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-10-31T13:22:18.674Z"
+  "savedAt": "2026-10-31T13:44:29.039Z"
 }
