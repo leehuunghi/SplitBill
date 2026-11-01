@@ -261,7 +261,8 @@
     {
       "id": 43,
       "name": "Phú",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 45,
@@ -10888,5 +10889,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-11-01T03:15:43.878Z"
+  "savedAt": "2026-11-01T03:15:45.471Z"
 }
