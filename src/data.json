@@ -205,7 +205,8 @@
     {
       "id": 33,
       "name": "Lịch",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 34,
@@ -10890,5 +10891,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-11-01T03:15:52.462Z"
+  "savedAt": "2026-11-01T03:15:54.395Z"
 }
