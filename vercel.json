@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": "src/*.json"
+    }
+  },
   "rewrites": [
     {
       "source": "/superadmin",

@@ -184,6 +184,7 @@ const SplitWiseTool = () => {
   const [activeAdminPanel, setActiveAdminPanel] = useState(isRestrictedAdmin ? 'expense' : null);
   const [newMemberName, setNewMemberName] = useState('');
   const [isHydrated, setIsHydrated] = useState(false);
+  const [loadError, setLoadError] = useState('');
 
   const [members, setMembers] = useState([]);
 
@@ -296,7 +297,13 @@ const SplitWiseTool = () => {
   useEffect(() => {
     let active = true;
     fetch('/api/load')
-      .then(res => res.json())
+      .then(async res => {
+        const body = await res.json().catch(() => null);
+        if (!res.ok) {
+          throw new Error(body?.error || `Không tải được dữ liệu (HTTP ${res.status})`);
+        }
+        return body;
+      })
       .then(data => {
         if (!active) return;
         const normalizedData = normalizeLoadedData(data);
@@ -338,7 +345,9 @@ const SplitWiseTool = () => {
         }
         setIsHydrated(true);
       })
-      .catch(() => {
+      .catch(error => {
+        if (!active) return;
+        setLoadError(error?.message || 'Không tải được dữ liệu');
         setIsHydrated(true);
       });
     return () => {
@@ -992,6 +1001,11 @@ const SplitWiseTool = () => {
 
   return (
     <AppShell>
+      {loadError && (
+        <div className="mx-auto mb-4 max-w-3xl rounded-2xl bg-rose-600 px-4 py-3 text-sm font-bold text-white">
+          {loadError}. Vui lòng tải lại trang sau ít phút; nếu vẫn lỗi, báo admin kiểm tra GITHUB_TOKEN.
+        </div>
+      )}
       {isAdminView && toast && (
         <div className="fixed top-4 right-4 z-50">
           <div

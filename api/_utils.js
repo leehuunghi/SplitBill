@@ -129,24 +129,45 @@ export const createJsonStore = ({ localRelativePath, githubRelativePath, default
   // request local chạy gần như đồng thời không interleave đọc/ghi vào nhau.
   let localMutationQueue = Promise.resolve();
 
-  const read = async () => {
+  const readLocalFile = async () => {
+    try {
+      const raw = await fs.readFile(localPath, 'utf-8');
+      return JSON.parse(raw);
+    } catch (_error) {
+      return null;
+    }
+  };
+
+  // Đọc dữ liệu dùng chung.
+  // - Lỗi đọc GitHub (token hết hạn/bị thu hồi, rate limit, mạng...) KHÔNG
+  //   được âm thầm trả về dữ liệu rỗng nữa: trước đây làm UI hiện danh sách
+  //   thành viên trống và các luồng đọc-sửa-ghi có nguy cơ ghi đè mất dữ liệu.
+  // - `fallbackToBundled: true` (chỉ dùng cho các API chỉ-đọc để hiển thị):
+  //   khi GitHub lỗi thì đọc bản src/*.json được đóng gói kèm bản deploy
+  //   (mỗi commit dữ liệu đều trigger redeploy nên bản này gần như mới nhất).
+  //   Mặc định ném lỗi để các luồng ghi không dựa trên dữ liệu cũ.
+  const read = async ({ fallbackToBundled = false } = {}) => {
     if (canUseGithubStorage()) {
       try {
         const data = await readGithubJson(githubRelativePath);
         if (data) {
           return data;
         }
-      } catch (_error) {
-        return defaultData;
+      } catch (error) {
+        console.error(`[store] Đọc GitHub thất bại (${githubRelativePath}):`, error?.message || error);
+        if (!fallbackToBundled) {
+          throw error;
+        }
+        const bundled = await readLocalFile();
+        if (bundled) {
+          console.warn(`[store] Dùng bản đóng gói ${localRelativePath} thay cho GitHub`);
+          return bundled;
+        }
+        throw error;
       }
     }
 
-    try {
-      const raw = await fs.readFile(localPath, 'utf-8');
-      return JSON.parse(raw);
-    } catch (_error) {
-      return defaultData;
-    }
+    return (await readLocalFile()) || defaultData;
   };
 
   const write = async (data, saveMeta) => {

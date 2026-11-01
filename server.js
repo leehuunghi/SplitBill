@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { dataStore, matchHistoryStore, defaultData } from './api/_utils.js';
+import { dataStore, matchHistoryStore } from './api/_utils.js';
 import {
   computeMemberStats,
   sortMatchesDesc,
@@ -18,9 +18,9 @@ app.use(express.json({ limit: '1mb' }));
 
 app.get('/api/load', async (_req, res) => {
   try {
-    res.json(await dataStore.read());
-  } catch (_err) {
-    res.status(200).json(defaultData);
+    res.json(await dataStore.read({ fallbackToBundled: true }));
+  } catch (err) {
+    res.status(503).json({ success: false, error: `Không tải được dữ liệu: ${err?.message || 'lỗi không xác định'}` });
   }
 });
 
@@ -53,10 +53,14 @@ app.post('/api/data-action', async (req, res) => {
 });
 
 app.get('/api/match-history/load', async (_req, res) => {
-  const historyData = await matchHistoryStore.read();
-  const matches = sortMatchesDesc(Array.isArray(historyData?.matches) ? historyData.matches : []);
-  const baseline = historyData?.baseline && typeof historyData.baseline === 'object' ? historyData.baseline : {};
-  res.json({ members: computeMemberStats(matches), matches, baseline });
+  try {
+    const historyData = await matchHistoryStore.read({ fallbackToBundled: true });
+    const matches = sortMatchesDesc(Array.isArray(historyData?.matches) ? historyData.matches : []);
+    const baseline = historyData?.baseline && typeof historyData.baseline === 'object' ? historyData.baseline : {};
+    res.json({ members: computeMemberStats(matches), matches, baseline });
+  } catch (err) {
+    res.status(503).json({ success: false, error: `Không tải được lịch sử trận: ${err?.message || 'lỗi không xác định'}` });
+  }
 });
 
 // Lưu "level ban đầu" (baseline) admin xếp thủ công ở tab riêng trong
