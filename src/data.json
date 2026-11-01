@@ -256,7 +256,8 @@
     {
       "id": 42,
       "name": "Khoa",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "remove"
     },
     {
       "id": 43,
@@ -10889,5 +10890,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-11-01T03:15:45.471Z"
+  "savedAt": "2026-11-01T03:15:52.462Z"
 }
