@@ -284,6 +284,28 @@
   ],
   "expenses": [
     {
+      "id": 1793630591750,
+      "amount": 344000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 14,
+          "amount": 114667
+        },
+        {
+          "memberId": 18,
+          "amount": 114667
+        },
+        {
+          "memberId": 32,
+          "amount": 114666
+        }
+      ],
+      "note": "Taxi Hà Nội",
+      "date": "2026-10-31",
+      "createdAt": "2026-11-02T14:43:11.750Z"
+    },
+    {
       "id": 1793630471196,
       "amount": 225000,
       "payerId": 14,
@@ -10987,5 +11009,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-11-02T14:41:11.196Z"
+  "savedAt": "2026-11-02T14:43:11.750Z"
 }
