@@ -284,6 +284,32 @@
   ],
   "expenses": [
     {
+      "id": 1793630300316,
+      "amount": 1637000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 12,
+          "amount": 409250
+        },
+        {
+          "memberId": 14,
+          "amount": 409250
+        },
+        {
+          "memberId": 32,
+          "amount": 409250
+        },
+        {
+          "memberId": 39,
+          "amount": 409250
+        }
+      ],
+      "note": "Đi Tràng An",
+      "date": "2026-10-31",
+      "createdAt": "2026-11-02T14:38:20.316Z"
+    },
+    {
       "id": 1793454269039,
       "amount": 344000,
       "payerId": 1,
@@ -10939,5 +10965,5 @@
     }
   },
   "nextMemberId": 47,
-  "savedAt": "2026-11-02T03:24:26.248Z"
+  "savedAt": "2026-11-02T14:38:20.316Z"
 }
