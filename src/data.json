@@ -280,6 +280,11 @@
       "isTreasurer": false,
       "group": "mobile-android",
       "avatar": "https://avatars.hermes-api.net/avatars/users/cfb36e1f4bcee7be/original/01M51NRQYQ5K6WSV415FHE584B"
+    },
+    {
+      "id": 47,
+      "name": "Hiệp",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -11104,6 +11109,6 @@
       "updatedAt": "2026-11-03T02:33:01.929Z"
     }
   },
-  "nextMemberId": 47,
-  "savedAt": "2026-11-03T02:39:08.134Z"
+  "nextMemberId": 48,
+  "savedAt": "2026-11-03T06:12:08.726Z"
 }
