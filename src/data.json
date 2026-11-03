@@ -285,6 +285,11 @@
       "id": 47,
       "name": "Hiệp",
       "isTreasurer": false
+    },
+    {
+      "id": 48,
+      "name": "Đoàn",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -11109,6 +11114,6 @@
       "updatedAt": "2026-11-03T02:33:01.929Z"
     }
   },
-  "nextMemberId": 48,
-  "savedAt": "2026-11-03T06:12:08.726Z"
+  "nextMemberId": 49,
+  "savedAt": "2026-11-03T06:12:21.670Z"
 }
