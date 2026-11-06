@@ -294,6 +294,20 @@
   ],
   "expenses": [
     {
+      "id": 1793955013888,
+      "amount": 321000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 321000
+        }
+      ],
+      "note": "tiền sách VGW",
+      "date": "2026-11-06",
+      "createdAt": "2026-11-06T08:50:13.888Z"
+    },
+    {
       "id": 1793942200479,
       "amount": 88000,
       "payerId": 1,
@@ -11251,5 +11265,5 @@
     }
   },
   "nextMemberId": 49,
-  "savedAt": "2026-11-06T05:16:40.480Z"
+  "savedAt": "2026-11-06T08:50:13.888Z"
 }
