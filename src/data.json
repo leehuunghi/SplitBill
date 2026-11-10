@@ -294,6 +294,36 @@
   ],
   "expenses": [
     {
+      "id": 1794285508837,
+      "amount": 180000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 36000
+        },
+        {
+          "memberId": 5,
+          "amount": 36000
+        },
+        {
+          "memberId": 12,
+          "amount": 36000
+        },
+        {
+          "memberId": 14,
+          "amount": 36000
+        },
+        {
+          "memberId": 39,
+          "amount": 36000
+        }
+      ],
+      "note": "cf sáng 4/11",
+      "date": "2026-11-04",
+      "createdAt": "2026-11-10T04:38:28.837Z"
+    },
+    {
       "id": 1794206491664,
       "amount": 440000,
       "payerId": 1,
@@ -11417,5 +11447,5 @@
     }
   },
   "nextMemberId": 49,
-  "savedAt": "2026-11-09T10:31:02.623Z"
+  "savedAt": "2026-11-10T04:38:28.837Z"
 }
