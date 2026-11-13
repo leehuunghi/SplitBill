@@ -294,6 +294,40 @@
   ],
   "expenses": [
     {
+      "id": 1794546049065,
+      "amount": 2347,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 4,
+          "amount": 391
+        },
+        {
+          "memberId": 7,
+          "amount": 391
+        },
+        {
+          "memberId": 8,
+          "amount": 391
+        },
+        {
+          "memberId": 9,
+          "amount": 391
+        },
+        {
+          "memberId": 11,
+          "amount": 391
+        },
+        {
+          "memberId": 46,
+          "amount": 392
+        }
+      ],
+      "note": "nhậu tối t5",
+      "date": "2026-11-13",
+      "createdAt": "2026-11-13T05:00:49.065Z"
+    },
+    {
       "id": 1794545746003,
       "amount": 148604,
       "payerId": 1,
@@ -11706,5 +11740,5 @@
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {},
   "nextMemberId": 49,
-  "savedAt": "2026-11-13T04:55:46.003Z"
+  "savedAt": "2026-11-13T05:00:49.065Z"
 }
