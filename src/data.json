@@ -9724,6 +9724,14 @@
   ],
   "payments": [
     {
+      "id": 1794824178255,
+      "memberId": 9,
+      "amount": 48000,
+      "type": "pay",
+      "note": "Complete thanh toán",
+      "createdAt": "2026-11-16T10:16:18.255Z"
+    },
+    {
       "id": 1794824141197,
       "memberId": 46,
       "amount": 433870,
@@ -11802,5 +11810,5 @@
   "treasurerAccountName": "Le Huu Nghi",
   "qrCache": {},
   "nextMemberId": 49,
-  "savedAt": "2026-11-16T10:15:41.197Z"
+  "savedAt": "2026-11-16T10:16:18.255Z"
 }
