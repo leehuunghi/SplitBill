@@ -294,6 +294,20 @@
   ],
   "expenses": [
     {
+      "id": 1795054957633,
+      "amount": 454300,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 2,
+          "amount": 454300
+        }
+      ],
+      "note": "coffee cho team 18/11",
+      "date": "2026-11-18",
+      "createdAt": "2026-11-19T02:22:37.633Z"
+    },
+    {
       "id": 1794983607755,
       "amount": 276000,
       "payerId": 1,
@@ -11907,5 +11921,5 @@
     }
   },
   "nextMemberId": 49,
-  "savedAt": "2026-11-18T06:33:27.755Z"
+  "savedAt": "2026-11-19T02:22:37.633Z"
 }
