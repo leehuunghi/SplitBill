@@ -294,7 +294,8 @@
     {
       "id": 49,
       "name": "Quang",
-      "isTreasurer": false
+      "isTreasurer": false,
+      "group": "mobile-ios"
     }
   ],
   "expenses": [
@@ -11954,5 +11955,5 @@
     }
   },
   "nextMemberId": 50,
-  "savedAt": "2026-11-19T06:35:41.498Z"
+  "savedAt": "2026-11-19T06:38:22.381Z"
 }
