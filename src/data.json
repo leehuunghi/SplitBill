@@ -290,6 +290,11 @@
       "id": 48,
       "name": "Đoàn",
       "isTreasurer": false
+    },
+    {
+      "id": 49,
+      "name": "Quang",
+      "isTreasurer": false
     }
   ],
   "expenses": [
@@ -11928,6 +11933,6 @@
       "updatedAt": "2026-11-16T10:16:35.235Z"
     }
   },
-  "nextMemberId": 49,
-  "savedAt": "2026-11-19T03:10:39.560Z"
+  "nextMemberId": 50,
+  "savedAt": "2026-11-19T06:34:51.170Z"
 }
