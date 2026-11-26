@@ -300,6 +300,20 @@
   ],
   "expenses": [
     {
+      "id": 1795675896016,
+      "amount": 793000,
+      "payerId": 1,
+      "splits": [
+        {
+          "memberId": 22,
+          "amount": 793000
+        }
+      ],
+      "note": "katinat",
+      "date": "2026-11-26",
+      "createdAt": "2026-11-26T06:51:36.016Z"
+    },
+    {
       "id": 1795673317982,
       "amount": 275000,
       "payerId": 1,
@@ -12167,5 +12181,5 @@
     }
   },
   "nextMemberId": 50,
-  "savedAt": "2026-11-26T06:08:37.982Z"
+  "savedAt": "2026-11-26T06:51:36.016Z"
 }
