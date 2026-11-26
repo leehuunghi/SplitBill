@@ -300,6 +300,40 @@
   ],
   "expenses": [
     {
+      "id": 1795680495980,
+      "amount": 204000,
+      "payerId": 14,
+      "splits": [
+        {
+          "memberId": 3,
+          "amount": 34000
+        },
+        {
+          "memberId": 5,
+          "amount": 34000
+        },
+        {
+          "memberId": 12,
+          "amount": 34000
+        },
+        {
+          "memberId": 14,
+          "amount": 34000
+        },
+        {
+          "memberId": 19,
+          "amount": 34000
+        },
+        {
+          "memberId": 39,
+          "amount": 34000
+        }
+      ],
+      "note": "Cà phê sáng 25/11",
+      "date": "2026-11-25",
+      "createdAt": "2026-11-26T08:08:15.980Z"
+    },
+    {
       "id": 1795680427036,
       "amount": 128000,
       "payerId": 14,
@@ -12245,5 +12279,5 @@
     }
   },
   "nextMemberId": 50,
-  "savedAt": "2026-11-26T08:07:07.036Z"
+  "savedAt": "2026-11-26T08:08:15.980Z"
 }
